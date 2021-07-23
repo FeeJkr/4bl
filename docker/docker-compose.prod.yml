@@ -1,0 +1,45 @@
+version: '3'
+services:
+  app:
+    container_name: 4bl-app
+    build:
+      context: ../
+    volumes:
+      - ../:/app
+    networks:
+      - intranet
+      - 4bl
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=intranet"
+      - "traefik.http.routers.4bl-app.rule=Host(`mardeus.dev`)"
+      - "traefik.http.routers.4bl-app.tls=true"
+      - "traefik.http.routers.4bl-app.tls.certresolver=leresolver"
+
+  invoice-generator-microservice:
+    image: feejkr/invoice-generator
+    hostname: invoice-generator-ms
+    container_name: 4bl-invoice-generator
+    networks:
+      - 4bl
+
+  db:
+    image: "postgres:latest"
+    container_name: 4bl-db
+    environment:
+      - POSTGRES_USER=${SQL_DATABASE_USER}
+      - POSTGRES_PASSWORD=${SQL_DATABASE_PASSWORD}
+      - PGPASSWORD=${SQL_DATABASE_ROOT_PASSWORD}
+    volumes:
+      - 4bl_postgres:/var/lib/postgresql/data
+    networks:
+      - 4bl
+
+networks:
+  intranet:
+    external: true
+  4bl: ~
+
+volumes:
+  4bl_postgres:
+    driver: local
