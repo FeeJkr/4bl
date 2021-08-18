@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Common\Application\Command\CommandHandler;
+use App\Common\Application\Event\EventHandler;
 use App\Common\Application\Query\QueryHandler;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -26,6 +27,10 @@ class Kernel extends BaseKernel
         } elseif (is_file($path = dirname(__DIR__).'/config/services.php')) {
             (require $path)($container->withPath($path), $this);
         }
+
+        foreach (array_diff(scandir(__DIR__ . '/Modules'), ['..', '.']) as $moduleName) {
+            $container->import(sprintf('%s/Modules/%s/Infrastructure/Resource/{services}.yaml', __DIR__, $moduleName));
+        }
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
@@ -38,6 +43,8 @@ class Kernel extends BaseKernel
         } elseif (is_file($path = dirname(__DIR__).'/config/routes.php')) {
             (require $path)($routes->withPath($path), $this);
         }
+
+        $routes->import(__DIR__.'/Web/API/Resource/{routes}.yaml');
     }
 
     protected function build(ContainerBuilder $container): void
@@ -49,5 +56,9 @@ class Kernel extends BaseKernel
         $container
             ->registerForAutoconfiguration(QueryHandler::class)
             ->addTag('messenger.message_handler', ['bus' => 'query.bus']);
+
+        $container
+            ->registerForAutoconfiguration(EventHandler::class)
+            ->addTag('messenger.message_handler', ['bus' => 'event.bus']);
     }
 }

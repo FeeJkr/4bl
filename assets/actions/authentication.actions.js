@@ -1,6 +1,7 @@
 import {authenticationConstants} from "../constants/authentication.constants";
 import {authenticationService} from "../services/authentication.service";
 import {history} from '../helpers/history';
+import {Redirect} from "react-router-dom";
 
 export const authenticationActions = {
     login,
@@ -15,10 +16,10 @@ function login(email, password, from) {
         dispatch(request());
 
         authenticationService.login(email, password).then(
-            () => {
-                dispatch(success());
+            (user) => {
+                dispatch(success(user));
 
-                location.href = from.pathname;
+                history.push({pathname: '/'});
             },
             errors => {
                 dispatch(failure(errors))
@@ -27,7 +28,7 @@ function login(email, password, from) {
     };
 
     function request() { return { type: authenticationConstants.LOGIN_REQUEST } }
-    function success() { return { type: authenticationConstants.LOGIN_SUCCESS } }
+    function success(user) { return { type: authenticationConstants.LOGIN_SUCCESS, user } }
     function failure(responseErrors) {
         let errors = {
             domain: [],
@@ -44,11 +45,11 @@ function login(email, password, from) {
     }
 }
 
-function register(email, username, password) {
+function register(email, username, password, firstName, lastName) {
     return dispatch => {
         dispatch(request(email));
 
-        authenticationService.register(email, username, password).then(
+        authenticationService.register(email, username, password, firstName, lastName).then(
             user => {
                 dispatch(success());
                 history.push({
@@ -85,7 +86,7 @@ function logout() {
         authenticationService.logout().then(
             () => {
                 dispatch(success());
-                location.reload();
+                history.push({pathname: '/sign-in'});
             },
             () => {}
         )

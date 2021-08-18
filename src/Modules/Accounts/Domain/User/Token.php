@@ -4,25 +4,28 @@ declare(strict_types=1);
 
 namespace App\Modules\Accounts\Domain\User;
 
-use JetBrains\PhpStorm\Pure;
+use DateTimeImmutable;
 
 final class Token
 {
-    public function __construct(private ?string $token) {}
+    public function __construct(
+        private string $accessToken,
+        private string $refreshToken,
+        private DateTimeImmutable $refreshTokenExpiresAt
+    ){}
 
-    #[Pure]
-    public static function nullInstance(): self
+    public function getAccessToken(): string
     {
-        return new self(null);
+        return $this->accessToken;
     }
 
-    public function toString(): ?string
+    public function getRefreshToken(): string
     {
-        return $this->token;
+        return $this->refreshToken;
     }
 
-    public function isNull(): bool
+    public function getRefreshTokenExpiresAt(): DateTimeImmutable
     {
-        return $this->token === null;
+        return $this->refreshTokenExpiresAt;
     }
 }

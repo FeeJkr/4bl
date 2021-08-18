@@ -5,6 +5,9 @@ import {store} from "./helpers/store";
 import {Provider} from "react-redux";
 import './app.css';
 import 'boxicons';
+import {isLoggedIn} from "./reducers/authentication/sign-in.reducer";
+
+store.dispatch(isLoggedIn);
 
 ReactDOM.render(
     <Provider store={store}>

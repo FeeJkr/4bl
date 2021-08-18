@@ -6,10 +6,10 @@ namespace App\Modules\Accounts\Application\User\GetTokenByEmail;
 
 final class TokenDTO
 {
-    public function __construct(private string $token) {}
+    public function __construct(private string $accessToken) {}
 
-    public function getToken(): string
+    public function getAccessToken(): string
     {
-        return $this->token;
+        return $this->accessToken;
     }
 }

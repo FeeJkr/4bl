@@ -15,6 +15,8 @@ final class GetMyUserDataResponse extends Response
             'id' => $userDTO->getId(),
             'email' => $userDTO->getEmail(),
             'username' => $userDTO->getUsername(),
+            'firstName' => $userDTO->getFirstName(),
+            'lastName' => $userDTO->getLastName(),
         ]);
     }
 }

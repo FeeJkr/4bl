@@ -8,37 +8,43 @@ use JetBrains\PhpStorm\Pure;
 class CompanyPaymentInformation
 {
     public function __construct(
-        private ?string $paymentType,
-        private ?int $paymentLastDate,
-        private ?string $bank,
-        private ?string $accountNumber,
+        private CompanyPaymentInformationId $id,
+        private string $paymentType,
+        private int $paymentLastDay,
+        private string $bank,
+        private string $accountNumber,
     ){}
 
-    public function update(string $paymentType, int $paymentLastDate, string $bank, string $accountNumber): void
+    public static function create(string $paymentType, int $paymentLastDay, string $bank, string $accountNumber): self
+    {
+        return new self(
+            CompanyPaymentInformationId::generate(),
+            $paymentType,
+            $paymentLastDay,
+            $bank,
+            $accountNumber
+        );
+    }
+
+    public function update(string $paymentType, int $paymentLastDay, string $bank, string $accountNumber): self
     {
         $this->paymentType = $paymentType;
-        $this->paymentLastDate = $paymentLastDate;
+        $this->paymentLastDay = $paymentLastDay;
         $this->bank = $bank;
         $this->accountNumber = $accountNumber;
+
+        return $this;
     }
 
-    public function getPaymentType(): ?string
+    #[Pure]
+    public function getSnapshot(): CompanyPaymentInformationSnapshot
     {
-        return $this->paymentType;
-    }
-
-    public function getPaymentLastDate(): ?int
-    {
-        return $this->paymentLastDate;
-    }
-
-    public function getBank(): ?string
-    {
-        return $this->bank;
-    }
-
-    public function getAccountNumber(): ?string
-    {
-        return $this->accountNumber;
+        return new CompanyPaymentInformationSnapshot(
+            $this->id->toString(),
+            $this->paymentType,
+            $this->paymentLastDay,
+            $this->bank,
+            $this->accountNumber,
+        );
     }
 }

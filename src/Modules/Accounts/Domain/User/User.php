@@ -4,75 +4,69 @@ declare(strict_types=1);
 
 namespace App\Modules\Accounts\Domain\User;
 
-use DateTimeImmutable;
+use App\Common\Domain\Entity;
+use JetBrains\PhpStorm\Pure;
 
-final class User
+final class User extends Entity
 {
     public function __construct(
         private UserId $id,
         private string $email,
         private string $username,
-        private string $password,
-        private Token $token,
-        private DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt
-    ) {}
+        private string $firstName,
+        private string $lastName,
+        private ?Token $token = null
+    ){}
 
-    public static function register(string $email, string $username, string $password): self
-    {
+    public static function register(
+        string $email,
+        string $username,
+        string $firstName,
+        string $lastName,
+    ): self {
         return new self(
             UserId::generate(),
             $email,
             $username,
-            $password,
-            Token::nullInstance(),
-            new DateTimeImmutable(),
-            null
+            $firstName,
+            $lastName,
         );
     }
 
-    public function signIn(Token $token): void
+    public function signIn(TokenManager $tokenManager, string $password): void
     {
-        $this->token = $token;
+        $this->token = $tokenManager->generate($this->email, $password);
     }
 
     public function signOut(): void
     {
-        $this->token = new Token(null);
+        $this->token = null;
     }
 
-    public function getId(): UserId
+    /**
+     * @throws UserException
+     */
+    public function refreshToken(TokenManager $tokenManager): void
     {
-        return $this->id;
+        if ($this->token === null) {
+            throw UserException::emptyToken();
+        }
+
+        $this->token = $tokenManager->refresh($this->token->getRefreshToken());
     }
 
-    public function getEmail(): string
+    #[Pure]
+    public function getSnapshot(): UserSnapshot
     {
-        return $this->email;
+        return new UserSnapshot(
+            $this->id->toString(),
+            $this->email,
+            $this->username,
+            $this->firstName,
+            $this->lastName,
+            $this->token?->getAccessToken(),
+            $this->token?->getRefreshToken(),
+            $this->token?->getRefreshTokenExpiresAt(),
+        );
     }
-
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function getToken(): Token
-    {
-        return $this->token;
-    }
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
 }

@@ -1,0 +1,59 @@
+api.v1.invoices.companies.delete:
+  path: /api/v1/invoices/companies/{id}
+  controller: App\Web\API\Action\Invoices\Company\Delete\DeleteCompanyAction
+  methods: DELETE
+
+api.v1.invoices.companies.getAll:
+  path: /api/v1/invoices/companies
+  controller: App\Web\API\Action\Invoices\Company\GetAll\GetAllCompaniesAction
+  methods: GET
+
+api.v1.invoices.companies.create:
+  path: /api/v1/invoices/companies
+  controller: App\Web\API\Action\Invoices\Company\Create\CreateCompanyAction
+  methods: POST
+
+api.v1.invoices.companies.getOne:
+  path: /api/v1/invoices/companies/{id}
+  controller: App\Web\API\Action\Invoices\Company\GetOne\GetOneCompanyAction
+  methods: GET
+
+api.v1.invoices.companies.update:
+  path: /api/v1/invoices/companies/{id}
+  controller: App\Web\API\Action\Invoices\Company\Update\UpdateCompanyAction
+  methods: POST
+
+api.v1.invoices.companies.updatePaymentInformation:
+  path: /api/v1/invoices/companies/{id}/payment-information
+  controller: App\Web\API\Action\Invoices\Company\UpdatePaymentInformation\UpdateCompanyPaymentInformationAction
+  methods: POST
+
+api.v1.invoices.invoices.generate:
+  path: /api/v1/invoices/invoices
+  controller: App\Web\API\Action\Invoices\Invoices\Generate\GenerateInvoiceAction
+  methods: POST
+
+api.v1.invoices.invoices.getAll:
+  path: /api/v1/invoices/invoices
+  controller: App\Web\API\Action\Invoices\Invoices\GetAll\GetAllInvoicesAction
+  methods: GET
+
+api.v1.invoices.invoices.getOne:
+  path: /api/v1/invoices/invoices/{id}
+  controller: App\Web\API\Action\Invoices\Invoices\GetOne\GetOneInvoiceAction
+  methods: GET
+
+api.v1.invoices.invoices.update:
+  path: /api/v1/invoices/invoices/{id}
+  controller: App\Web\API\Action\Invoices\Invoices\Update\UpdateInvoiceAction
+  methods: POST
+
+api.v1.invoices.invoices.delete:
+  path: /api/v1/invoices/invoices/{id}
+  controller: App\Web\API\Action\Invoices\Invoices\Delete\DeleteInvoiceAction
+  methods: DELETE
+
+api.v1.invoices.filesystem.getByName:
+  path: /api/v1/invoices/filesystem/{filename}
+  controller: App\Web\API\Action\Invoices\Filesystem\GetFileByName\GetFileByNameAction
+  methods: GET

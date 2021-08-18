@@ -10,16 +10,13 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class RegisterUserRequest extends Request
 {
-    private string $email;
-    private string $username;
-    private string $password;
-
-    public function __construct(string $email, string $username, string $password)
-    {
-        $this->email = $email;
-        $this->username = $username;
-        $this->password = $password;
-    }
+    public function __construct(
+        private string $email,
+        private string $username,
+        private string $password,
+        private string $firstName,
+        private string $lastName
+    ){}
 
     public static function fromRequest(ServerRequest $request): self
     {
@@ -28,17 +25,23 @@ final class RegisterUserRequest extends Request
         $email = $requestData['email'];
         $username = $requestData['username'];
         $password = $requestData['password'];
+        $firstName = $requestData['firstName'];
+        $lastName = $requestData['lastName'];
 
         Assert::lazy()
             ->that($email, 'email')->notEmpty()->email()
             ->that($username, 'username')->notEmpty()
             ->that($password, 'password')->notEmpty()->minLength(8)->maxLength(255)
+            ->that($firstName, 'firstName')->notEmpty()->maxLength(255)
+            ->that($lastName, 'lastName')->notEmpty()->maxLength(255)
             ->verifyNow();
 
         return new self(
             $email,
             $username,
-            $password
+            $password,
+            $firstName,
+            $lastName
         );
     }
 
@@ -55,5 +58,15 @@ final class RegisterUserRequest extends Request
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
     }
 }

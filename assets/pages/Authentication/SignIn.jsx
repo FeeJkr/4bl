@@ -15,12 +15,6 @@ export default function SignIn() {
     const errors = useSelector(state => state.authentication.signIn.errors);
     const isLoading = useSelector(state => state.authentication.signIn.loggingIn);
 
-    useEffect(() => {
-        return history.listen((location) => {
-            dispatch(authenticationActions.clearLoginState());
-        });
-    },[history]);
-
     const handleChange = (e) => {
         const { name, value } = e.target;
 

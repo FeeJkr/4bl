@@ -6,6 +6,7 @@ namespace App\Modules\Invoices\Application\Company\Create;
 
 use App\Common\Application\Command\CommandHandler;
 use App\Modules\Invoices\Domain\Company\Company;
+use App\Modules\Invoices\Domain\Company\CompanyAddress;
 use App\Modules\Invoices\Domain\Company\CompanyRepository;
 use App\Modules\Invoices\Domain\User\UserContext;
 
@@ -16,13 +17,12 @@ class CreateCompanyHandler implements CommandHandler
         private UserContext $userContext
     ){}
 
-    public function __invoke(CreateCompanyCommand $command): string
+    public function __invoke(CreateCompanyCommand $command): void
     {
+        $companyAddress = CompanyAddress::create($command->getStreet(), $command->getZipCode(), $command->getCity());
         $company = Company::create(
             $this->userContext->getUserId(),
-            $command->getStreet(),
-            $command->getZipCode(),
-            $command->getCity(),
+            $companyAddress,
             $command->getName(),
             $command->getIdentificationNumber(),
             $command->getEmail(),
@@ -30,7 +30,5 @@ class CreateCompanyHandler implements CommandHandler
         );
 
         $this->repository->store($company);
-
-        return $company->getId()->toString();
     }
 }

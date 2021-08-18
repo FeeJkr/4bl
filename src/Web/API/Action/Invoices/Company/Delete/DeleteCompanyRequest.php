@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 class DeleteCompanyRequest extends Request
 {
-    public function __construct(private string $companyId){}
+    private function __construct(private string $companyId){}
 
     public static function fromRequest(ServerRequest $request): self
     {

@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace App\Modules\Accounts\Domain\User;
 
+use Exception;
+
 final class UserService
 {
     public function __construct(
         private TokenManager $tokenManager,
-        private ValidPasswordSpecification $validPasswordSpecification,
         private EmailAndUsernameNotExistsSpecification $alreadyExistsSpecification,
         private UserRepository $repository,
-        private PasswordManager $passwordManager,
     ){}
 
     /**
      * @throws UserException
      */
-    public function register(string $email, string $username, string $password): User
-    {
+    public function register(
+        string $email,
+        string $username,
+        string $firstName,
+        string $lastName
+    ): User {
         if (! $this->alreadyExistsSpecification->isSatisfiedBy($email, $username)) {
             throw UserException::alreadyExists();
         }
@@ -26,7 +30,8 @@ final class UserService
         return User::register(
             $email,
             $username,
-            $this->passwordManager->hash($password),
+            $firstName,
+            $lastName
         );
     }
 
@@ -37,11 +42,9 @@ final class UserService
     {
         $user = $this->repository->fetchByEmail($email) ?? throw UserException::notFoundByEmail($email);
 
-        if (! $this->validPasswordSpecification->isSatisfiedBy($password, $user->getPassword())) {
-            throw UserException::withInvalidCredentials();
-        }
+        $user->signIn($this->tokenManager, $password);
 
-        $user->signIn($this->tokenManager->generate());
+        $this->repository->save($user);
 
         return $user;
     }
@@ -49,12 +52,26 @@ final class UserService
     /**
      * @throws UserException
      */
-    public function signOut(Token $token): User
+    public function signOut(string $accessToken): void
     {
-        $user = $this->repository->fetchByToken($token) ?? throw UserException::notFoundByToken($token);
+        $user = $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
 
         $user->signOut();
 
-        return $user;
+        $this->repository->save($user);
+    }
+
+    /**
+     * @throws UserException
+     */
+    public function refreshToken(string $accessToken): string
+    {
+        $user = $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
+
+        $user->refreshToken($this->tokenManager);
+
+        $this->repository->save($user);
+
+        return $user->getSnapshot()->getAccessToken();
     }
 }

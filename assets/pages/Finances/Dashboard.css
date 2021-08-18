@@ -76,24 +76,7 @@
     border-color: #7b93a4;
 }
 
-.btn-check:active+.btn-primary, .btn-check:checked+.btn-primary, .btn-primary.active, .btn-primary:active, .show>.btn-primary.dropdown-toggle {
-    color: black;
-    background: none;
-    border-color: #7b93a4;
-}
 
-.btn-check:active+.btn-primary:focus, .btn-check:checked+.btn-primary:focus, .btn-primary.active:focus, .btn-primary:active:focus, .show>.btn-primary.dropdown-toggle:focus {
-    box-shadow: none;
-}
-.btn-check:focus+.btn-primary, .btn-primary:focus {
-    box-shadow: none;
-}
-
-.btn-check:focus+.btn-primary, .btn-primary:focus {
-    color: black;
-    background: none;
-    border-color: #7b93a4;
-}
 
 .select-category:active {
     background: none;

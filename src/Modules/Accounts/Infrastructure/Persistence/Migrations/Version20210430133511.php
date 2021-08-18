@@ -17,13 +17,14 @@ final class Version20210430133511 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-            create table users(
-                id uuid default gen_random_uuid() not null unique constraint users_pk primary key,
-                email varchar(255) not null,
-                username varchar(255) not null,
-                password varchar(255) not null,
-                token varchar(255) unique default NULL::character varying,
-                created_at timestamp(0) default (now()) not null,
+            create table accounts_users(
+                id uuid not null unique constraint accounts_users_pk primary key,
+                email varchar(255) unique not null,
+                username varchar(255) unique not null,
+                access_token text,
+                refresh_token text,
+                refresh_token_expired_at timestamp,
+                created_at timestamp default now() not null,
                 updated_at timestamp
             );
         ');

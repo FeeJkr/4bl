@@ -11,37 +11,14 @@ class InvoiceProduct
 {
     public function __construct(
         private InvoiceProductId $id,
-        private ?Invoice $invoice,
         private int $position,
         private string $name,
         private float $netPrice,
-        private DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt
     ){}
 
     public function getId(): InvoiceProductId
     {
         return $this->id;
-    }
-
-    public function getInvoice(): Invoice
-    {
-        return $this->invoice;
-    }
-
-    public function setInvoice(?Invoice $invoice): void
-    {
-        $this->invoice = $invoice;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
     }
 
     public function getPosition(): int

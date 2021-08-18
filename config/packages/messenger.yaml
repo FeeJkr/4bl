@@ -19,5 +19,10 @@ framework:
 
             command.bus:
                 middleware:
-                    - doctrine_transaction
                     - validation
+                    - 'App\Common\Infrastructure\Messenger\Middleware\DomainEventDispatcherMiddleware'
+
+            event.bus:
+                default_middleware: allow_no_handlers
+                middleware:
+                    - 'App\Common\Infrastructure\Messenger\Middleware\DomainEventDispatcherMiddleware'

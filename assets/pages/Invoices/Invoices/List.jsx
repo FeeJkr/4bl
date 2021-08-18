@@ -70,8 +70,8 @@ function List() {
                                                 <td>{invoice.invoiceNumber}</td>
                                                 <td>{invoice.generatedAt}</td>
                                                 <td>{invoice.soldAt}</td>
-                                                <td>{invoice.seller.name}</td>
-                                                <td>{invoice.buyer.name}</td>
+                                                <td>{invoice.sellerName}</td>
+                                                <td>{invoice.buyerName}</td>
                                                 <td>{invoice.totalNetPrice} {invoice.currencyCode}</td>
                                                 <td>
                                                     <div className="gap-3" style={{display: 'flex', gridGap: '1 rem'}}>

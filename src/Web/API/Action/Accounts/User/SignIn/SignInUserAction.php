@@ -18,10 +18,9 @@ final class SignInUserAction extends AbstractAction
     public function __construct(
         private CommandBus $commandBus,
         private QueryBus $queryBus,
-        private SessionInterface $session
     ){}
 
-    public function __invoke(SignInUserRequest $request): NoContentResponse
+    public function __invoke(SignInUserRequest $request): SignInUserResponse
     {
         $this->commandBus->dispatch(
             new SignInUserCommand($request->getEmail(), $request->getPassword())
@@ -30,8 +29,6 @@ final class SignInUserAction extends AbstractAction
         /** @var TokenDTO $token */
         $token = $this->queryBus->handle(new GetTokenQuery($request->getEmail()));
 
-        $this->session->set('user.token', $token->getToken());
-
-        return NoContentResponse::respond();
+        return SignInUserResponse::respond($token);
     }
 }

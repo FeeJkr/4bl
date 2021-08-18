@@ -9,6 +9,7 @@ use App\Modules\Invoices\Domain\Invoice\HtmlGenerator;
 use App\Modules\Invoices\Domain\Invoice\PdfFromHtmlGenerator as PdfFromHtmlGeneratorInterface;
 use App\Modules\Invoices\Domain\Invoice\Invoice;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -21,6 +22,9 @@ class PdfFromHtmlGenerator implements PdfFromHtmlGeneratorInterface
         private string $host,
     ){}
 
+    /**
+     * @throws GuzzleException
+     */
     public function generate(Invoice $invoice): void
     {
         $filepath = sprintf('generated-files/%s.pdf', $invoice->getId()->toString());

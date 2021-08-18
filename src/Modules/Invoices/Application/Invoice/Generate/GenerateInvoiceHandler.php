@@ -45,12 +45,11 @@ class GenerateInvoiceHandler implements CommandHandler
 
         $invoice = Invoice::create(
             $userId,
-            $this->companyRepository->fetchById(CompanyId::fromString($command->getSellerId()), $userId),
-            $this->companyRepository->fetchById(CompanyId::fromString($command->getBuyerId()), $userId),
+            CompanyId::fromString($command->getSellerId()),
+            CompanyId::fromString($command->getBuyerId()),
             $invoiceParameters,
+            $command->getProducts()
         );
-
-        $invoice->setProducts($command->getProducts());
 
         $this->pdfFromHtmlGenerator->generate($invoice);
 

@@ -6,18 +6,12 @@ namespace App\Web\API\Action\Accounts\User\SignIn;
 
 use App\Web\API\Action\Request;
 use Assert\Assert;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class SignInUserRequest extends Request
 {
-    private string $email;
-    private string $password;
-
-    public function __construct(string $email, string $password)
-    {
-        $this->email = $email;
-        $this->password = $password;
-    }
+    public function __construct(private string $email, private string $password){}
 
     public static function fromRequest(ServerRequest $request): self
     {

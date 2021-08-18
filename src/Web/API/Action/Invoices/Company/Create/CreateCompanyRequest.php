@@ -18,7 +18,7 @@ class CreateCompanyRequest extends Request
 	private const ZIP_CODE = 'zipCode';
 	private const CITY = 'city';
 
-	public function __construct(
+	private function __construct(
         private string $name,
         private string $identificationNumber,
         private ?string $email,

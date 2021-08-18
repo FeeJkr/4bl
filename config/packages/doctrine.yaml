@@ -1,34 +1,3 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
-
-        types:
-            Accounts_UserId: App\Modules\Accounts\Infrastructure\Persistence\Doctrine\Mapping\User\UserIdType
-            Accounts_Token: App\Modules\Accounts\Infrastructure\Persistence\Doctrine\Mapping\User\TokenType
-
-            Invoices_CompanyId: App\Modules\Invoices\Infrastructure\Persistence\Doctrine\Mapping\Company\CompanyIdType
-            Invoices_CompanyAddressId: App\Modules\Invoices\Infrastructure\Persistence\Doctrine\Mapping\Company\CompanyAddressIdType
-            Invoices_InvoiceId: App\Modules\Invoices\Infrastructure\Persistence\Doctrine\Mapping\Invoice\InvoiceIdType
-            Invoices_InvoiceProductId: App\Modules\Invoices\Infrastructure\Persistence\Doctrine\Mapping\Invoice\InvoiceProductIdType
-            Invoices_UserId: App\Modules\Invoices\Infrastructure\Persistence\Doctrine\Mapping\User\UserIdType
-
-    orm:
-        auto_generate_proxy_classes: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        auto_mapping: true
-        mappings:
-            Accounts_User:
-                type: xml
-                prefix: 'App\Modules\Accounts\Domain\User'
-                dir: '%kernel.project_dir%/src/Modules/Accounts/Infrastructure/Persistence/Doctrine/Mapping/User'
-                is_bundle: false
-            Invoices_Company:
-                type: xml
-                prefix: 'App\Modules\Invoices\Domain\Company'
-                dir: '%kernel.project_dir%/src/Modules/Invoices/Infrastructure/Persistence/Doctrine/Mapping/Company'
-                is_bundle: false
-            Invoices_Invoice:
-                type: xml
-                prefix: 'App\Modules\Invoices\Domain\Invoice'
-                dir: '%kernel.project_dir%/src/Modules/Invoices/Infrastructure/Persistence/Doctrine/Mapping/Invoice'
-                is_bundle: false

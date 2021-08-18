@@ -1,11 +1,16 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import {authenticationService} from "../services/authentication.service";
+import UserContext from "../context/user.context";
+import {useSelector} from "react-redux";
+import Loading from "../components/Loading";
 
 function PrivateRoute({ component: Component, roles, ...rest }) {
+    const isLoggedIn = useSelector(state => state.authentication.signIn.loggedIn) ?? null;
+
     return (
         <Route {...rest} render={props => {
-            if (authenticationService.isUserLoggedIn()) {
+            if (isLoggedIn) {
                 return <Component {...props} />
             }
 

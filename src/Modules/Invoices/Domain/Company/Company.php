@@ -13,21 +13,17 @@ class Company
     public function __construct(
         private CompanyId $id,
         private UserId $userId,
-        private CompanyAddress $companyAddress,
+        private CompanyAddress $address,
+        private ?CompanyPaymentInformation $paymentInformation,
         private string $name,
         private string $identificationNumber,
         private ?string $email,
         private ?string $phoneNumber,
-        private CompanyPaymentInformation $paymentInformation,
-        private DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt
     ){}
 
     public static function create(
         UserId $userId,
-        string $street,
-        string $zipCode,
-        string $city,
+        CompanyAddress $address,
         string $name,
         string $identificationNumber,
         ?string $email,
@@ -36,14 +32,12 @@ class Company
         return new self(
             CompanyId::generate(),
             $userId,
-            CompanyAddress::create($street, $zipCode, $city),
+            $address,
+            null,
             $name,
             $identificationNumber,
             $email,
             $phoneNumber,
-            new CompanyPaymentInformation(null, null, null, null),
-            new DateTimeImmutable(),
-            null
         );
     }
 
@@ -56,7 +50,7 @@ class Company
         ?string $email,
         ?string $phoneNumber,
     ): void {
-        $this->companyAddress->update($street, $zipCode, $city);
+        $this->address->update($street, $zipCode, $city);
 
         $this->name = $name;
         $this->identificationNumber = $identificationNumber;
@@ -70,101 +64,32 @@ class Company
         string $bank,
         string $accountNumber
     ): void {
-    	if ($this->paymentInformation === null) {
-    		$this->paymentInformation = new CompanyPaymentInformation(
-    			$paymentType,
-				$paymentLastDate,
-				$bank,
-				$accountNumber
-			);
-
-    		return;
-		}
-
-        $this->paymentInformation->update($paymentType, $paymentLastDate, $bank, $accountNumber);
+    	$this->paymentInformation = $this->paymentInformation === null
+            ? CompanyPaymentInformation::create($paymentType, $paymentLastDate, $bank, $accountNumber)
+            : $this->paymentInformation->update($paymentType, $paymentLastDate, $bank, $accountNumber);
     }
 
-    public function getId(): CompanyId
+    public function getAddress(): CompanyAddress
     {
-        return $this->id;
+        return $this->address;
     }
 
-    public function getUserId(): UserId
+    public function getPaymentInformation(): ?CompanyPaymentInformation
     {
-        return $this->userId;
+        return $this->paymentInformation;
     }
 
-    public function getCompanyAddressId(): CompanyAddressId
+    public function getSnapshot(): CompanySnapshot
     {
-        return $this->companyAddress->getId();
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getStreet(): string
-    {
-        return $this->companyAddress->getStreet();
-    }
-
-    public function getZipCode(): string
-    {
-        return $this->companyAddress->getZipCode();
-    }
-
-    public function getCity(): string
-    {
-        return $this->companyAddress->getCity();
-    }
-
-    public function getIdentificationNumber(): string
-    {
-        return $this->identificationNumber;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    #[Pure]
-    public function getPaymentType(): ?string
-    {
-        return $this->paymentInformation->getPaymentType();
-    }
-
-    #[Pure]
-    public function getPaymentLastDate(): ?int
-    {
-        return $this->paymentInformation->getPaymentLastDate();
-    }
-
-    #[Pure]
-    public function getBank(): ?string
-    {
-        return $this->paymentInformation->getBank();
-    }
-
-    #[Pure]
-    public function getAccountNumber(): ?string
-    {
-        return $this->paymentInformation->getAccountNumber();
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
+        return new CompanySnapshot(
+            $this->id->toString(),
+            $this->userId->toString(),
+            $this->address->getSnapshot()->getId(),
+            $this->paymentInformation?->getSnapshot()->getId(),
+            $this->name,
+            $this->identificationNumber,
+            $this->email,
+            $this->phoneNumber,
+        );
     }
 }

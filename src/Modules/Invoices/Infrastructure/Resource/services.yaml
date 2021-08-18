@@ -1,0 +1,22 @@
+parameters:
+  microservices.html2pdf.host: '%env(resolve:MICROSERVICE_HTML2PDF_HOST)%'
+  integrations.dropbox.auth_token: '%env(resolve:DROPBOX_AUTH_TOKEN)%'
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  App\Modules\Invoices\:
+    resource: '../../'
+
+  App\Modules\Invoices\Domain\Invoice\PdfFromHtmlGenerator:
+    class: App\Modules\Invoices\Infrastructure\Domain\Invoice\PdfFromHtmlGenerator
+    arguments:
+      $host: '%microservices.html2pdf.host%'
+
+  App\Modules\Invoices\Domain\Filesystem\Dropbox:
+    class: App\Modules\Invoices\Infrastructure\Domain\Filesystem\DropboxApiIntegration
+    arguments:
+      $dropboxAuthorizationToken: '%integrations.dropbox.auth_token%'

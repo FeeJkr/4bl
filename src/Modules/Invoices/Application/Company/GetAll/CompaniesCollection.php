@@ -6,7 +6,12 @@ namespace App\Modules\Invoices\Application\Company\GetAll;
 
 final class CompaniesCollection
 {
-    public function __construct(private array $companies) {}
+    public function __construct(private array $companies = []) {}
+
+    public function add(CompanyDTO $companyDTO): void
+    {
+        $this->companies[] = $companyDTO;
+    }
 
     public function toArray(): array
     {

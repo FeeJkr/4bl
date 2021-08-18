@@ -16,51 +16,44 @@ class Invoice
     public function __construct(
         private InvoiceId $id,
         private UserId $userId,
-        private Company $seller,
-        private Company $buyer,
+        private CompanyId $sellerId,
+        private CompanyId $buyerId,
         private InvoiceParameters $parameters,
-        private Collection $products,
-        private DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt
+        private array $products,
     ){}
 
     public static function create(
         UserId $userId,
-        Company $seller,
-        Company $buyer,
+        CompanyId $sellerId,
+        CompanyId $buyerId,
         InvoiceParameters $parameters,
+        array $products,
     ): self {
         return new self(
             InvoiceId::generate(),
             $userId,
-            $seller,
-            $buyer,
+            $sellerId,
+            $buyerId,
             $parameters,
-            new ArrayCollection(),
-            new DateTimeImmutable(),
-            null
+            self::prepareProducts($products),
         );
     }
 
-    public function setProducts(array $products): void
+    private static function prepareProducts(array $products): array
     {
-        $productsCollection = new ArrayCollection();
+        $productsCollection = [];
 
         foreach ($products as $product) {
-            $productsCollection->add(
+            $productsCollection[] =
                 new InvoiceProduct(
                     InvoiceProductId::generate(),
-                    $this,
                     (int) $product['position'],
                     $product['name'],
                     (float) $product['price'],
-                    new DateTimeImmutable(),
-                    null,
-                )
-            );
+                );
         }
 
-        $this->products = $productsCollection;
+        return $productsCollection;
     }
 
     public function update(
@@ -85,14 +78,14 @@ class Invoice
         return $this->userId;
     }
 
-    public function getSeller(): Company
+    public function getSellerId(): CompanyId
     {
-        return $this->seller;
+        return $this->sellerId;
     }
 
-    public function getBuyer(): Company
+    public function getBuyerId(): CompanyId
     {
-        return $this->buyer;
+        return $this->buyerId;
     }
 
     public function getParameters(): InvoiceParameters
@@ -100,18 +93,8 @@ class Invoice
         return $this->parameters;
     }
 
-    public function getProducts(): Collection
+    public function getProducts(): array
     {
         return $this->products;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
     }
 }

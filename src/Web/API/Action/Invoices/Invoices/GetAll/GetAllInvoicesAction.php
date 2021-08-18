@@ -15,7 +15,7 @@ class GetAllInvoicesAction extends AbstractAction
     public function __invoke(): GetAllInvoicesResponse
     {
         return GetAllInvoicesResponse::respond(
-            $this->bus->handle(new GetAllInvoicesQuery)
+            $this->bus->handle(new GetAllInvoicesQuery())
         );
     }
 }

@@ -1,38 +1,53 @@
 import axios from "axios";
-import settings from "../helpers/application.settings";
 
 export const authenticationService = {
+    me,
     login,
     register,
-    isUserLoggedIn,
     logout,
 };
+
+function me() {
+    return axios.get('/api/v1/accounts/me')
+        .then((response) => {
+            localStorage.setItem('user', JSON.stringify(response.data));
+
+            return response.data;
+        })
+        .catch(() => {
+            localStorage.removeItem('user');
+
+            return false;
+        });
+}
 
 function login(email, password) {
     return axios.post('/api/v1/accounts/sign-in', {
         email: email,
         password: password,
     })
-        .then(handleNoContentResponse)
+        .then((response) => {
+            return me();
+        })
         .catch(handleError);
 }
 
-function register(email, username, password) {
+function register(email, username, password, firstName, lastName) {
     return axios.post('/api/v1/accounts/register', {
         email: email,
         username: username,
         password: password,
+        firstName: firstName,
+        lastName: lastName,
     })
         .then(handleNoContentResponse)
         .catch(handleError);
 }
 
 function logout() {
-    return axios.post('/api/v1/accounts/logout');
-}
+    localStorage.removeItem('user');
 
-function isUserLoggedIn() {
-    return settings.isAuthenticated || false;
+    return axios.post('/api/v1/accounts/logout');
 }
 
 function handleNoContentResponse(response) {

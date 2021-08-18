@@ -17,12 +17,9 @@ use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use Throwable;
 
-class InvoiceRepository extends ServiceEntityRepository implements InvoiceRepositoryInterface
+class InvoiceRepository implements InvoiceRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Invoice::class);
-    }
+    public function __construct(private Connection $connection){}
 
     /**
      * @throws Throwable

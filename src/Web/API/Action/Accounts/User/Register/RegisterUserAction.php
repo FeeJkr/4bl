@@ -19,7 +19,9 @@ final class RegisterUserAction extends AbstractAction
             new RegisterUserCommand(
                 $request->getEmail(),
                 $request->getUsername(),
-                $request->getPassword()
+                $request->getPassword(),
+                $request->getFirstName(),
+                $request->getLastName(),
             )
         );
 

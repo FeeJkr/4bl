@@ -1,19 +1,16 @@
 parameters:
     jwt.secret_key: '%env(resolve:JWT_SECRET_KEY)%'
+    keycloak.url: '%env(resolve:KEYCLOAK_URL)%'
+    keycloak.admin.client: '%env(resolve:KEYCLOAK_ADMIN_CLIENT)%'
+    keycloak.admin.secret: '%env(resolve:KEYCLOAK_ADMIN_CLIENT_SECRET)%'
+    keycloak.realm: '%env(resolve:KEYCLOAK_USER_REALM)%'
+    keycloak.client: '%env(resolve:KEYCLOAK_USER_CLIENT)%'
+    keycloak.secret: '%env(resolve:KEYCLOAK_USER_SECRET)%'
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
-
-    _instanceof:
-        App\Common\Application\Command\CommandHandler:
-            tags:
-                - { name: messenger.message_handler, bus: command.bus }
-
-        App\Common\Application\Query\QueryHandler:
-            tags:
-                - { name: messenger.message_handler, bus: query.bus }
 
     Framework\:
         resource: '../framework'
@@ -21,12 +18,27 @@ services:
     App\Common\:
         resource: '../src/Common/'
 
-    App\Common\Infrastructure\Request\HttpRequestContext:
-        class: App\Web\API\SessionRequestContext
+    App\Web\:
+        resource: '../src/Web/'
 
-imports:
-    - {resource: 'modules/accounts/services.yaml'}
-    - {resource: 'modules/invoices/services.yaml'}
-    - {resource: 'modules/finances/services.yaml'}
-    - {resource: 'web/mvc/services.yaml'}
-    - {resource: 'web/api/services.yaml'}
+    # Controllers
+    App\Web\MVC\SPAController:
+        tags: [ 'controller.service_arguments' ]
+
+    App\Web\API\Action\:
+        resource: '../src/Web/API/Action/*/*/*/*Action*'
+        tags: [ 'controller.service_arguments' ]
+
+    # Middlewares
+    App\Web\API\Middleware\TokenMiddleware:
+        tags: [ 'kernel.event_subscriber' ]
+
+    App\Web\API\Middleware\ErrorHandlerMiddleware:
+        tags: [ 'kernel.event_subscriber' ]
+
+    App\Common\Infrastructure\Request\HttpRequestContext:
+        class: App\Web\API\CookieRequestContext
+
+    GuzzleHttp\Client:
+        class: GuzzleHttp\Client
+

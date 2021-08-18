@@ -20,44 +20,4 @@ class InvoiceProductsCollection
             $this->products
         );
     }
-
-    public static function fromRows(array $rows): self
-    {
-        return new self(
-            array_map(
-                static fn(array $row) => InvoiceProduct::fromRow($row),
-                $rows
-            )
-        );
-    }
-
-    public function getTotalNetPrice(): float
-    {
-        return array_sum(
-            array_map(
-                static fn (InvoiceProduct $product): float => $product->getNetPrice(),
-                $this->products
-            )
-        );
-    }
-
-    public function getTotalTaxPrice(): float
-    {
-        return array_sum(
-            array_map(
-                static fn (InvoiceProduct $product): float => $product->getTaxPrice(),
-                $this->products
-            )
-        );
-    }
-
-    public function getTotalGrossPrice(): float
-    {
-        return array_sum(
-            array_map(
-                static fn (InvoiceProduct $product): float => $product->getGrossPrice(),
-                $this->products
-            )
-        );
-    }
 }

@@ -6,8 +6,9 @@ namespace App\Modules\Accounts\Domain\User;
 
 interface UserRepository
 {
-    public function store(User $user): void;
+    public function store(User $user, string $password): void;
+    public function save(User $user): void;
     public function fetchByEmail(string $email): ?User;
     public function existsByEmailOrUsername(string $email, string $username): bool;
-    public function fetchByToken(Token $token): ?User;
+    public function fetchByAccessToken(string $accessToken): ?User;
 }

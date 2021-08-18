@@ -23,18 +23,18 @@ final class GetTokenHandler implements QueryHandler
         try {
             $row = $this->connection
                 ->createQueryBuilder()
-                ->select('token')
-                ->from('users')
+                ->select('access_token')
+                ->from('accounts_users')
                 ->where('email = :email')
                 ->setParameter('email', $query->getEmail())
                 ->execute()
                 ->fetchAssociative();
 
-            if ($row === false || ! isset($row['token'])) {
+            if ($row === false || ! isset($row['access_token'])) {
                 throw ApplicationException::fromDomainException(UserException::withInvalidCredentials());
             }
 
-            return new TokenDTO($row['token']);
+            return new TokenDTO($row['access_token']);
         } catch (DBALException|Exception) {
             throw ApplicationException::internalError();
         }

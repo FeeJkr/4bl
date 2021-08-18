@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Dashboard.css';
 import {Link} from "react-router-dom";
 import {Collapse, Dropdown} from "react-bootstrap";
@@ -13,13 +13,16 @@ import {Edit as CompaniesEdit} from '../pages/Invoices/Companies/Edit';
 import {List as InvoicesList} from '../pages/Invoices/Invoices/List';
 import {Generate as InvoicesGenerate} from '../pages/Invoices/Invoices/Generate';
 import {Edit as InvoicesEdit} from "./Invoices/Invoices/Edit";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {authenticationActions} from "../actions/authentication.actions";
 // finances
 import {Dashboard as FinancesDashboard} from '../pages/Finances/Dashboard';
 import {List as FinancesCategoriesList} from '../pages/Finances/Categories/List';
 import {Create as FinancesCategoriesCreate} from '../pages/Finances/Categories/Create';
 import {Edit as FinancesCategoriesEdit} from '../pages/Finances/Categories/Edit';
+import {List as FinancesWalletsList} from '../pages/Finances/Wallets/List';
+import {Create as FinancesWalletsCreate} from '../pages/Finances/Wallets/Create';
+import {Edit as FinancesWalletsEdit} from '../pages/Finances/Wallets/Edit';
 
 export default function Dashboard() {
     const dispatch = useDispatch();
@@ -31,10 +34,13 @@ export default function Dashboard() {
     const isFinancesCategoriesRoute = history.location.pathname.startsWith('/finances/categories');
 
     let [openInvoices, setOpenInvoices] = useState(isCompaniesRoute || isInvoicesRoute);
-    let [openFinances, setOpenFinances] = useState(isFinancesRoute)
+    let [openFinances, setOpenFinances] = useState(isFinancesRoute);
+
+    const user = useSelector(state => state.authentication.signIn.user);
 
     function collapseAll() {
         setOpenInvoices(false);
+        setOpenFinances(false);
     }
 
     const handleLogoutClick = () => {
@@ -62,7 +68,10 @@ export default function Dashboard() {
                                     bsPrefix="dropdown-user-header"
                                     style={{color: "black", height: '70px', boxShadow: 'none !important', border:0, borderRadius:0, lineHeight:1.5, backgroundColor: 'transparent', padding: '.47rem .75rem', fontSize: '.8125rem', transition: 'color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out', textAlign: 'center', verticalAlign: 'middle'}}
                                 >
-                                    <span>Admin</span>
+                                    {user
+                                        ? <span>{user.firstName} {user.lastName}</span>
+                                        : <span>Profile</span>
+                                    }
                                     <i className="bi bi-arrow-down-short"/>
                                 </Dropdown.Toggle>
 
@@ -120,7 +129,7 @@ export default function Dashboard() {
 
                         <li style={{display: 'block', width: '100%'}}>
                             <a style={{padding: '.625rem 1.5rem', position: 'relative', fontSize: '13px', transition: 'all .4s', color: '#79829c', cursor: 'pointer', width: '100%', display: 'block', textDecoration: 'none'}}
-                               onClick={() => setOpenInvoices(!openInvoices)}
+                               onClick={() => { setOpenFinances(false); setOpenInvoices(!openInvoices); }}
                                aria-controls="invoices"
                                aria-expanded={openInvoices}
                                className={isCompaniesRoute || isInvoicesRoute ? 'mm-active' : ''}
@@ -167,7 +176,7 @@ export default function Dashboard() {
 
                         <li style={{display: 'block', width: '100%'}}>
                             <a style={{padding: '.625rem 1.5rem', position: 'relative', fontSize: '13px', transition: 'all .4s', color: '#79829c', cursor: 'pointer', width: '100%', display: 'block', textDecoration: 'none'}}
-                               onClick={() => setOpenFinances(!openFinances)}
+                               onClick={() => { setOpenInvoices(false); setOpenFinances(!openFinances) }}
                                aria-controls="finances"
                                aria-expanded={openFinances}
                                className={isFinancesRoute ? 'mm-active' : ''}
@@ -231,6 +240,10 @@ export default function Dashboard() {
                             <PrivateRoute exact path={'/finances/categories'} component={FinancesCategoriesList}/>
                             <PrivateRoute exact path={'/finances/categories/create'} component={FinancesCategoriesCreate}/>
                             <PrivateRoute exact path={'/finances/categories/edit/:id'} component={FinancesCategoriesEdit}/>
+                            <PrivateRoute exact path={'/finances/wallets'} component={FinancesWalletsList}/>
+                            <PrivateRoute exact path={'/finances/wallets/create'} component={FinancesWalletsCreate}/>
+                            <PrivateRoute exact path={'/finances/wallets/edit/:id'} component={FinancesWalletsEdit}/>
+
                         </Switch>
                     </Router>
                 </div>

@@ -1,5 +1,7 @@
-web.mvc:
-    resource: 'web/mvc/routes.yaml'
-
-web.api:
-    resource: 'web/api/routes.yaml'
+index:
+    path: /{spa}
+    controller: App\Web\MVC\SPAController::index
+    requirements:
+        spa: ^(?!\/?api).+$
+    defaults:
+        spa: null

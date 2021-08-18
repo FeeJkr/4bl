@@ -20,9 +20,14 @@ final class RegisterUserHandler implements CommandHandler
     public function __invoke(RegisterUserCommand $command): void
     {
         try {
-            $user = $this->service->register($command->getEmail(), $command->getUsername(), $command->getPassword());
+            $user = $this->service->register(
+                $command->getEmail(),
+                $command->getUsername(),
+                $command->getFirstName(),
+                $command->getLastName(),
+            );
 
-            $this->repository->store($user);
+            $this->repository->store($user, $command->getPassword());
         } catch (DomainException $exception) {
             throw ApplicationException::fromDomainException($exception);
         }

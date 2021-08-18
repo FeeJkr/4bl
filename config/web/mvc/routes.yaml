@@ -1,8 +1,0 @@
-index:
-  path: /{spa}
-  controller: App\Web\MVC\SPAController::index
-  requirements:
-    spa: ^(?!\/?api).+$
-  defaults:
-    spa: null
-

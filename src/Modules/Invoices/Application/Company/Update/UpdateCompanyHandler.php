@@ -6,6 +6,7 @@ namespace App\Modules\Invoices\Application\Company\Update;
 
 use App\Common\Application\Command\CommandHandler;
 use App\Modules\Invoices\Domain\Company\CompanyId;
+use App\Modules\Invoices\Domain\Company\CompanyException;
 use App\Modules\Invoices\Domain\Company\CompanyRepository;
 use App\Modules\Invoices\Domain\User\UserContext;
 
@@ -16,12 +17,15 @@ class UpdateCompanyHandler implements CommandHandler
         private UserContext $userContext,
     ){}
 
+    /**
+     * @throws CompanyException
+     */
     public function __invoke(UpdateCompanyCommand $command): void
     {
         $company = $this->repository->fetchById(
             CompanyId::fromString($command->getCompanyId()),
             $this->userContext->getUserId()
-        );
+        ) ?? throw CompanyException::notFoundById($command->getCompanyId());
 
         $company->update(
             $command->getStreet(),
@@ -33,6 +37,6 @@ class UpdateCompanyHandler implements CommandHandler
             $command->getPhoneNumber(),
         );
 
-        $this->repository->store($company);
+        $this->repository->save($company);
     }
 }

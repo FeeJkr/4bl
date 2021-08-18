@@ -1,0 +1,24 @@
+api.v1.accounts.register:
+  path: /api/v1/accounts/register
+  controller: App\Web\API\Action\Accounts\User\Register\RegisterUserAction
+  methods: POST
+
+api.v1.accounts.sign-in:
+  path: /api/v1/accounts/sign-in
+  controller: App\Web\API\Action\Accounts\User\SignIn\SignInUserAction
+  methods: POST
+
+api.v1.accounts.logout:
+  path: /api/v1/accounts/logout
+  controller: App\Web\API\Action\Accounts\User\Logout\LogoutUserAction
+  methods: POST
+
+api.v1.accounts.me:
+  path: /api/v1/accounts/me
+  controller: App\Web\API\Action\Accounts\User\GetMyUserData\GetMyUserDataAction
+  methods: GET
+
+api.v1.accounts.refresh-token:
+  path: /api/v1/accounts/refresh-token
+  controller: App\Web\API\Action\Accounts\User\RefreshToken\RefreshTokenAction
+  methods: POST

@@ -15,7 +15,6 @@ class GetAllCompaniesAction extends AbstractAction
 
     public function __invoke(): GetAllCompaniesResponse
     {
-        /** @var CompaniesCollection $companies */
         $companies = $this->bus->handle(new GetAllCompaniesQuery());
 
         return GetAllCompaniesResponse::respond($companies);

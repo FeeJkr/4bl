@@ -28,8 +28,8 @@ const SignUp = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (email && password && username) {
-            dispatch(authenticationActions.register(email, username, password));
+        if (email && password && username && firstName && lastName) {
+            dispatch(authenticationActions.register(email, username, password, firstName, lastName));
         }
     }
 
@@ -37,8 +37,10 @@ const SignUp = () => {
         email: '',
         username: '',
         password: '',
+        firstName: '',
+        lastName: '',
     });
-    const {email, username, password} = inputs;
+    const {email, username, password, firstName, lastName} = inputs;
 
     return (
         <div className="my-5 pt-sm-5">
@@ -81,6 +83,33 @@ const SignUp = () => {
                                                 isRequired={true}
                                             />
                                         </div>
+
+                                        <div className="mb-3">
+                                            <InputField
+                                                name="firstName"
+                                                type="text"
+                                                label="First name"
+                                                placeholder="Enter first name"
+                                                value={firstName}
+                                                onChange={handleChange}
+                                                error={errors?.validation?.firstName}
+                                                isRequired={true}
+                                            />
+                                        </div>
+
+                                        <div className="mb-3">
+                                            <InputField
+                                                name="lastName"
+                                                type="text"
+                                                label="Last name"
+                                                placeholder="Enter last name"
+                                                value={lastName}
+                                                onChange={handleChange}
+                                                error={errors?.validation?.lastName}
+                                                isRequired={true}
+                                            />
+                                        </div>
+
                                         <div className="mb-3">
                                             <InputField
                                                 name="password"
