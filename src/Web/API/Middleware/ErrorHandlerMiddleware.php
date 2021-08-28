@@ -26,6 +26,7 @@ final class ErrorHandlerMiddleware implements EventSubscriberInterface
     /**
      * @throws Throwable
      */
+    // TODO: FIX NOT FOUND ACCOUNTS EXCEPTION
     public function onKernelException(ExceptionEvent $event): void
     {
     	if (str_contains($event->getRequest()->getPathInfo(), '/api/')) {

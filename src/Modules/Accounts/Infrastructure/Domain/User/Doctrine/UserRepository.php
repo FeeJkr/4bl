@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Accounts\Infrastructure\Domain\User\Doctrine;
 
+use App\Modules\Accounts\Domain\User\Status;
 use App\Modules\Accounts\Domain\User\Token;
 use App\Modules\Accounts\Domain\User\User;
 use App\Modules\Accounts\Domain\User\UserId;
@@ -26,7 +27,7 @@ final class UserRepository implements UserRepositoryInterface
 {
     private const DATETIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(private Connection $connection, private KeycloakIntegration $keycloakIntegration){}
+    public function __construct(private Connection $connection){}
 
     /**
      * @throws Throwable
@@ -45,24 +46,21 @@ final class UserRepository implements UserRepositoryInterface
                     'id' => ':id',
                     'email' => ':email',
                     'username' => ':username',
+                    'password' => ':password',
+                    'first_name' => ':firstName',
+                    'last_name' => ':lastName',
+                    'status' => ':status'
                 ])
                 ->setParameters([
                     'id' => $snapshot->getId(),
                     'email' => $snapshot->getEmail(),
                     'username' => $snapshot->getUsername(),
+                    'password' => $snapshot->getPassword(),
+                    'firstName' => $snapshot->getFirstName(),
+                    'lastName' => $snapshot->getLastName(),
+                    'status' => $snapshot->getStatus(),
                 ])
                 ->execute();
-
-            $this->keycloakIntegration->addUser(
-                new KeycloakUser(
-                    $snapshot->getId(),
-                    $snapshot->getEmail(),
-                    $snapshot->getUsername(),
-                    $password,
-                    $snapshot->getFirstName(),
-                    $snapshot->getLastName()
-                )
-            );
 
             $this->connection->commit();
         } catch (Throwable $exception) {
@@ -72,15 +70,31 @@ final class UserRepository implements UserRepositoryInterface
         }
     }
 
-    /**
-     * @throws GuzzleException
-     * @throws JsonException
-     */
     public function fetchByEmail(string $email): ?User
     {
-        $row = $this->keycloakIntegration->getUserByEmail($email);
+        $row = $this
+            ->connection
+            ->createQueryBuilder()
+            ->select([
+                'id',
+                'email',
+                'username',
+                'password',
+                'first_name',
+                'last_name',
+                'status'
+            ])
+            ->from('accounts_users')
+            ->where('email = :email')
+            ->andWhere('status = :status')
+            ->setParameters([
+                'email' => $email,
+                'status' => Status::ACTIVE()->getValue(),
+            ])
+            ->execute()
+            ->fetchAssociative();
 
-        if ($row === null) {
+        if ($row === false) {
             return null;
         }
 
@@ -88,16 +102,16 @@ final class UserRepository implements UserRepositoryInterface
             UserId::fromString($row['id']),
             $row['email'],
             $row['username'],
-            $row['firstName'],
-            $row['lastName']
+            $row['password'],
+            $row['first_name'],
+            $row['last_name'],
+            new Status($row['status']),
         );
     }
 
     /**
-     * @throws JsonException
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws Exception
-     * @throws GuzzleException
      */
     public function fetchByAccessToken(string $accessToken): ?User
     {
@@ -113,8 +127,6 @@ final class UserRepository implements UserRepositoryInterface
         if ($row === false) {
             return null;
         }
-
-        $userData = $this->keycloakIntegration->getUserByEmail($row['email']);
 
         return new User(
             UserId::fromString($row['id']),
@@ -132,8 +144,6 @@ final class UserRepository implements UserRepositoryInterface
 
     /**
      * @throws Exception
-     * @throws GuzzleException
-     * @throws JsonException
      */
     public function existsByEmailOrUsername(string $email, string $username): bool
     {
@@ -150,9 +160,7 @@ final class UserRepository implements UserRepositoryInterface
             ->execute()
             ->rowCount();
 
-        return $databaseRows > 0
-            || $this->keycloakIntegration->existsByKeyValue('email', $email)
-            || $this->keycloakIntegration->existsByKeyValue('username', $username);
+        return $databaseRows > 0;
     }
 
     /**

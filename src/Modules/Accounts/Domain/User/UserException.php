@@ -16,12 +16,6 @@ final class UserException extends DomainException
     }
 
     #[Pure]
-    public static function notFoundByToken(Token $token): self
-    {
-        return new self(sprintf('User with token %s not found.', $token->toString()));
-    }
-
-    #[Pure]
     public static function notFoundByAccessToken(): self
     {
         return new self('Access token is invalid.');
@@ -37,11 +31,5 @@ final class UserException extends DomainException
     public static function notFoundByEmail(string $email): self
     {
         return new self(sprintf('User with email %s not found.', $email));
-    }
-
-    #[Pure]
-    public static function emptyToken(): self
-    {
-        return new self('User access or refresh token is empty. Invalid state');
     }
 }

@@ -1,18 +1,8 @@
 services:
   _defaults:
-    bind:
-      $keycloakUrl: '%keycloak.url%'
-      $keycloakAdminClient: '%keycloak.admin.client%'
-      $keycloakAdminClientSecret: '%keycloak.admin.secret%'
-      $keycloakRealm: '%keycloak.realm%'
-      $keycloakClient: '%keycloak.client%'
-      $keycloakSecret: '%keycloak.secret%'
     autowire: true
     autoconfigure: true
     public: false
 
   App\Modules\Accounts\:
     resource: '../../'
-
-  App\Modules\Accounts\Domain\User\TokenManager:
-    class: App\Modules\Accounts\Infrastructure\Domain\User\KeycloakTokenManager

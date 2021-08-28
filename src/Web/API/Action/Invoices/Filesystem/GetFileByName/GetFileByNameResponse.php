@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Web\API\Action\Invoices\Filesystem\GetFileByName;
 
-use App\Web\API\Action\Response;
+use App\Web\API\Action\FileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Response;
 
-final class GetFileByNameResponse extends Response
+final class GetFileByNameResponse extends FileResponse
 {
     public static function respond(string $file): self
     {
         return new self($file, headers: [
-            'Content-Type' => 'application/octet-stream',
+            'Content-Type' => 'application/pdf',
         ]);
     }
 }

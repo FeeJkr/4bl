@@ -40,7 +40,7 @@ function List() {
                         <div className="card-body">
                             <div className="mb-2 row">
                                 <div className="col-md-12" style={{textAlign: 'right'}}>
-                                    <Link to={'/invoices/generate'} className="button-create-new btn btn-success">
+                                    <Link to={'/invoices/documents/new'} className="button-create-new btn btn-success">
                                         <i className="bi bi-plus"/>
                                         Generate new
                                     </Link>
@@ -81,7 +81,7 @@ function List() {
                                                                style={{fontSize: '18 px'}}
                                                             />
                                                         </a>
-                                                        <Link to={'/invoices/edit/' + invoice.id}>
+                                                        <Link to={'/invoices/documents/edit/' + invoice.id}>
                                                             <i className="bi bi-pencil"
                                                                 style={{color: '#34c38f', fontSize: '18 px'}}
                                                             />

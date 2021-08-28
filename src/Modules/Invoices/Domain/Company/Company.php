@@ -79,6 +79,7 @@ class Company
         return $this->paymentInformation;
     }
 
+    #[Pure]
     public function getSnapshot(): CompanySnapshot
     {
         return new CompanySnapshot(

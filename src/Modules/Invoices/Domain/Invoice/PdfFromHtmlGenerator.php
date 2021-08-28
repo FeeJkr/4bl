@@ -6,5 +6,5 @@ namespace App\Modules\Invoices\Domain\Invoice;
 
 interface PdfFromHtmlGenerator
 {
-    public function generate(Invoice $invoice): void;
+    public function generate(InvoiceSnapshot $snapshot): void;
 }

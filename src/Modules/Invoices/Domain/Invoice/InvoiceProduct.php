@@ -16,26 +16,6 @@ class InvoiceProduct
         private float $netPrice,
     ){}
 
-    public function getId(): InvoiceProductId
-    {
-        return $this->id;
-    }
-
-    public function getPosition(): int
-    {
-        return $this->position;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getNetPrice(): float
-    {
-        return $this->netPrice;
-    }
-
     public function getTaxPrice(): float
     {
         return ($this->netPrice * 23) / 100;
@@ -48,14 +28,15 @@ class InvoiceProduct
     }
 
     #[Pure]
-    #[ArrayShape(['name' => "string", 'netPrice' => "float", 'taxPrice' => "float", 'grossPrice' => "float"])]
-    public function toArray(): array
+    public function getSnapshot(): InvoiceProductSnapshot
     {
-        return [
-            'name' => $this->getName(),
-            'netPrice' => $this->getNetPrice(),
-            'taxPrice' => $this->getTaxPrice(),
-            'grossPrice' => $this->getGrossPrice(),
-        ];
+        return new InvoiceProductSnapshot(
+            $this->id->toString(),
+            $this->position,
+            $this->name,
+            $this->netPrice,
+            $this->getTaxPrice(),
+            $this->getGrossPrice(),
+        );
     }
 }

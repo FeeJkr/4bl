@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Web\API\Middleware;
 
 use App\Common\Infrastructure\Request\HttpRequestContext;
-use App\Modules\Accounts\Domain\User\Token;
-use App\Modules\Accounts\Domain\User\TokenException;
-use App\Modules\Accounts\Domain\User\TokenManager;
 use App\Modules\Accounts\Domain\User\UserException;
 use App\Modules\Accounts\Domain\User\UserService;
 use App\Web\API\Action\AbstractAction;
@@ -34,7 +31,6 @@ final class TokenMiddleware implements EventSubscriberInterface
     ];
 
     public function __construct(
-        private TokenManager $tokenManager,
         private HttpRequestContext $httpRequestContext,
         private UserService $userService,
     ){}
@@ -42,17 +38,6 @@ final class TokenMiddleware implements EventSubscriberInterface
     public function onKernelController(ControllerEvent $event): void
     {
         if ($event->getController() instanceof AbstractAction) {
-            if (in_array(get_class($event->getController()), $this->allowedActions, true)) {
-                $event->getRequest()->cookies->remove('__ACCESS_TOKEN');
-
-                return;
-            }
-
-            try {
-                $this->tokenManager->validate($this->httpRequestContext->getUserToken());
-            } catch (TokenException) {
-                $this->refreshToken($event);
-            }
         }
     }
 
@@ -63,7 +48,7 @@ final class TokenMiddleware implements EventSubscriberInterface
                 '__ACCESS_TOKEN',
                 $this->userService->refreshToken($this->httpRequestContext->getUserToken())
             );
-        } catch (UserException|TokenException $exception) {
+        } catch (UserException $exception) {
             $this->setAuthenticationErrorResponse($event);
         }
     }

@@ -44,7 +44,7 @@ function deleteCompany(id) {
     function failure(id, error) { return { type: companiesConstants.DELETE_FAILURE, id, error } }
 }
 
-function createCompany(formData) {
+function createCompany(formData, navigate) {
     return dispatch => {
         dispatch(request(formData));
 
@@ -52,7 +52,7 @@ function createCompany(formData) {
             .then(
                 response => {
                     dispatch(success());
-                    history.push('/companies');
+                    navigate('/invoices/companies');
                 },
                 errors => dispatch(failure(errors, formData))
             );

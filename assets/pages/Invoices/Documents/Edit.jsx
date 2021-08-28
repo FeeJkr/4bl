@@ -10,6 +10,7 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {companiesService} from "../../../services/companies.service";
 import './Invoices.css';
 import 'boxicons/css/boxicons.min.css';
+import {companiesActions} from "../../../actions/companies.actions";
 
 function Edit() {
     const {id} = useParams();
@@ -18,10 +19,14 @@ function Edit() {
     const isLoading = useSelector(state => state.invoices.update.isLoading);
     const isUpdated = useSelector(state => state.invoices.update.isUpdated);
     const validationErrors = useSelector(state => state.invoices.update.validationErrors);
+    const companiesOptions = useSelector(state => state.companies.items);
+    const [seller, setSeller] = useState(null);
+    const [buyer, setBuyer] = useState(null);
     let errors = [];
 
     useEffect(() => {
         dispatch(invoicesActions.getOne(id));
+        dispatch(companiesActions.getAll());
     }, []);
     
     const handleSubmit = (event) => {
@@ -31,8 +36,7 @@ function Edit() {
     }
 
     const handleSelectChange = (value, meta) => {
-        invoice[meta.name]['id'] = value.value;
-        invoice[meta.name]['name'] = value.label;
+        invoice[meta.name] = value.id;
 
         dispatch(invoicesActions.change(invoice));
     }
@@ -43,14 +47,6 @@ function Edit() {
 
         dispatch(invoicesActions.change(invoice));
     }
-
-    const companiesOptions = () => new Promise(resolve => {
-        resolve(
-            companiesService.getAll().then(data => {
-                return data.map((company) => {return {value: company.id, label: company.name}});
-            })
-        );
-    });
 
     const onProductsDragEnd = result => {
         const {destination, source} = result;
@@ -131,7 +127,12 @@ function Edit() {
         });
     }
 
-    console.log(invoice);
+    useEffect(() => {
+        if (invoice && companiesOptions) {
+            setSeller(companiesOptions.find(item => item.id === invoice.sellerId));
+            setBuyer(companiesOptions.find(item => item.id === invoice.buyerId));
+        }
+    }, [invoice, companiesOptions]);
 
     return (invoice
         ?
@@ -182,16 +183,18 @@ function Edit() {
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
-                                                <label htmlFor="seller"
+                                                <label htmlFor="sellerId"
                                                        style={{marginBottom: '.5rem', fontWeight: 500}}
                                                 >
                                                     Seller
                                                 </label>
-                                                <AsyncSelect
-                                                    name="seller"
-                                                    loadOptions={companiesOptions}
+                                                <Select
+                                                    name="sellerId"
+                                                    options={companiesOptions}
                                                     defaultOptions
-                                                    defaultValue={{value: invoice.seller.id, label: invoice.seller.name}}
+                                                    value={seller}
+                                                    getOptionLabel={option => option.name}
+                                                    getOptionValue={option => option.id}
                                                     placeholder={'Choose seller'}
                                                     style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                     onChange={handleSelectChange}
@@ -201,13 +204,15 @@ function Edit() {
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
-                                                <label htmlFor="buyer"
+                                                <label htmlFor="buyerId"
                                                        style={{marginBottom: '.5rem', fontWeight: 500}}>Buyer</label>
-                                                <AsyncSelect
-                                                    name="buyer"
-                                                    loadOptions={companiesOptions}
+                                                <Select
+                                                    name="buyerId"
+                                                    options={companiesOptions}
                                                     defaultOptions
-                                                    defaultValue={{value: invoice.buyer.id, label: invoice.buyer.name}}
+                                                    value={buyer}
+                                                    getOptionLabel={option => option.name}
+                                                    getOptionValue={option => option.id}
                                                     placeholder={'Choose buyer'}
                                                     style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                     onChange={handleSelectChange}

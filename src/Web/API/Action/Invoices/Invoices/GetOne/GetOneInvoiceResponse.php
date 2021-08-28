@@ -4,45 +4,39 @@ declare(strict_types=1);
 
 namespace App\Web\API\Action\Invoices\Invoices\GetOne;
 
-use App\Modules\Invoices\Domain\Invoice\Invoice;
-use App\Modules\Invoices\Domain\Invoice\InvoiceProduct;
+use App\Modules\Invoices\Application\Invoice\GetOneById\InvoiceDTO;
+use App\Modules\Invoices\Application\Invoice\GetOneById\InvoiceProductDTO;
+use App\Modules\Invoices\Application\Invoice\GetOneById\InvoiceProductDTOCollection;
 use App\Web\API\Action\Response;
-use Doctrine\Common\Collections\Collection;
 
 final class GetOneInvoiceResponse extends Response
 {
-    public static function respond(Invoice $invoice): self
+    public static function respond(InvoiceDTO $invoice): self
     {
         return new self([
-            'id' => $invoice->getId()->toString(),
-            'userId' => $invoice->getUserId()->toString(),
-            'seller' => [
-                'id' => $invoice->getSeller()->getId()->toString(),
-                'name' => $invoice->getSeller()->getName(),
-            ],
-            'buyer' => [
-                'id' => $invoice->getBuyer()->getId()->toString(),
-                'name' => $invoice->getBuyer()->getName(),
-            ],
-            'invoiceNumber' => $invoice->getParameters()->getInvoiceNumber(),
-            'alreadyTakenPrice' => $invoice->getParameters()->getAlreadyTakenPrice(),
-            'generatePlace' => $invoice->getParameters()->getGeneratePlace(),
-            'currencyCode' => $invoice->getParameters()->getCurrencyCode(),
-            'generatedAt' => $invoice->getParameters()->getGenerateDate()->format('d-m-Y'),
-            'soldAt' => $invoice->getParameters()->getSellDate()->format('d-m-Y'),
+            'id' => $invoice->getId(),
+            'userId' => $invoice->getUserId(),
+            'sellerId' => $invoice->getSellerId(),
+            'buyerId' => $invoice->getBuyerId(),
+            'invoiceNumber' => $invoice->getInvoiceNumber(),
+            'alreadyTakenPrice' => $invoice->getAlreadyTakenPrice(),
+            'generatePlace' => $invoice->getGeneratePlace(),
+            'currencyCode' => $invoice->getCurrencyCode(),
+            'generatedAt' => $invoice->getGeneratedAt()->format('d-m-Y'),
+            'soldAt' => $invoice->getSoldAt()->format('d-m-Y'),
             'products' => self::buildProducts($invoice->getProducts()),
-            'totalNetPrice' => array_sum(
-                $invoice->getProducts()->map(static fn(InvoiceProduct $product) => $product->getNetPrice())->toArray()
-            ),
         ]);
     }
 
-    private static function buildProducts(Collection $products): array
+    private static function buildProducts(InvoiceProductDTOCollection $products): array
     {
-        return $products->map(static fn(InvoiceProduct $product) => [
-            'position' => $product->getPosition(),
-            'name' => $product->getName(),
-            'price' => $product->getNetPrice(),
-        ])->toArray();
+        return array_map(
+            static fn(InvoiceProductDTO $product) => [
+                'position' => $product->getPosition(),
+                'name' => $product->getName(),
+                'price' => $product->getPrice(),
+            ],
+            $products->toArray()
+        );
     }
 }

@@ -2,18 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Accounts\Infrastructure\Domain\User;
+namespace App\Modules\Accounts\Application\User;
 
-final class KeycloakUser
+final class UserDTO
 {
     public function __construct(
         private string $id,
         private string $email,
         private string $username,
-        private string $password,
         private string $firstName,
         private string $lastName,
-    ){}
+    ) {}
 
     public function getId(): string
     {
@@ -28,11 +27,6 @@ final class KeycloakUser
     public function getUsername(): string
     {
         return $this->username;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
     }
 
     public function getFirstName(): string

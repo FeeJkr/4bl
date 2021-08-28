@@ -28,7 +28,7 @@ function getAll() {
     function failure(errors) { return { type: invoicesConstants.GET_ALL_FAILURE, errors } }
 }
 
-function generateInvoice(formData) {
+function generateInvoice(formData, navigate) {
     return dispatch => {
         dispatch(request(formData));
 
@@ -36,7 +36,7 @@ function generateInvoice(formData) {
             .then(
                 response => {
                     dispatch(success());
-                    history.push('/invoices');
+                    navigate('/invoices/documents');
                 },
                 errors => dispatch(failure(errors, formData))
             );

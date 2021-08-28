@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Accounts\Domain\User;
 
-use Exception;
-
 final class UserService
 {
     public function __construct(
-        private TokenManager $tokenManager,
         private EmailAndUsernameNotExistsSpecification $alreadyExistsSpecification,
         private UserRepository $repository,
+        private PasswordManager $passwordManager
     ){}
 
     /**
@@ -20,6 +18,7 @@ final class UserService
     public function register(
         string $email,
         string $username,
+        string $password,
         string $firstName,
         string $lastName
     ): User {
@@ -30,6 +29,7 @@ final class UserService
         return User::register(
             $email,
             $username,
+            $this->passwordManager->hash($password),
             $firstName,
             $lastName
         );
@@ -42,9 +42,9 @@ final class UserService
     {
         $user = $this->repository->fetchByEmail($email) ?? throw UserException::notFoundByEmail($email);
 
-        $user->signIn($this->tokenManager, $password);
-
-        $this->repository->save($user);
+        if (!$this->passwordManager->isValid($password, $user->getSnapshot()->getPassword())) {
+            throw UserException::withInvalidCredentials();
+        }
 
         return $user;
     }
@@ -56,22 +56,6 @@ final class UserService
     {
         $user = $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
 
-        $user->signOut();
-
         $this->repository->save($user);
-    }
-
-    /**
-     * @throws UserException
-     */
-    public function refreshToken(string $accessToken): string
-    {
-        $user = $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
-
-        $user->refreshToken($this->tokenManager);
-
-        $this->repository->save($user);
-
-        return $user->getSnapshot()->getAccessToken();
     }
 }

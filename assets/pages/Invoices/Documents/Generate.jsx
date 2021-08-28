@@ -1,7 +1,7 @@
 import "flatpickr/dist/themes/airbnb.css";
 
 import React, {useState} from 'react';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {invoicesActions} from "../../../actions/invoices.actions";
 import AsyncSelect from 'react-select/async';
@@ -12,6 +12,7 @@ import Select from "react-select";
 
 function Generate() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const validationErrors = useSelector(state => state.invoices.create.validationErrors);
     const isLoading = useSelector(state => state.invoices.create.isLoading);
     let errors = [];
@@ -41,7 +42,7 @@ function Generate() {
     function handleSubmit(e) {
         e.preventDefault();
 
-        dispatch(invoicesActions.generateInvoice(inputs));
+        dispatch(invoicesActions.generateInvoice(inputs, navigate));
     }
 
     if(validationErrors) {
@@ -113,11 +114,11 @@ function Generate() {
                     <nav>
                         <ol className="breadcrumb m-0">
                             <li className="breadcrumb-item">
-                                <Link to={'/invoices'}
-                                   style={{textDecoration: 'none', color: '#495057'}}>Invoices</Link>
+                                <Link to={'/invoices/documents'}
+                                   style={{textDecoration: 'none', color: '#495057'}}>Documents</Link>
                             </li>
                             <li className="active breadcrumb-item">
-                                <Link to={'/invoices/generate'}
+                                <Link to={'/invoices/documents/new'}
                                    style={{textDecoration: 'none', color: '#74788d'}}>Generate Invoice</Link>
                             </li>
                         </ol>

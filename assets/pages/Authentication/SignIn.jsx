@@ -37,66 +37,50 @@ export default function SignIn() {
     const {email, password} = inputs;
 
     return (
-        <div className="my-5 pt-sm-5">
-            <div className="container">
-                <div className="justify-content-center row">
-                    <div className="col-md-8 col-lg-6 col-xl-5">
-                        <div className="overflow-hidden card">
-                            <CardHeader/>
-                            <div className="pt-0 card-body">
-                                <CardBodyTitle
-                                    title="Welcome Back!"
-                                    description="Sign in to continue"
-                                />
-                                <div className="p-2">
-                                    {errors?.domain.length > 0 &&
-                                        <Alert type="error" message={errors.domain[0].message}/>
-                                    }
+        <div className="pt-0 card-body">
+            <CardBodyTitle
+                title="Welcome Back!"
+                description="Sign in to continue"
+            />
+            <div className="p-2">
+                {errors?.domain.length > 0 &&
+                <Alert type="error" message={errors.domain[0].message}/>
+                }
 
-                                    {isRegistered &&
-                                        <Alert type="success" message="Your account was successfully created. Now you can sign-in!"/>
-                                    }
+                {isRegistered &&
+                <Alert type="success" message="Your account was successfully created. Now you can sign-in!"/>
+                }
 
-                                    <form className="form-horizontal" id="sign-in-form" onSubmit={handleSubmit}>
-                                        <div className="mb-3">
-                                            <InputField
-                                                name="email"
-                                                type="email"
-                                                label="Email"
-                                                placeholder="Enter email"
-                                                value={email}
-                                                onChange={handleChange}
-                                                error={errors?.validation?.email}
-                                                isRequired={true}
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputField
-                                                name="password"
-                                                type="password"
-                                                label="Password"
-                                                placeholder="Enter password"
-                                                value={password}
-                                                onChange={handleChange}
-                                                error={errors?.validation?.password}
-                                                isRequired={true}
-                                            />
-                                        </div>
-
-                                        <div className="mt-5 d-grid">
-                                            <SubmitButton isLoading={isLoading} label="Sign in"/>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <UnderCardBlock
-                            message="Don't have an account?"
-                            link={{pathname: '/sign-up', label: 'Signup'}}
+                <form className="form-horizontal" id="sign-in-form" onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <InputField
+                            name="email"
+                            type="email"
+                            label="Email"
+                            placeholder="Enter email"
+                            value={email}
+                            onChange={handleChange}
+                            error={errors?.validation?.email}
+                            isRequired={true}
                         />
                     </div>
-                </div>
+                    <div className="mb-3">
+                        <InputField
+                            name="password"
+                            type="password"
+                            label="Password"
+                            placeholder="Enter password"
+                            value={password}
+                            onChange={handleChange}
+                            error={errors?.validation?.password}
+                            isRequired={true}
+                        />
+                    </div>
+
+                    <div className="mt-5 d-grid">
+                        <SubmitButton isLoading={isLoading} label="Sign in"/>
+                    </div>
+                </form>
             </div>
         </div>
     );

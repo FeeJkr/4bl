@@ -5,5 +5,6 @@ namespace App\Common\Infrastructure\Request;
 
 interface HttpRequestContext
 {
-    public function getUserToken(): string;
+    public function getUserIdentity(): string;
+    public function setUserIdentity(mixed $identity): void;
 }

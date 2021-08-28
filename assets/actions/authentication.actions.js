@@ -53,7 +53,7 @@ function register(email, username, password, firstName, lastName) {
             user => {
                 dispatch(success());
                 history.push({
-                    pathname: '/sign-in',
+                    pathname: '/auth/login',
                     isRegistered: true,
                 });
             },
@@ -86,7 +86,7 @@ function logout() {
         authenticationService.logout().then(
             () => {
                 dispatch(success());
-                history.push({pathname: '/sign-in'});
+                history.push({pathname: '/auth/login'});
             },
             () => {}
         )

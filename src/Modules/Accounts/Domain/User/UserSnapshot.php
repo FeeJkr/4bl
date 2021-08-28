@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace App\Modules\Accounts\Domain\User;
 
-use DateTimeImmutable;
-
 final class UserSnapshot
 {
     public function __construct(
         private string $id,
         private string $email,
         private string $username,
+        private string $password,
         private string $firstName,
         private string $lastName,
-        private ?string $accessToken,
-        private ?string $refreshToken,
-        private ?DateTimeImmutable $refreshTokenExpiresAt
+        private string $status,
     ){}
 
     public function getId(): string
@@ -34,6 +31,11 @@ final class UserSnapshot
         return $this->username;
     }
 
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
     public function getFirstName(): string
     {
         return $this->firstName;
@@ -44,18 +46,8 @@ final class UserSnapshot
         return $this->lastName;
     }
 
-    public function getAccessToken(): ?string
+    public function getStatus(): string
     {
-        return $this->accessToken;
-    }
-
-    public function getRefreshToken(): ?string
-    {
-        return $this->refreshToken;
-    }
-
-    public function getRefreshTokenExpiresAt(): ?DateTimeImmutable
-    {
-        return $this->refreshTokenExpiresAt;
+        return $this->status;
     }
 }

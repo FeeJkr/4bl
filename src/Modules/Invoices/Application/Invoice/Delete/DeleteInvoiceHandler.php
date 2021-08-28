@@ -15,9 +15,11 @@ class DeleteInvoiceHandler implements CommandHandler
 
     public function __invoke(DeleteInvoiceCommand $command): void
     {
-        $this->repository->delete(
+        $invoice = $this->repository->fetchOneById(
             InvoiceId::fromString($command->getInvoiceId()),
             $this->userContext->getUserId()
         );
+
+        $this->repository->delete($invoice);
     }
 }

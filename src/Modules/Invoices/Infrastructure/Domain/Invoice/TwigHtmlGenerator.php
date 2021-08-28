@@ -10,6 +10,8 @@ use App\Modules\Invoices\Application\Company\GetOneById\GetOneCompanyByIdQuery;
 use App\Modules\Invoices\Domain\Invoice\HtmlGenerator;
 use App\Modules\Invoices\Domain\Invoice\Invoice;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProduct;
+use App\Modules\Invoices\Domain\Invoice\InvoiceProductSnapshot;
+use App\Modules\Invoices\Domain\Invoice\InvoiceSnapshot;
 use App\Modules\Invoices\Domain\Invoice\PriceTransformer;
 use DateInterval;
 use Doctrine\Common\Collections\Collection;
@@ -24,23 +26,23 @@ class TwigHtmlGenerator implements HtmlGenerator
         private QueryBus $queryBus
     ){}
 
-    public function prepareParameters(Invoice $invoice): array
+    public function prepareParameters(InvoiceSnapshot $snapshot): array
     {
         try {
             /** @var CompanyDTO $seller */
-            $seller = $this->queryBus->handle(new GetOneCompanyByIdQuery($invoice->getSellerId()->toString()));
+            $seller = $this->queryBus->handle(new GetOneCompanyByIdQuery($snapshot->getSellerId()));
 
             /** @var CompanyDTO $buyer */
-            $buyer = $this->queryBus->handle(new GetOneCompanyByIdQuery($invoice->getBuyerId()->toString()));
-            $paymentLastDate = clone $invoice->getParameters()->getSellDate();
+            $buyer = $this->queryBus->handle(new GetOneCompanyByIdQuery($snapshot->getBuyerId()));
+            $paymentLastDate = clone $snapshot->getParameters()->getSellDate();
             $paymentLastDate->add(new DateInterval(sprintf('P%dD', $seller->getPaymentLastDate())));
-            $toPayPrice = $this->calculateToPayPrice($invoice);
+            $toPayPrice = $this->calculateToPayPrice($snapshot);
 
             return [
-                'invoiceNumber' => $invoice->getParameters()->getInvoiceNumber(),
-                'generateDate' => $invoice->getParameters()->getGenerateDate()->format('d-m-Y'),
-                'sellDate' => $invoice->getParameters()->getSellDate()->format('d-m-Y'),
-                'generatePlace' => $invoice->getParameters()->getGeneratePlace(),
+                'invoiceNumber' => $snapshot->getParameters()->getInvoiceNumber(),
+                'generateDate' => $snapshot->getParameters()->getGenerateDate()->format('d-m-Y'),
+                'sellDate' => $snapshot->getParameters()->getSellDate()->format('d-m-Y'),
+                'generatePlace' => $snapshot->getParameters()->getGeneratePlace(),
                 'seller' => [
                     'name' => $seller->getName(),
                     'street' => $seller->getStreet(),
@@ -59,32 +61,32 @@ class TwigHtmlGenerator implements HtmlGenerator
                     'email' => $buyer->getEmail(),
                     'phoneNumber' => $buyer->getPhoneNumber(),
                 ],
-                'products' => $this->prepareProducts($invoice->getProducts()),
+                'products' => $this->prepareProducts($snapshot->getProducts()),
                 'totalNetPrice' => array_sum(
                     array_map(
-                        static fn (InvoiceProduct $product): float => $product->getNetPrice(),
-                        $invoice->getProducts()
+                        static fn (InvoiceProductSnapshot $product): float => $product->getNetPrice(),
+                        $snapshot->getProducts()
                     )
                 ),
                 'totalTaxPrice' => array_sum(
                     array_map(
-                        static fn (InvoiceProduct $product): float => $product->getTaxPrice(),
-                        $invoice->getProducts()
+                        static fn (InvoiceProductSnapshot $product): float => $product->getTaxPrice(),
+                        $snapshot->getProducts()
                     )
                 ),
                 'totalGrossPrice' => array_sum(
                     array_map(
-                        static fn (InvoiceProduct $product): float => $product->getGrossPrice(),
-                        $invoice->getProducts()
+                        static fn (InvoiceProductSnapshot $product): float => $product->getGrossPrice(),
+                        $snapshot->getProducts()
                     )
                 ),
                 'paymentType' => $seller->getPaymentType(),
                 'paymentLastDate' => '14-08-2021',
                 'paymentBankName' => $seller->getBank(),
                 'paymentAccountNumber' => $seller->getAccountNumber(),
-                'alreadyTakenPrice' => $invoice->getParameters()->getAlreadyTakenPrice(),
+                'alreadyTakenPrice' => $snapshot->getParameters()->getAlreadyTakenPrice(),
                 'toPayPrice' => $toPayPrice,
-                'currencyCode' => $invoice->getParameters()->getCurrencyCode(),
+                'currencyCode' => $snapshot->getParameters()->getCurrencyCode(),
                 'translatePrice' => $this->priceTransformer->transformToText($toPayPrice),
             ];
         } catch (Throwable $exception) {
@@ -92,19 +94,19 @@ class TwigHtmlGenerator implements HtmlGenerator
         }
     }
 
-    private function calculateToPayPrice(Invoice $invoice): float
+    private function calculateToPayPrice(InvoiceSnapshot $snapshot): float
     {
         return array_sum(
             array_map(
-                static fn (InvoiceProduct $product): float => $product->getGrossPrice(),
-                $invoice->getProducts()
+                static fn (InvoiceProductSnapshot $product): float => $product->getGrossPrice(),
+                $snapshot->getProducts()
             )
-        ) - $invoice->getParameters()->getAlreadyTakenPrice();
+        ) - $snapshot->getParameters()->getAlreadyTakenPrice();
     }
 
     private function prepareProducts(array $collection): array
     {
-        return array_map(static fn(InvoiceProduct $product): array => [
+        return array_map(static fn(InvoiceProductSnapshot $product): array => [
             'name' => $product->getName(),
             'netPrice' => $product->getNetPrice(),
             'taxPrice' => $product->getTaxPrice(),

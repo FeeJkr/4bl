@@ -6,12 +6,15 @@ import {Provider} from "react-redux";
 import './app.css';
 import 'boxicons';
 import {isLoggedIn} from "./reducers/authentication/sign-in.reducer";
+import {BrowserRouter} from "react-router-dom";
 
 store.dispatch(isLoggedIn);
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
     </Provider>,
     document.getElementById('root')
 );

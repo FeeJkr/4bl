@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {companiesActions} from "../../../actions/companies.actions";
 
@@ -16,6 +16,7 @@ function Create() {
         city: '',
         zipCode: '',
     });
+    const navigate = useNavigate();
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -25,7 +26,7 @@ function Create() {
     function handleSubmit(e) {
         e.preventDefault();
 
-        dispatch(companiesActions.createCompany(inputs));
+        dispatch(companiesActions.createCompany(inputs, navigate));
     }
 
     if(validationErrors) {
@@ -43,11 +44,11 @@ function Create() {
                     <nav>
                         <ol className="breadcrumb m-0">
                             <li className="breadcrumb-item">
-                                <Link to={'/companies'}
+                                <Link to={'/invoices/companies'}
                                    style={{textDecoration: 'none', color: '#495057'}}>Companies</Link>
                             </li>
                             <li className="active breadcrumb-item">
-                                <Link to={'/companies/create'}
+                                <Link to={'/invoices/companies/new'}
                                    style={{textDecoration: 'none', color: '#74788d'}}>Add Company</Link>
                             </li>
                         </ol>

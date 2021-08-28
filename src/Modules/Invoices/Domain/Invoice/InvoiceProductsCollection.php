@@ -15,9 +15,21 @@ class InvoiceProductsCollection
 
     public function toArray(): array
     {
-        return array_map(
-            static fn (InvoiceProduct $product): array => $product->toArray(),
-            $this->products
+        return $this->products;
+    }
+
+    public static function fromArray(array $products): self
+    {
+        $mappedProducts = array_map(
+            static fn(array $product): InvoiceProduct => new InvoiceProduct(
+                InvoiceProductId::generate(),
+                (int) $product['position'],
+                $product['name'],
+                (float) $product['price'],
+            ),
+            $products
         );
+
+        return new self($mappedProducts);
     }
 }

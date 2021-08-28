@@ -27,7 +27,6 @@ class GenerateInvoiceHandler implements CommandHandler
         private InvoiceRepository $repository,
         private PdfFromHtmlGenerator $pdfFromHtmlGenerator,
         private UserContext $userContext,
-        private CompanyRepository $companyRepository,
     ){}
 
     public function __invoke(GenerateInvoiceCommand $command): void
@@ -48,10 +47,10 @@ class GenerateInvoiceHandler implements CommandHandler
             CompanyId::fromString($command->getSellerId()),
             CompanyId::fromString($command->getBuyerId()),
             $invoiceParameters,
-            $command->getProducts()
+            InvoiceProductsCollection::fromArray($command->getProducts()),
         );
 
-        $this->pdfFromHtmlGenerator->generate($invoice);
+        $this->pdfFromHtmlGenerator->generate($invoice->getSnapshot());
 
         $this->repository->store($invoice);
     }

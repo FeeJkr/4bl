@@ -57,11 +57,11 @@ function Edit() {
                         <nav>
                             <ol className="breadcrumb m-0">
                                 <li className="breadcrumb-item">
-                                    <Link to="/companies"
+                                    <Link to="/invoices/companies"
                                        style={{textDecoration: 'none', color: '#495057'}}>Companies</Link>
                                 </li>
                                 <li className="active breadcrumb-item">
-                                    <Link to={'/companies/' + company.id}
+                                    <Link to={'/invoices/companies/' + company.id}
                                        style={{textDecoration: 'none', color: '#74788d'}}>Edit Company</Link>
                                 </li>
                             </ol>

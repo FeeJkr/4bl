@@ -10,6 +10,7 @@ use App\Modules\Invoices\Domain\User\UserId;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use JetBrains\PhpStorm\Pure;
 
 class Invoice
 {
@@ -19,7 +20,7 @@ class Invoice
         private CompanyId $sellerId,
         private CompanyId $buyerId,
         private InvoiceParameters $parameters,
-        private array $products,
+        private InvoiceProductsCollection $products,
     ){}
 
     public static function create(
@@ -27,7 +28,7 @@ class Invoice
         CompanyId $sellerId,
         CompanyId $buyerId,
         InvoiceParameters $parameters,
-        array $products,
+        InvoiceProductsCollection $products,
     ): self {
         return new self(
             InvoiceId::generate(),
@@ -35,66 +36,34 @@ class Invoice
             $sellerId,
             $buyerId,
             $parameters,
-            self::prepareProducts($products),
+            $products,
         );
     }
 
-    private static function prepareProducts(array $products): array
-    {
-        $productsCollection = [];
-
-        foreach ($products as $product) {
-            $productsCollection[] =
-                new InvoiceProduct(
-                    InvoiceProductId::generate(),
-                    (int) $product['position'],
-                    $product['name'],
-                    (float) $product['price'],
-                );
-        }
-
-        return $productsCollection;
-    }
-
     public function update(
-        Company $seller,
-        Company $buyer,
+        CompanyId $sellerId,
+        CompanyId $buyerId,
         InvoiceParameters $parameters,
-        array $products,
+        InvoiceProductsCollection $products,
     ): void {
-        $this->seller = $seller;
-        $this->buyer = $buyer;
+        $this->sellerId = $sellerId;
+        $this->buyerId = $buyerId;
         $this->parameters = $parameters;
-        $this->setProducts($products);
+        $this->products = $products;
     }
 
-    public function getId(): InvoiceId
+    public function getSnapshot(): InvoiceSnapshot
     {
-        return $this->id;
-    }
-
-    public function getUserId(): UserId
-    {
-        return $this->userId;
-    }
-
-    public function getSellerId(): CompanyId
-    {
-        return $this->sellerId;
-    }
-
-    public function getBuyerId(): CompanyId
-    {
-        return $this->buyerId;
-    }
-
-    public function getParameters(): InvoiceParameters
-    {
-        return $this->parameters;
-    }
-
-    public function getProducts(): array
-    {
-        return $this->products;
+        return new InvoiceSnapshot(
+            $this->id->toString(),
+            $this->userId->toString(),
+            $this->sellerId->toString(),
+            $this->buyerId->toString(),
+            $this->parameters->getSnapshot(),
+            array_map(
+                static fn(InvoiceProduct $product) => $product->getSnapshot(),
+                $this->products->toArray(),
+            )
+        );
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Web\API\Action\Accounts\User\GetMyUserData;
 
-use App\Modules\Accounts\Application\User\GetUserByToken\UserDTO;
+use App\Modules\Accounts\Application\User\UserDTO;
 use App\Web\API\Action\Response;
 
 final class GetMyUserDataResponse extends Response

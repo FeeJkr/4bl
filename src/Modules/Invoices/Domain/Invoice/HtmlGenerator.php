@@ -6,5 +6,5 @@ namespace App\Modules\Invoices\Domain\Invoice;
 
 interface HtmlGenerator
 {
-    public function prepareParameters(Invoice $invoice): array;
+    public function prepareParameters(InvoiceSnapshot $snapshot): array;
 }

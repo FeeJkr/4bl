@@ -51,6 +51,7 @@ final class Version20210430135526 extends AbstractMigration
                 name varchar(255) not null,
                 identification_number varchar(30) not null,
                 email varchar(255),
+                phone_number varchar(255),
                 created_at timestamp default now() not null,
                 updated_at timestamp
             );

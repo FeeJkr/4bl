@@ -29,7 +29,7 @@ function List() {
                         <div className="card-body">
                             <div className="mb-2 row">
                                 <div className="col-md-12" style={{textAlign: 'right'}}>
-                                    <Link to={'/companies/create'} className="button-create-new btn btn-success"
+                                    <Link to={'/invoices/companies/new'} className="button-create-new btn btn-success"
                                             id="button-create-new-company">
                                         <i className="bi bi-plus"/>
                                         Create new
@@ -66,7 +66,7 @@ function List() {
                                                 <td>
                                                     <div className="gap-3"
                                                          style={{display: 'flex', gridGap: '1 rem'}}>
-                                                        <Link to={'companies/edit/' + company.id}>
+                                                        <Link to={'/invoices/companies/edit/' + company.id}>
                                                             <i className="bi bi-pencil edit-company-button"
                                                                 style={{color: '#34c38f'}}
                                                             />

@@ -23,6 +23,7 @@ final class RegisterUserHandler implements CommandHandler
             $user = $this->service->register(
                 $command->getEmail(),
                 $command->getUsername(),
+                $command->getPassword(),
                 $command->getFirstName(),
                 $command->getLastName(),
             );

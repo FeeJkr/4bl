@@ -11,12 +11,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RequestContext;
 
-final class CookieRequestContext implements HttpRequestContext
+final class SessionRequestContext implements HttpRequestContext
 {
-    public function __construct(private RequestStack $request){}
+    public function __construct(private SessionInterface $session){}
 
-    public function getUserToken(): string
+    public function getUserIdentity(): string
     {
-        return $this->request->getCurrentRequest()->cookies->get('__ACCESS_TOKEN', '');
+        return $this->session->get('user.id', '');
+    }
+
+    public function setUserIdentity(mixed $identity): void
+    {
+        $this->session->set('user.id', $identity);
     }
 }

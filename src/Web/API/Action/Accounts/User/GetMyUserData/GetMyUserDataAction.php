@@ -6,8 +6,8 @@ namespace App\Web\API\Action\Accounts\User\GetMyUserData;
 
 use App\Common\Application\Query\QueryBus;
 use App\Common\Infrastructure\Request\HttpRequestContext;
-use App\Modules\Accounts\Application\User\GetUserByToken\GetUserByTokenQuery;
-use App\Modules\Accounts\Application\User\GetUserByToken\UserDTO;
+use App\Modules\Accounts\Application\User\GetById\GetUserByIdQuery;
+use App\Modules\Accounts\Application\User\UserDTO;
 use App\Web\API\Action\AbstractAction;
 
 class GetMyUserDataAction extends AbstractAction
@@ -18,7 +18,7 @@ class GetMyUserDataAction extends AbstractAction
     {
         /** @var UserDTO $user */
         $user = $this->bus->handle(
-            new GetUserByTokenQuery($this->requestContext->getUserToken())
+            new GetUserByIdQuery($this->requestContext->getUserIdentity())
         );
 
         return GetMyUserDataResponse::respond($user);
