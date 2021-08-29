@@ -24,7 +24,6 @@ class UpdateInvoiceHandler implements CommandHandler
         private InvoiceRepository $repository,
         private UserContext $userContext,
         private PdfFromHtmlGenerator $pdfFromHtmlGenerator,
-        private CompanyRepository $companyRepository,
     ){}
 
     public function __invoke(UpdateInvoiceCommand $command): void
@@ -44,14 +43,14 @@ class UpdateInvoiceHandler implements CommandHandler
         );
 
         $invoice->update(
-            $this->companyRepository->fetchById(CompanyId::fromString($command->getSellerId()), $invoice->getUserId()),
-            $this->companyRepository->fetchById(CompanyId::fromString($command->getBuyerId()), $invoice->getUserId()),
+            CompanyId::fromString($command->getSellerId()),
+            CompanyId::fromString($command->getBuyerId()),
             $invoiceParameters,
-            $command->getProducts()
+            InvoiceProductsCollection::fromArray($command->getProducts())
         );
 
-        $this->pdfFromHtmlGenerator->generate($invoice);
+        $this->pdfFromHtmlGenerator->generate($invoice->getSnapshot());
 
-        $this->repository->store($invoice);
+        $this->repository->save($invoice);
     }
 }

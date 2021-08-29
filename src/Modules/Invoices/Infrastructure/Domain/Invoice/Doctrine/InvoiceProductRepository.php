@@ -35,4 +35,14 @@ final class InvoiceProductRepository
             ])
             ->execute();
     }
+
+    public function deleteByInvoiceId(string $invoiceId): void
+    {
+        $this->connection
+            ->createQueryBuilder()
+            ->delete('invoices_invoice_products')
+            ->where('invoice_id = :invoiceId')
+            ->setParameter('invoiceId', $invoiceId)
+            ->execute();
+    }
 }

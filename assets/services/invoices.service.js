@@ -44,7 +44,6 @@ function getOne(id) {
 }
 
 function updateInvoice(invoice) {
-    console.log(invoice);
 
     const products = invoice.products.map((element, index) => {
         return {...element, position: index};
@@ -52,8 +51,8 @@ function updateInvoice(invoice) {
 
     return axios.post(invoicesDictionary.UPDATE_URL.replace('{id}', invoice.id), {
         invoiceNumber: invoice.invoiceNumber,
-        sellerId: invoice.seller.id,
-        buyerId: invoice.buyer.id,
+        sellerId: invoice.sellerId,
+        buyerId: invoice.buyerId,
         generatePlace: invoice.generatePlace,
         alreadyTakenPrice: invoice.alreadyTakenPrice,
         generateDate: invoice.generatedAt,

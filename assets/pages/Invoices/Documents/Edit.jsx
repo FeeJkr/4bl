@@ -146,11 +146,11 @@ function Edit() {
                         <nav>
                             <ol className="breadcrumb m-0">
                                 <li className="breadcrumb-item">
-                                    <Link to="/invoices"
+                                    <Link to="/invoices/documents"
                                        style={{textDecoration: 'none', color: '#495057'}}>Invoices</Link>
                                 </li>
                                 <li className="active breadcrumb-item">
-                                    <Link to={'/invoices/' + invoice.id}
+                                    <Link to={'/invoices/documents/edit/' + invoice.id}
                                        style={{textDecoration: 'none', color: '#74788d'}}>Edit Invoice</Link>
                                 </li>
                             </ol>

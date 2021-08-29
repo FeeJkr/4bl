@@ -14,6 +14,7 @@ const sidebar = [
                 icon: 'bi-file-earmark-binary',
                 children: [
                     { path: '/invoices/documents/new' },
+                    { path: '/invoices/documents/edit/:id' },
                 ]
             },
             {

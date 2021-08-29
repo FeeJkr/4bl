@@ -16,6 +16,8 @@ use App\Modules\Invoices\Domain\Invoice\InvoiceRepository as InvoiceRepositoryIn
 use App\Modules\Invoices\Domain\User\UserId;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ConnectionException;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\Pure;
 use Throwable;
@@ -193,8 +195,55 @@ class InvoiceRepository implements InvoiceRepositoryInterface
         }
     }
 
+    /**
+     * @throws Throwable
+     * @throws ConnectionException
+     * @throws Exception
+     */
     public function save(Invoice $invoice): void
     {
+        try {
+            $this->connection->beginTransaction();
 
+            $snapshot = $invoice->getSnapshot();
+            $parametersSnapshot = $snapshot->getParameters();
+
+            $this->invoiceProductRepository->deleteByInvoiceId($snapshot->getId());
+
+            $this->connection
+                ->createQueryBuilder()
+                ->update('invoices_invoices')
+                ->set('seller_company_id', ':sellerCompanyId')
+                ->set('buyer_company_id', ':buyerCompanyId')
+                ->set('invoice_number', ':invoiceNumber')
+                ->set('generate_place', ':generatePlace')
+                ->set('already_taken_price', ':alreadyTakenPrice')
+                ->set('currency_code', ':currencyCode')
+                ->set('generated_at', ':generatedAt')
+                ->set('sold_at', ':soldAt')
+                ->set('updated_at', ':updatedAt')
+                ->setParameters([
+                    'sellerCompanyId' => $snapshot->getSellerId(),
+                    'buyerCompanyId' => $snapshot->getBuyerId(),
+                    'invoiceNumber' => $parametersSnapshot->getInvoiceNumber(),
+                    'generatePlace' => $parametersSnapshot->getGeneratePlace(),
+                    'alreadyTakenPrice' => $parametersSnapshot->getAlreadyTakenPrice(),
+                    'currencyCode' => $parametersSnapshot->getCurrencyCode(),
+                    'generatedAt' => $parametersSnapshot->getGenerateDate()->format(self::DATETIME_FORMAT),
+                    'soldAt' => $parametersSnapshot->getSellDate()->format(self::DATETIME_FORMAT),
+                    'updatedAt' => (new DateTimeImmutable())->format(self::DATETIME_FORMAT),
+                ])
+                ->execute();
+
+            foreach ($snapshot->getProducts() as $product) {
+                $this->invoiceProductRepository->store($snapshot->getId(), $product);
+            }
+
+            $this->connection->commit();
+        } catch (Throwable $exception) {
+            $this->connection->rollBack();
+
+            throw $exception;
+        }
     }
 }
