@@ -81,7 +81,11 @@ class TwigHtmlGenerator implements HtmlGenerator
                     )
                 ),
                 'paymentType' => $seller->getPaymentType(),
-                'paymentLastDate' => '14-08-2021',
+                'paymentLastDate' => $snapshot
+                    ->getParameters()
+                    ->getSellDate()
+                    ->modify('+' . $seller->getPaymentLastDate() . ' days')
+                    ->format('d-m-Y'),
                 'paymentBankName' => $seller->getBank(),
                 'paymentAccountNumber' => $seller->getAccountNumber(),
                 'alreadyTakenPrice' => $snapshot->getParameters()->getAlreadyTakenPrice(),

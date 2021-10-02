@@ -20,6 +20,7 @@ framework:
             command.bus:
                 middleware:
                     - validation
+                    - 'App\Common\Infrastructure\Messenger\Middleware\DatabaseTransactionMiddleware'
                     - 'App\Common\Infrastructure\Messenger\Middleware\DomainEventDispatcherMiddleware'
 
             event.bus:
