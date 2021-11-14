@@ -25,7 +25,8 @@ class UpdateInvoiceAction extends AbstractAction
             $request->getBuyerId(),
             $request->getProducts(),
             $request->getAlreadyTakenPrice(),
-            $request->getCurrencyCode()
+            $request->getCurrencyCode(),
+            $request->getVatPercentage(),
 		);
 
 		$this->bus->dispatch($command);

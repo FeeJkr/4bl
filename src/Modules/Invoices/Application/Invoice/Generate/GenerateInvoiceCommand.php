@@ -17,7 +17,8 @@ final class GenerateInvoiceCommand implements Command
         private string $buyerId,
         private array $products,
         private float $alreadyTakenPrice,
-        private string $currency
+        private string $currency,
+        private int $vatPercentage,
     ){}
 
     public function getInvoiceNumber(): string
@@ -63,5 +64,10 @@ final class GenerateInvoiceCommand implements Command
     public function getCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function getVatPercentage(): int
+    {
+        return $this->vatPercentage;
     }
 }

@@ -54,8 +54,6 @@ final class UserService
      */
     public function signOut(string $accessToken): void
     {
-        $user = $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
-
-        $this->repository->save($user);
+        $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
     }
 }

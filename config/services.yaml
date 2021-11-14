@@ -21,9 +21,6 @@ services:
         tags: [ 'controller.service_arguments' ]
 
     # Middlewares
-    App\Web\API\Middleware\TokenMiddleware:
-        tags: [ 'kernel.event_subscriber' ]
-
     App\Web\API\Middleware\ErrorHandlerMiddleware:
         tags: [ 'kernel.event_subscriber' ]
 

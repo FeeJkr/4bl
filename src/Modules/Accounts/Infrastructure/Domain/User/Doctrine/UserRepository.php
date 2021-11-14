@@ -117,10 +117,10 @@ final class UserRepository implements UserRepositoryInterface
     {
         $row = $this->connection
             ->createQueryBuilder()
-            ->select(['id', 'email', 'username', 'access_token', 'refresh_token', 'refresh_token_expired_at'])
+            ->select(['id', 'email', 'username', 'password', 'first_name', 'last_name', 'status'])
             ->from('accounts_users')
-            ->where('access_token = :accessToken')
-            ->setParameter('accessToken', $accessToken)
+            ->where('id = :id')
+            ->setParameter('id', $accessToken)
             ->execute()
             ->fetchAssociative();
 
@@ -132,13 +132,10 @@ final class UserRepository implements UserRepositoryInterface
             UserId::fromString($row['id']),
             $row['email'],
             $row['username'],
-            $userData['firstName'],
-            $userData['lastName'],
-            new Token(
-                $row['access_token'],
-                $row['refresh_token'],
-                DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $row['refresh_token_expired_at']),
-            )
+            $row['password'],
+            $row['first_name'],
+            $row['last_name'],
+            new Status($row['status']),
         );
     }
 

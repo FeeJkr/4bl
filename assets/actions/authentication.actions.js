@@ -1,7 +1,7 @@
 import {authenticationConstants} from "../constants/authentication.constants";
 import {authenticationService} from "../services/authentication.service";
 import {history} from '../helpers/history';
-import {Redirect} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 export const authenticationActions = {
     login,
@@ -18,8 +18,6 @@ function login(email, password, from) {
         authenticationService.login(email, password).then(
             (user) => {
                 dispatch(success(user));
-
-                history.push({pathname: '/'});
             },
             errors => {
                 dispatch(failure(errors))
@@ -50,12 +48,8 @@ function register(email, username, password, firstName, lastName) {
         dispatch(request(email));
 
         authenticationService.register(email, username, password, firstName, lastName).then(
-            user => {
+            () => {
                 dispatch(success());
-                history.push({
-                    pathname: '/auth/login',
-                    isRegistered: true,
-                });
             },
             errors => {
                 dispatch(failure(errors));

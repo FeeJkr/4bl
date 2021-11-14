@@ -28,6 +28,7 @@ function generateInvoice(formData) {
         sellDate: _parseDate(formData.soldAt),
         currencyCode: formData.currencyCode,
         products: products.filter((element) => element.name !== ''),
+        vatPercentage: formData.vatPercentage,
     }).catch(error => Promise.reject(error.response.data));
 }
 
@@ -59,5 +60,6 @@ function updateInvoice(invoice) {
         sellDate: invoice.soldAt,
         currencyCode: invoice.currencyCode,
         products: products.filter((element) => element.name !== ''),
+        vatPercentage: invoice.vatPercentage,
     }).catch(error => Promise.reject(error.response.data));
 }

@@ -20,8 +20,8 @@ export default function Router() {
             path: '/auth',
             element: <AuthLayout/>,
             children: [
-                { path: '/login', element: <SignIn/> },
-                { path: '/register', element: <SignUp/> },
+                { path: 'login', element: <SignIn/> },
+                { path: 'register', element: <SignUp/> },
             ]
         },
         {

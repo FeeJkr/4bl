@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Web\API\Middleware;
 
+use App\Common\Application\NotFoundException;
 use App\Modules\Accounts\Application\User\ApplicationException as AccountApplicationException;
 use App\Web\API\DomainErrorResponse;
 use App\Web\API\ValidationErrorResponse;
@@ -42,6 +43,7 @@ final class ErrorHandlerMiddleware implements EventSubscriberInterface
 
 				$statusCode = match ($exception::class) {
                     AccountApplicationException::class => Response::HTTP_CONFLICT,
+                    NotFoundException::class => Response::HTTP_NOT_FOUND,
 					default => throw $exception,
 				};
 

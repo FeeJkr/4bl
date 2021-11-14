@@ -68,6 +68,7 @@ final class Version20210430135526 extends AbstractMigration
                 generate_place varchar(255) not null,
                 already_taken_price float default 0 not null,
                 currency_code varchar(255),
+                vat_percentage int not null default 23,
                 generated_at timestamp not null,
                 sold_at timestamp not null,
                 created_at timestamp default now() not null,

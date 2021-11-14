@@ -10,6 +10,7 @@ use App\Modules\Accounts\Application\User\UserDTO;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Exception as DBALException;
+use Ramsey\Uuid\Uuid;
 
 final class GetUserByIdHandler implements QueryHandler
 {
@@ -22,6 +23,10 @@ final class GetUserByIdHandler implements QueryHandler
      */
     public function __invoke(GetUserByIdQuery $query): UserDTO
     {
+        if (!Uuid::isValid($query->getUserId())) {
+            throw NotFoundException::notFoundById($query->getUserId());
+        }
+
         $row = $this->connection
             ->createQueryBuilder()
             ->select([

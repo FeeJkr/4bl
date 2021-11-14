@@ -13,6 +13,7 @@ class InvoiceParametersSnapshot
         private string $generatePlace,
         private float $alreadyTakenPrice,
         private string $currencyCode,
+        private int $vatPercentage,
         private DateTimeImmutable $generateDate,
         private DateTimeImmutable $sellDate
     ){}
@@ -35,6 +36,11 @@ class InvoiceParametersSnapshot
     public function getCurrencyCode(): string
     {
         return $this->currencyCode;
+    }
+
+    public function getVatPercentage(): int
+    {
+        return $this->vatPercentage;
     }
 
     public function getGenerateDate(): DateTimeImmutable

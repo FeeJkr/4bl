@@ -92,6 +92,7 @@ class TwigHtmlGenerator implements HtmlGenerator
                 'toPayPrice' => $toPayPrice,
                 'currencyCode' => $snapshot->getParameters()->getCurrencyCode(),
                 'translatePrice' => $this->priceTransformer->transformToText($toPayPrice),
+                'vatPercentage' => $snapshot->getParameters()->getVatPercentage(),
             ];
         } catch (Throwable $exception) {
             throw new Exception($exception->getMessage());

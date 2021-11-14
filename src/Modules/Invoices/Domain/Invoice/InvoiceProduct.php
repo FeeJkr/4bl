@@ -14,11 +14,14 @@ class InvoiceProduct
         private int $position,
         private string $name,
         private float $netPrice,
+        private int $vatPercentage,
     ){}
 
     public function getTaxPrice(): float
     {
-        return ($this->netPrice * 23) / 100;
+        return $this->vatPercentage === 0
+            ? 0
+            : ($this->netPrice * $this->vatPercentage) / 100;
     }
 
     #[Pure]
@@ -37,6 +40,7 @@ class InvoiceProduct
             $this->netPrice,
             $this->getTaxPrice(),
             $this->getGrossPrice(),
+            $this->vatPercentage,
         );
     }
 }

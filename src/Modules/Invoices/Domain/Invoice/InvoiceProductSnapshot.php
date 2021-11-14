@@ -13,6 +13,7 @@ final class InvoiceProductSnapshot
         private float $netPrice,
         private float $taxPrice,
         private float $grossPrice,
+        private int $vatPercentage,
     ){}
 
     public function getId(): string
@@ -43,5 +44,10 @@ final class InvoiceProductSnapshot
     public function getGrossPrice(): float
     {
         return $this->grossPrice;
+    }
+
+    public function getVatPercentage(): int
+    {
+        return $this->vatPercentage;
     }
 }

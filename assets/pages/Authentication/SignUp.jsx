@@ -1,24 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {authenticationActions} from "../../actions/authentication.actions";
 import {useDispatch, useSelector} from "react-redux";
-import {history} from "../../helpers/history";
 import InputField from "./components/InputField";
 import SubmitButton from "./components/SubmitButton";
-import CardHeader from "./components/CardHeader";
 import CardBodyTitle from "./components/CardBodyTitle";
 import Alert from "./components/Alert";
-import UnderCardBlock from "./components/UnderCardBlock";
+import {useHistory, useNavigate} from "react-router-dom";
 
 const SignUp = () => {
     const dispatch = useDispatch();
     const errors = useSelector(state => state.authentication.signUp.errors);
     const isLoading = useSelector(state => state.authentication.signUp.isLoading);
-
-    useEffect(() => {
-        return history.listen((location) => {
-            dispatch(authenticationActions.clearRegisterState());
-        });
-    },[history]);
+    const isRegistered = useSelector(state => state.authentication.signUp.isRegistered);
+    let navigate = useNavigate();
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -28,10 +22,18 @@ const SignUp = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        dispatch(authenticationActions.clearRegisterState());
+
         if (email && password && username && firstName && lastName) {
             dispatch(authenticationActions.register(email, username, password, firstName, lastName));
         }
     }
+
+    useEffect(() => {
+        if (isRegistered) {
+            navigate('/auth/login');
+        }
+    },[isRegistered]);
 
     const [inputs, setInputs] = useState({
         email: '',
@@ -50,7 +52,7 @@ const SignUp = () => {
             />
 
             <div className="p-2">
-                {errors?.domain.length > 0 && <Alert type="error" message={errors.domain[0].message} />}
+                {errors?.domain?.length > 0 && <Alert type="error" message={errors.domain[0].message} />}
 
                 <form className="form-horizontal" onSubmit={handleSubmit}>
                     <div className="mb-3">

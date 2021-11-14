@@ -25,6 +25,7 @@ function Generate() {
         generatePlace: '',
         alreadyTakenPrice: 0.00,
         currencyCode: 'PLN',
+        vatPercentage: 0,
         products: [
             {name: '', price: 0.00},
         ],
@@ -289,6 +290,21 @@ function Generate() {
                                             />
                                             {errors['currencyCode'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['currencyCode'].message}</span>
+                                            }
+                                        </div>
+                                        <div className="mb-3 form-group">
+                                            <label htmlFor="vatPercentage"
+                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>VAT Percentage</label>
+                                            <Select
+                                                options={[
+                                                    {value: 0, label: '0%'},
+                                                    {value: 23, label: '23%'},
+                                                ]}
+                                                placeholder="Select VAT percentage"
+                                                defaultValue={{value: 23, label: '23%'}}
+                                            />
+                                            {errors['vatPercentage'] &&
+                                            <span style={{color: 'red', fontSize: '10px'}}>{errors['vatPercentage'].message}</span>
                                             }
                                         </div>
                                     </div>

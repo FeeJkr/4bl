@@ -17,7 +17,9 @@ class LogoutUserAction extends AbstractAction
 
     public function __invoke(): NoContentResponse
     {
-        $this->bus->dispatch(new SignOutUserCommand($this->requestContext->getUserToken()));
+        $this->bus->dispatch(new SignOutUserCommand($this->requestContext->getUserIdentity()));
+
+        $this->requestContext->setUserIdentity(null);
 
         return NoContentResponse::respond();
     }

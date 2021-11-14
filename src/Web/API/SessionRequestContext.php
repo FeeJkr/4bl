@@ -17,7 +17,7 @@ final class SessionRequestContext implements HttpRequestContext
 
     public function getUserIdentity(): string
     {
-        return $this->session->get('user.id', '');
+        return $this->session->get('user.id', '') ?? '';
     }
 
     public function setUserIdentity(mixed $identity): void

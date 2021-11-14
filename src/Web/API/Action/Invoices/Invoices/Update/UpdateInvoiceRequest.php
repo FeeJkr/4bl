@@ -22,6 +22,7 @@ class UpdateInvoiceRequest extends Request
 	private const SELL_DATE = 'sellDate';
 	private const CURRENCY_CODE = 'currencyCode';
 	private const PRODUCTS = 'products';
+    private const VAT_PERCENTAGE = 'vatPercentage';
 
 	public function __construct(
 	    private string $id,
@@ -33,7 +34,8 @@ class UpdateInvoiceRequest extends Request
         private string $generateDate,
         private string $sellDate,
         private string $currencyCode,
-        private array $products
+        private array $products,
+        private int $vatPercentage,
     ){}
 
     public static function fromRequest(ServerRequest $request): self
@@ -51,6 +53,9 @@ class UpdateInvoiceRequest extends Request
         $sellDate = $requestData[self::SELL_DATE] ?? null;
         $currencyCode = $requestData[self::CURRENCY_CODE] ?? null;
         $products = $requestData[self::PRODUCTS] ?? null;
+        $vatPercentage = isset($requestData[self::VAT_PERCENTAGE])
+            ? (int) $requestData[self::VAT_PERCENTAGE]
+            : null;
 
         Assert::lazy()
             ->that($id, self::ID)->uuid()
@@ -63,10 +68,11 @@ class UpdateInvoiceRequest extends Request
             ->that($sellDate, self::SELL_DATE)->notEmpty()->date('d-m-Y')
             ->that($currencyCode, self::CURRENCY_CODE)->notEmpty()
             ->that($products, self::PRODUCTS)->notEmpty()->isArray()
+            ->that($vatPercentage, self::VAT_PERCENTAGE)->notNull()->integer()
             ->verifyNow();
 
         foreach ($products as $product) {
-            if (! isset($product['name'], $product['position'], $product['price'])) {
+            if (! isset($product['name'], $product['position'], $product['price'], $product['vatPercentage'])) {
                 throw new LazyAssertionException(
                     'Products array is invalid.', [
                         new InvalidArgumentException('Products array is invalid.', 0, 'products')
@@ -85,7 +91,8 @@ class UpdateInvoiceRequest extends Request
             $generateDate,
             $sellDate,
             $currencyCode,
-            $products
+            $products,
+            $vatPercentage,
         );
     }
 
@@ -137,5 +144,10 @@ class UpdateInvoiceRequest extends Request
     public function getProducts(): array
     {
         return $this->products;
+    }
+
+    public function getVatPercentage(): int
+    {
+        return $this->vatPercentage;
     }
 }

@@ -332,6 +332,21 @@ function Edit() {
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['currencyCode'].message}</span>
                                                 }
                                             </div>
+                                            <div className="mb-3 form-group">
+                                                <label htmlFor="vatPercentage"
+                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>VAT Percentage</label>
+                                                <Select
+                                                    options={[
+                                                        {value: 0, label: '0%'},
+                                                        {value: 23, label: '23%'},
+                                                    ]}
+                                                    placeholder="Select language"
+                                                    defaultValue={{value: invoice.vatPercentage, label: invoice.vatPercentage + '%'}}
+                                                />
+                                                {errors['vatPercentage'] &&
+                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['vatPercentage'].message}</span>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
 

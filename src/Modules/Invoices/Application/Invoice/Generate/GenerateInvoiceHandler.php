@@ -36,6 +36,7 @@ class GenerateInvoiceHandler implements CommandHandler
                 $command->getGeneratePlace(),
                 $command->getAlreadyTakenPrice(),
                 $command->getCurrency(),
+                $command->getVatPercentage(),
                 DateTimeImmutable::createFromFormat('d-m-Y', $command->getGenerateDate()),
                 DateTimeImmutable::createFromFormat('d-m-Y', $command->getSellDate()),
         );
@@ -47,7 +48,7 @@ class GenerateInvoiceHandler implements CommandHandler
             CompanyId::fromString($command->getSellerId()),
             CompanyId::fromString($command->getBuyerId()),
             $invoiceParameters,
-            InvoiceProductsCollection::fromArray($command->getProducts()),
+            InvoiceProductsCollection::fromArray($command->getProducts(), $command->getVatPercentage()),
         );
 
         $this->pdfFromHtmlGenerator->generate($invoice->getSnapshot());

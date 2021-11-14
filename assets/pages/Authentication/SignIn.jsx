@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {authenticationActions} from "../../actions/authentication.actions";
-import {history} from "../../helpers/history";
-import CardHeader from "./components/CardHeader";
 import CardBodyTitle from "./components/CardBodyTitle";
 import Alert from "./components/Alert";
 import InputField from "./components/InputField";
 import SubmitButton from "./components/SubmitButton";
-import UnderCardBlock from "./components/UnderCardBlock";
+import {useNavigate} from "react-router-dom";
 
 export default function SignIn() {
     const dispatch = useDispatch();
-    const [isRegistered, setIsRegistered] = useState(!!history.location.isRegistered);
+    const navigate = useNavigate();
+    const isRegistered = useSelector(state => state.authentication.signUp.isRegistered);
     const errors = useSelector(state => state.authentication.signIn.errors);
     const isLoading = useSelector(state => state.authentication.signIn.loggingIn);
+    const loggedIn = useSelector(state => state.authentication.signIn.loggedIn);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,15 +23,18 @@ export default function SignIn() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (isRegistered) {
-            setIsRegistered(false);
-        }
+        dispatch(authenticationActions.clearRegisterState());
 
         if (email && password) {
             dispatch(authenticationActions.login(email, password, {pathname: "/"}));
         }
     }
+
+    useEffect(() => {
+        if (loggedIn) {
+            navigate('/');
+        }
+    },[loggedIn]);
 
     const [inputs, setInputs] = useState({email: '', password: ''});
     const {email, password} = inputs;
@@ -43,7 +46,7 @@ export default function SignIn() {
                 description="Sign in to continue"
             />
             <div className="p-2">
-                {errors?.domain.length > 0 &&
+                {errors?.domain?.length > 0 &&
                 <Alert type="error" message={errors.domain[0].message}/>
                 }
 

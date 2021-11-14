@@ -52,6 +52,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                     'generate_place' => ':generatePlace',
                     'already_taken_price' => ':alreadyTakenPrice',
                     'currency_code' => ':currencyCode',
+                    'vat_percentage' => ':vatPercentage',
                     'generated_at' => ':generatedAt',
                     'sold_at' => ':soldAt',
                 ])
@@ -64,6 +65,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                     'generatePlace' => $snapshot->getParameters()->getGeneratePlace(),
                     'alreadyTakenPrice' => $snapshot->getParameters()->getAlreadyTakenPrice(),
                     'currencyCode' => $snapshot->getParameters()->getCurrencyCode(),
+                    'vatPercentage' => $snapshot->getParameters()->getVatPercentage(),
                     'generatedAt' => $snapshot->getParameters()->getGenerateDate()->format(self::DATETIME_FORMAT),
                     'soldAt' => $snapshot->getParameters()->getSellDate()->format(self::DATETIME_FORMAT),
                 ])
@@ -97,6 +99,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 'ii.generate_place',
                 'ii.already_taken_price',
                 'ii.currency_code',
+                'ii.vat_percentage',
                 'ii.generated_at',
                 'ii.sold_at',
                 'iip.id as product_id',
@@ -132,6 +135,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 $row['generate_place'],
                 (float) $row['already_taken_price'],
                 $row['currency_code'],
+                (int) $row['vat_percentage'],
                 DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $row['generated_at']),
                 DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $row['sold_at']),
             ),
@@ -153,7 +157,8 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 InvoiceProductId::fromString($row['product_id']),
                 (int) $row['position'],
                 $row['name'],
-                (float) $row['price']
+                (float) $row['price'],
+                (int) $row['vat_percentage'],
             );
         }
 
@@ -219,6 +224,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 ->set('generate_place', ':generatePlace')
                 ->set('already_taken_price', ':alreadyTakenPrice')
                 ->set('currency_code', ':currencyCode')
+                ->set('vat_percentage', ':vatPercentage')
                 ->set('generated_at', ':generatedAt')
                 ->set('sold_at', ':soldAt')
                 ->set('updated_at', ':updatedAt')
@@ -229,6 +235,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                     'generatePlace' => $parametersSnapshot->getGeneratePlace(),
                     'alreadyTakenPrice' => $parametersSnapshot->getAlreadyTakenPrice(),
                     'currencyCode' => $parametersSnapshot->getCurrencyCode(),
+                    'vatPercentage' => $parametersSnapshot->getVatPercentage(),
                     'generatedAt' => $parametersSnapshot->getGenerateDate()->format(self::DATETIME_FORMAT),
                     'soldAt' => $parametersSnapshot->getSellDate()->format(self::DATETIME_FORMAT),
                     'updatedAt' => (new DateTimeImmutable())->format(self::DATETIME_FORMAT),

@@ -18,7 +18,8 @@ final class UpdateInvoiceCommand implements Command
         private string $buyerId,
         private array $products,
         private float $alreadyTakenPrice,
-        private string $currency
+        private string $currency,
+        private int $vatPercentage,
     ){}
 
     public function getId(): string
@@ -69,5 +70,10 @@ final class UpdateInvoiceCommand implements Command
     public function getCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function getVatPercentage(): int
+    {
+        return $this->vatPercentage;
     }
 }

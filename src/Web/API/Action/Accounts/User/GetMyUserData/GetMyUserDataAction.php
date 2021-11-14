@@ -9,6 +9,7 @@ use App\Common\Infrastructure\Request\HttpRequestContext;
 use App\Modules\Accounts\Application\User\GetById\GetUserByIdQuery;
 use App\Modules\Accounts\Application\User\UserDTO;
 use App\Web\API\Action\AbstractAction;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class GetMyUserDataAction extends AbstractAction
 {

@@ -14,6 +14,7 @@ class InvoiceParameters
         private string $generatePlace,
         private float $alreadyTakenPrice,
         private string $currencyCode,
+        private int $vatPercentage,
         private DateTimeImmutable $generateDate,
         private DateTimeImmutable $sellDate,
     ){}
@@ -26,6 +27,7 @@ class InvoiceParameters
             $this->generatePlace,
             $this->alreadyTakenPrice,
             $this->currencyCode,
+            $this->vatPercentage,
             $this->generateDate,
             $this->sellDate,
         );
