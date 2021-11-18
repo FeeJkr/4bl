@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Accounts\Domain\User;
 
 use App\Common\Domain\Entity;
+use App\Modules\Accounts\Domain\User\Event\UserWasRegistered;
 use JetBrains\PhpStorm\Pure;
 
 final class User extends Entity
@@ -26,7 +27,7 @@ final class User extends Entity
         string $firstName,
         string $lastName,
     ): self {
-        return new self(
+        $user = new self(
             UserId::generate(),
             $email,
             $username,
@@ -35,6 +36,12 @@ final class User extends Entity
             $lastName,
             Status::EMAIL_VERIFICATION(),
         );
+
+        $user->publishDomainEvent(
+            new UserWasRegistered($email, $username, $firstName, $lastName)
+        );
+
+        return $user;
     }
 
     #[Pure]

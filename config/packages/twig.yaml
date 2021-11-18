@@ -2,6 +2,7 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     paths:
         '%kernel.project_dir%/src/Web/MVC/Resource': ~
+        '%kernel.project_dir%/src/Modules/Accounts/Infrastructure/Resource/mailer': 'accounts.email'
 
 when@test:
     twig:

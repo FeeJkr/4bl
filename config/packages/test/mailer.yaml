@@ -1,0 +1,4 @@
+framework:
+    mailer:
+        envelope:
+            recipients: ['test@mardeus.dev']
