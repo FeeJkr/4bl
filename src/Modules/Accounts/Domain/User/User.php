@@ -18,6 +18,7 @@ final class User extends Entity
         private string $firstName,
         private string $lastName,
         private Status $status,
+        private ?ConfirmationToken $confirmationToken
     ){}
 
     public static function register(
@@ -27,6 +28,7 @@ final class User extends Entity
         string $firstName,
         string $lastName,
     ): self {
+        $confirmationToken = ConfirmationToken::generate();
         $user = new self(
             UserId::generate(),
             $email,
@@ -35,13 +37,20 @@ final class User extends Entity
             $firstName,
             $lastName,
             Status::EMAIL_VERIFICATION(),
+            $confirmationToken
         );
 
         $user->publishDomainEvent(
-            new UserWasRegistered($email, $username, $firstName, $lastName)
+            new UserWasRegistered($email, $username, $firstName, $lastName, $confirmationToken->toString())
         );
 
         return $user;
+    }
+
+    public function confirmEmail(): void
+    {
+        $this->status = Status::ACTIVE();
+        $this->confirmationToken = null;
     }
 
     #[Pure]
@@ -55,6 +64,7 @@ final class User extends Entity
             $this->firstName,
             $this->lastName,
             $this->status->getValue(),
+            $this->confirmationToken?->toString(),
         );
     }
 }

@@ -1,4 +1,4 @@
-FROM php:8.0.3-fpm
+FROM php:8.0-fpm
 
 # SYSTEM PACKAGES
 RUN apt-get update && apt-get install -y \
@@ -47,7 +47,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ENV PATH=$PATH:/root/composer/vendor/bin COMPOSER_ALLOW_SUPERUSER=1
 
 # NODE JS
-RUN curl -fsSL https://deb.nodesource.com/setup_15.x | bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
 RUN apt-get update \
  && apt-get install -y \
  nodejs
@@ -61,15 +61,15 @@ COPY --chown=www-data:www-data . .
 USER root
 
 # PHP-FPM
-COPY docker/config/php.ini $PHP_INI_DIR/php.ini
+COPY .docker/config/php.ini $PHP_INI_DIR/php.ini
 RUN rm /usr/local/etc/php-fpm.d/* && chown -R www-data:www-data /usr/local/etc/php/conf.d
-COPY docker/config/fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY .docker/config/fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
 # NGINX
 RUN rm /etc/nginx/nginx.conf && chown -R www-data:www-data /var/www/html /run /var/lib/nginx /var/log/nginx
-COPY docker/config/nginx.conf /etc/nginx/nginx.conf
+COPY .docker/config/nginx.conf /etc/nginx/nginx.conf
 
 USER www-data
 
 EXPOSE 8080
-ENTRYPOINT [ "/app/docker/entrypoint.sh" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]

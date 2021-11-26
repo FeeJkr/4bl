@@ -49,11 +49,12 @@ final class UserService
         return $user;
     }
 
-    /**
-     * @throws UserException
-     */
-    public function signOut(string $accessToken): void
+    public function confirmEmail(): User
     {
-        $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
+        $user = $this->repository->fetchByConfirmToken() ?? throw UserException::notFoundByConfirmToken();
+
+        $user->confirmEmail();
+
+        return $user;
     }
 }

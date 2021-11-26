@@ -16,7 +16,7 @@ final class UserException extends DomainException
     }
 
     #[Pure]
-    public static function notFoundByAccessToken(): self
+    public static function notFoundByConfirmToken(): self
     {
         return new self('Access token is invalid.');
     }

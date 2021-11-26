@@ -5,28 +5,15 @@ declare(strict_types=1);
 namespace App\Modules\Accounts\Infrastructure\Domain\User\Doctrine;
 
 use App\Modules\Accounts\Domain\User\Status;
-use App\Modules\Accounts\Domain\User\Token;
 use App\Modules\Accounts\Domain\User\User;
 use App\Modules\Accounts\Domain\User\UserId;
 use App\Modules\Accounts\Domain\User\UserRepository as UserRepositoryInterface;
-use App\Modules\Accounts\Infrastructure\Domain\User\KeycloakIntegration;
-use App\Modules\Accounts\Infrastructure\Domain\User\KeycloakUser;
-use DateTime;
-use DateTimeImmutable;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
-use Doctrine\Persistence\ManagerRegistry;
-use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use Throwable;
 
 final class UserRepository implements UserRepositoryInterface
 {
-    private const DATETIME_FORMAT = 'Y-m-d H:i:s';
-
     public function __construct(private Connection $connection){}
 
     /**
@@ -158,38 +145,5 @@ final class UserRepository implements UserRepositoryInterface
             ->rowCount();
 
         return $databaseRows > 0;
-    }
-
-    /**
-     * @throws Throwable
-     */
-    public function save(User $user): void
-    {
-        try {
-            $this->connection->beginTransaction();
-
-            $snapshot = $user->getSnapshot();
-
-            $this->connection
-                ->createQueryBuilder()
-                ->update('accounts_users')
-                ->set('access_token', ':accessToken')
-                ->set('refresh_token', ':refreshToken')
-                ->set('refresh_token_expired_at', ':refreshTokenExpiredAt')
-                ->set('updated_at', ':updatedAt')
-                ->setParameters([
-                    'accessToken' => $snapshot->getAccessToken(),
-                    'refreshToken' => $snapshot->getRefreshToken(),
-                    'refreshTokenExpiredAt' => $snapshot->getRefreshTokenExpiresAt()?->format(self::DATETIME_FORMAT),
-                    'updatedAt' => (new DateTime())->format(self::DATETIME_FORMAT),
-                ])
-                ->execute();
-
-            $this->connection->commit();
-        } catch (Throwable $exception) {
-            $this->connection->rollBack();
-
-            throw $exception;
-        }
     }
 }

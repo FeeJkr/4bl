@@ -14,6 +14,7 @@ final class UserSnapshot
         private string $firstName,
         private string $lastName,
         private string $status,
+        private ?string $confirmationToken
     ){}
 
     public function getId(): string
@@ -49,5 +50,10 @@ final class UserSnapshot
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
     }
 }

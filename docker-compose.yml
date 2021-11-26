@@ -2,11 +2,11 @@ version: '3'
 services:
   app:
     build:
-      context: ../
+      context: .
     ports:
       - "${APP_PORT}8080"
     volumes:
-      - ../:/app
+      - ./:/app
 
   invoice-generator-microservice:
     image: feejkr/invoice-generator

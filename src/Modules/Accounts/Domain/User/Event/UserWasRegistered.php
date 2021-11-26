@@ -12,7 +12,8 @@ final class UserWasRegistered implements DomainEvent
         private string $email,
         private string $username,
         private string $firstName,
-        private string $lastName
+        private string $lastName,
+        private string $confirmationToken
     ){}
 
     public function getEmail(): string
@@ -33,5 +34,10 @@ final class UserWasRegistered implements DomainEvent
     public function getLastName(): string
     {
         return $this->lastName;
+    }
+
+    public function getConfirmationToken(): string
+    {
+        return $this->confirmationToken;
     }
 }
