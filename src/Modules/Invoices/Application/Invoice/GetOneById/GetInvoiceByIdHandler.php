@@ -27,7 +27,7 @@ class GetInvoiceByIdHandler implements QueryHandler
     {
         $row = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'id',
                 'user_id',
                 'seller_company_id',
@@ -36,9 +36,10 @@ class GetInvoiceByIdHandler implements QueryHandler
                 'generate_place',
                 'already_taken_price',
                 'currency_code',
+                'vat_percentage',
                 'generated_at',
                 'sold_at',
-            ])
+            )
             ->from('invoices_invoices')
             ->where('id = :id')
             ->andWhere('user_id = :userId')
@@ -64,6 +65,7 @@ class GetInvoiceByIdHandler implements QueryHandler
             $row['generate_place'],
             (float) $row['already_taken_price'],
             $row['currency_code'],
+            (int) $row['vat_percentage'],
             DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $row['generated_at']),
             DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $row['sold_at']),
             $products

@@ -18,7 +18,7 @@ final class UserException extends DomainException
     #[Pure]
     public static function notFoundByConfirmToken(): self
     {
-        return new self('Access token is invalid.');
+        return new self('Confirmation token is expired or your account already active.');
     }
 
     #[Pure]
@@ -31,5 +31,11 @@ final class UserException extends DomainException
     public static function notFoundByEmail(string $email): self
     {
         return new self(sprintf('User with email %s not found.', $email));
+    }
+
+    #[Pure]
+    public static function unprocessableCondition(): self
+    {
+        return new self('Unprocessable entity condition.');
     }
 }

@@ -41,6 +41,12 @@ function Edit() {
         dispatch(invoicesActions.change(invoice));
     }
 
+    const handleVatPercentageChange = (value, meta) => {
+        invoice[meta.name] = value.value;
+
+        dispatch(invoicesActions.change(invoice));
+    }
+
     const handleChange = (element) => {
         const {name, value} = element.target;
         invoice[name] = value;
@@ -342,6 +348,8 @@ function Edit() {
                                                     ]}
                                                     placeholder="Select language"
                                                     defaultValue={{value: invoice.vatPercentage, label: invoice.vatPercentage + '%'}}
+                                                    onChange={handleVatPercentageChange}
+                                                    name="vatPercentage"
                                                 />
                                                 {errors['vatPercentage'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['vatPercentage'].message}</span>

@@ -22,6 +22,7 @@ final class GetOneInvoiceResponse extends Response
             'alreadyTakenPrice' => $invoice->getAlreadyTakenPrice(),
             'generatePlace' => $invoice->getGeneratePlace(),
             'currencyCode' => $invoice->getCurrencyCode(),
+            'vatPercentage' => $invoice->getVatPercentage(),
             'generatedAt' => $invoice->getGeneratedAt()->format('d-m-Y'),
             'soldAt' => $invoice->getSoldAt()->format('d-m-Y'),
             'products' => self::buildProducts($invoice->getProducts()),

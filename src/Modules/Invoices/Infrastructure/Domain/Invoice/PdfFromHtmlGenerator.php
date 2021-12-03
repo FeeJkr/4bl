@@ -30,6 +30,8 @@ class PdfFromHtmlGenerator implements PdfFromHtmlGeneratorInterface
     {
         $filepath = sprintf('generated-files/%s.pdf', $snapshot->getId());
 
+        dd($this->htmlGenerator->prepareParameters($snapshot));
+
         $this->httpClient->post(sprintf('%s/v1/invoice/generate', rtrim($this->host, '/')), [
             'json' => [
                 'parameters' => $this->htmlGenerator->prepareParameters($snapshot),

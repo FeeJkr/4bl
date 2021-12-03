@@ -72,7 +72,7 @@ class UpdateInvoiceRequest extends Request
             ->verifyNow();
 
         foreach ($products as $product) {
-            if (! isset($product['name'], $product['position'], $product['price'], $product['vatPercentage'])) {
+            if (! isset($product['name'], $product['position'], $product['price'])) {
                 throw new LazyAssertionException(
                     'Products array is invalid.', [
                         new InvalidArgumentException('Products array is invalid.', 0, 'products')

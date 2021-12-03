@@ -18,9 +18,8 @@ final class Version20211118200046 extends AbstractMigration
     {
         $this->addSql("
             create table accounts_users_confirmation(
-                id uuid not null unique constraint accounts_users_confirmation_pk primary key,
-                user_id uuid not null constraint users_confirmation_accounts_users_id_fk references accounts_users on delete cascade,
-                email varchar(255) unique not null,
+                user_id uuid not null unique constraint users_confirmation_accounts_users_id_fk references accounts_users on delete cascade,
+                email varchar(255) not null unique,
                 confirmation_token varchar(255) unique not null,
                 created_at timestamp default now() not null,
                 updated_at timestamp

@@ -6,9 +6,9 @@ namespace App\Modules\Accounts\Infrastructure\Domain\User\Doctrine;
 
 use App\Modules\Accounts\Domain\User\Status;
 use App\Modules\Accounts\Domain\User\User;
-use App\Modules\Accounts\Domain\User\UserId;
 use App\Modules\Accounts\Domain\User\UserRepository as UserRepositoryInterface;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Exception as DoctrineDriverException;
 use Doctrine\DBAL\Exception;
 use Throwable;
 
@@ -49,6 +49,21 @@ final class UserRepository implements UserRepositoryInterface
                 ])
                 ->execute();
 
+            $this->connection
+                ->createQueryBuilder()
+                ->insert('accounts_users_confirmation')
+                ->values([
+                    'user_id' => ':userId',
+                    'email' => ':email',
+                    'confirmation_token' => ':confirmationToken',
+                ])
+                ->setParameters([
+                    'userId' => $snapshot->getId(),
+                    'email' => $snapshot->getEmail(),
+                    'confirmationToken' => $snapshot->getConfirmationToken(),
+                ])
+                ->execute();
+
             $this->connection->commit();
         } catch (Throwable $exception) {
             $this->connection->rollBack();
@@ -57,23 +72,56 @@ final class UserRepository implements UserRepositoryInterface
         }
     }
 
+    /**
+     * @throws Throwable
+     */
+    public function save(User $user): void
+    {
+        try {
+            $this->connection->beginTransaction();
+
+            $snapshot = $user->getSnapshot();
+
+            $this->connection
+                ->createQueryBuilder()
+                ->update('accounts_users')
+                ->set('status', ':status')
+                ->setParameters([
+                    'status' => $snapshot->getStatus(),
+                ])
+                ->execute();
+
+            $this->connection->commit();
+        } catch (Throwable $exception) {
+            $this->connection->rollBack();
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @throws Exception
+     * @throws DoctrineDriverException
+     */
     public function fetchByEmail(string $email): ?User
     {
         $row = $this
             ->connection
             ->createQueryBuilder()
-            ->select([
-                'id',
-                'email',
-                'username',
-                'password',
-                'first_name',
-                'last_name',
-                'status'
-            ])
-            ->from('accounts_users')
-            ->where('email = :email')
-            ->andWhere('status = :status')
+            ->select(
+                'au.id',
+                'au.email',
+                'au.username',
+                'au.password',
+                'au.first_name',
+                'au.last_name',
+                'au.status',
+                'auc.confirmation_token'
+            )
+            ->from('accounts_users', 'au')
+            ->leftJoin('au', 'accounts_users_confirmation', 'auc', 'auc.user_id = au.id')
+            ->where('au.email = :email')
+            ->andWhere('au.status = :status')
             ->setParameters([
                 'email' => $email,
                 'status' => Status::ACTIVE()->getValue(),
@@ -85,45 +133,7 @@ final class UserRepository implements UserRepositoryInterface
             return null;
         }
 
-        return new User(
-            UserId::fromString($row['id']),
-            $row['email'],
-            $row['username'],
-            $row['password'],
-            $row['first_name'],
-            $row['last_name'],
-            new Status($row['status']),
-        );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws Exception
-     */
-    public function fetchByAccessToken(string $accessToken): ?User
-    {
-        $row = $this->connection
-            ->createQueryBuilder()
-            ->select(['id', 'email', 'username', 'password', 'first_name', 'last_name', 'status'])
-            ->from('accounts_users')
-            ->where('id = :id')
-            ->setParameter('id', $accessToken)
-            ->execute()
-            ->fetchAssociative();
-
-        if ($row === false) {
-            return null;
-        }
-
-        return new User(
-            UserId::fromString($row['id']),
-            $row['email'],
-            $row['username'],
-            $row['password'],
-            $row['first_name'],
-            $row['last_name'],
-            new Status($row['status']),
-        );
+        return UserFactory::fromRow($row);
     }
 
     /**
@@ -145,5 +155,43 @@ final class UserRepository implements UserRepositoryInterface
             ->rowCount();
 
         return $databaseRows > 0;
+    }
+
+    /**
+     * @throws Exception
+     * @throws DoctrineDriverException
+     */
+    public function fetchByConfirmToken(string $confirmToken): ?User
+    {
+        $row = $this
+            ->connection
+            ->createQueryBuilder()
+            ->select(
+                'au.id',
+                'au.email',
+                'au.username',
+                'au.password',
+                'au.first_name',
+                'au.last_name',
+                'au.status',
+                'auc.confirmation_token'
+            )
+            ->from('accounts_users', 'au')
+            ->leftJoin('au', 'accounts_users_confirmation', 'auc', 'auc.user_id = au.id')
+            ->where('auc.confirmation_token = :confirmationToken')
+            ->andWhere('au.status = :status')
+            ->andWhere('auc.email = au.email')
+            ->setParameters([
+                'confirmationToken' => $confirmToken,
+                'status' => Status::EMAIL_VERIFICATION()->getValue(),
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        if ($row === false) {
+            return null;
+        }
+
+        return UserFactory::fromRow($row);
     }
 }

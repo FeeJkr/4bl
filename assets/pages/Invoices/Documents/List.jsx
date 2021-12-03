@@ -58,6 +58,7 @@ function List() {
                                         <th>Seller</th>
                                         <th>Buyer</th>
                                         <th>Total Net Price</th>
+                                        <th> VAT % </th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-companies-body">
@@ -71,6 +72,7 @@ function List() {
                                                 <td>{invoice.sellerName}</td>
                                                 <td>{invoice.buyerName}</td>
                                                 <td>{invoice.totalNetPrice} {invoice.currencyCode}</td>
+                                                <td>{invoice.vatPercentage}%</td>
                                                 <td className="gap-3 action-buttons" style={{gridGap: '1 rem', position: 'absolute', right: 0, width: 40 * 3 + 'px'}}>
                                                     <a onClick={() => handleDownload(invoice.id, invoice.invoiceNumber)}
                                                        style={{fontSize: '18 px', cursor: 'pointer'}}>

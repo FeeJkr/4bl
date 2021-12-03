@@ -25,7 +25,7 @@ function Generate() {
         generatePlace: '',
         alreadyTakenPrice: 0.00,
         currencyCode: 'PLN',
-        vatPercentage: 0,
+        vatPercentage: 23,
         products: [
             {name: '', price: 0.00},
         ],
@@ -300,8 +300,10 @@ function Generate() {
                                                     {value: 0, label: '0%'},
                                                     {value: 23, label: '23%'},
                                                 ]}
+                                                name="vatPercentage"
                                                 placeholder="Select VAT percentage"
                                                 defaultValue={{value: 23, label: '23%'}}
+                                                onChange={handleSelectChange}
                                             />
                                             {errors['vatPercentage'] &&
                                             <span style={{color: 'red', fontSize: '10px'}}>{errors['vatPercentage'].message}</span>

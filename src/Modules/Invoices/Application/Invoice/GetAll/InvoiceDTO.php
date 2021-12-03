@@ -17,6 +17,7 @@ final class InvoiceDTO
         private string $buyerName,
         private float $totalNetPrice,
         private string $currencyCode,
+        private int $vatPercentage,
     ){}
 
     public function getId(): string
@@ -57,5 +58,10 @@ final class InvoiceDTO
     public function getCurrencyCode(): string
     {
         return $this->currencyCode;
+    }
+
+    public function getVatPercentage(): int
+    {
+        return $this->vatPercentage;
     }
 }

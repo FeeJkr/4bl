@@ -49,9 +49,12 @@ final class UserService
         return $user;
     }
 
-    public function confirmEmail(): User
+    /**
+     * @throws UserException
+     */
+    public function confirmEmail(string $confirmToken): User
     {
-        $user = $this->repository->fetchByConfirmToken() ?? throw UserException::notFoundByConfirmToken();
+        $user = $this->repository->fetchByConfirmToken($confirmToken) ?? throw UserException::notFoundByConfirmToken();
 
         $user->confirmEmail();
 

@@ -13,6 +13,8 @@ import {Create as CreateCompany} from "./pages/Invoices/Companies/Create";
 import CompaniesLayout from "./layouts/invoices/CompaniesLayout";
 import {Edit as EditCompany} from "./pages/Invoices/Companies/Edit";
 import {Edit as EditDocument} from "./pages/Invoices/Documents/Edit";
+import Profile from "./pages/Account/Profile";
+import Settings from "./pages/Account/Settings";
 
 export default function Router() {
     return useRoutes([
@@ -29,6 +31,8 @@ export default function Router() {
             element: <DashboardLayout/>,
             children: [
                 { path: '/', element: <Dashboard/> },
+                { path: '/profile', element: <Profile/>},
+                { path: '/settings', element: <Settings/> },
                 {
                     path: 'invoices',
                     children: [

@@ -47,10 +47,18 @@ final class User extends Entity
         return $user;
     }
 
+    /**
+     * @throws UserException
+     */
     public function confirmEmail(): void
     {
-        $this->status = Status::ACTIVE();
-        $this->confirmationToken = null;
+        if ($this->status->equals(Status::EMAIL_VERIFICATION())) {
+            $this->status = Status::ACTIVE();
+
+            return;
+        }
+
+        throw UserException::unprocessableCondition();
     }
 
     #[Pure]

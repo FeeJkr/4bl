@@ -24,6 +24,7 @@ final class GetAllInvoicesResponse extends Response
             'buyerName' => $invoice->getBuyerName(),
             'totalNetPrice' => $invoice->getTotalNetPrice(),
             'currencyCode' => $invoice->getCurrencyCode(),
+            'vatPercentage' => $invoice->getVatPercentage(),
         ], $invoices->toArray()));
     }
 }

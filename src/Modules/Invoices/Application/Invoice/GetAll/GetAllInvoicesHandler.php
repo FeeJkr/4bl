@@ -23,7 +23,7 @@ class GetAllInvoicesHandler implements QueryHandler
     {
         $rows = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'i.id',
                 'i.invoice_number',
                 'i.generated_at',
@@ -31,8 +31,9 @@ class GetAllInvoicesHandler implements QueryHandler
                 'i.currency_code',
                 'seller.name as seller_name',
                 'buyer.name as buyer_name',
-                '(SELECT SUM(price) FROM invoices_invoice_products WHERE invoice_id = i.id) as total_price'
-            ])
+                '(SELECT SUM(price) FROM invoices_invoice_products WHERE invoice_id = i.id) as total_price',
+                'i.vat_percentage',
+            )
             ->from('invoices_invoices', 'i')
             ->join('i', 'invoices_companies', 'seller', 'seller.id = i.seller_company_id')
             ->join('i', 'invoices_companies', 'buyer', 'buyer.id = i.buyer_company_id')
@@ -53,7 +54,8 @@ class GetAllInvoicesHandler implements QueryHandler
                     $row['seller_name'],
                     $row['buyer_name'],
                     (float) $row['total_price'],
-                    $row['currency_code']
+                    $row['currency_code'],
+                    $row['vat_percentage'],
                 )
             );
         }

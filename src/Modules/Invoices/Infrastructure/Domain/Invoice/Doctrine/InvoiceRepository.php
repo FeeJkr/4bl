@@ -228,7 +228,9 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 ->set('generated_at', ':generatedAt')
                 ->set('sold_at', ':soldAt')
                 ->set('updated_at', ':updatedAt')
+                ->where('id = :id')
                 ->setParameters([
+                    'id' => $snapshot->getId(),
                     'sellerCompanyId' => $snapshot->getSellerId(),
                     'buyerCompanyId' => $snapshot->getBuyerId(),
                     'invoiceNumber' => $parametersSnapshot->getInvoiceNumber(),

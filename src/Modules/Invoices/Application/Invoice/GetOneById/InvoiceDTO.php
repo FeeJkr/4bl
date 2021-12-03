@@ -17,6 +17,7 @@ final class InvoiceDTO
         private string $generatePlace,
         private float $alreadyTakenPrice,
         private string $currencyCode,
+        private int $vatPercentage,
         private DateTimeImmutable $generatedAt,
         private DateTimeImmutable $soldAt,
         private InvoiceProductDTOCollection $products,
@@ -60,6 +61,11 @@ final class InvoiceDTO
     public function getCurrencyCode(): string
     {
         return $this->currencyCode;
+    }
+
+    public function getVatPercentage(): int
+    {
+        return $this->vatPercentage;
     }
 
     public function getGeneratedAt(): DateTimeImmutable
