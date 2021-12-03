@@ -21,6 +21,7 @@ final class UserRepository implements UserRepositoryInterface
      */
     public function store(User $user, string $password): void
     {
+        sleep(10);
         try {
             $this->connection->beginTransaction();
 
@@ -47,7 +48,7 @@ final class UserRepository implements UserRepositoryInterface
                     'lastName' => $snapshot->getLastName(),
                     'status' => $snapshot->getStatus(),
                 ])
-                ->execute();
+                ->executeStatement();
 
             $this->connection
                 ->createQueryBuilder()
@@ -62,7 +63,7 @@ final class UserRepository implements UserRepositoryInterface
                     'email' => $snapshot->getEmail(),
                     'confirmationToken' => $snapshot->getConfirmationToken(),
                 ])
-                ->execute();
+                ->executeStatement();
 
             $this->connection->commit();
         } catch (Throwable $exception) {

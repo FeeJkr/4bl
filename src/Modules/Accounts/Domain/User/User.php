@@ -36,12 +36,12 @@ final class User extends Entity
             $password,
             $firstName,
             $lastName,
-            Status::EMAIL_VERIFICATION(),
+            Status::EMAIL_VERIFICATION,
             $confirmationToken
         );
 
         $user->publishDomainEvent(
-            new UserWasRegistered($email, $username, $firstName, $lastName, $confirmationToken->toString())
+            new UserWasRegistered($email, $username, $firstName, $lastName, $confirmationToken->token)
         );
 
         return $user;
@@ -52,8 +52,8 @@ final class User extends Entity
      */
     public function confirmEmail(): void
     {
-        if ($this->status->equals(Status::EMAIL_VERIFICATION())) {
-            $this->status = Status::ACTIVE();
+        if ($this->status === Status::EMAIL_VERIFICATION) {
+            $this->status = Status::ACTIVE;
 
             return;
         }
@@ -71,8 +71,8 @@ final class User extends Entity
             $this->password,
             $this->firstName,
             $this->lastName,
-            $this->status->getValue(),
-            $this->confirmationToken?->toString(),
+            $this->status->value,
+            $this->confirmationToken?->token,
         );
     }
 }

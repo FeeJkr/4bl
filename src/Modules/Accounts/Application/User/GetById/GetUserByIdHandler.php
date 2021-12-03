@@ -18,13 +18,12 @@ final class GetUserByIdHandler implements QueryHandler
 
     /**
      * @throws NotFoundException
-     * @throws Exception
      * @throws DBALException
      */
     public function __invoke(GetUserByIdQuery $query): UserDTO
     {
-        if (!Uuid::isValid($query->getUserId())) {
-            throw NotFoundException::notFoundById($query->getUserId());
+        if (!Uuid::isValid($query->userId)) {
+            throw NotFoundException::notFoundById($query->userId);
         }
 
         $row = $this->connection
@@ -38,12 +37,12 @@ final class GetUserByIdHandler implements QueryHandler
             ])
             ->from('accounts_users')
             ->where('id = :id')
-            ->setParameter('id', $query->getUserId())
-            ->execute()
+            ->setParameter('id', $query->userId)
+            ->executeQuery()
             ->fetchAssociative();
 
         if ($row === false) {
-            throw NotFoundException::notFoundById($query->getUserId());
+            throw NotFoundException::notFoundById($query->userId);
         }
 
         return new UserDTO(

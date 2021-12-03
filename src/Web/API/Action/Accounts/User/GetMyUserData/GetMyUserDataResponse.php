@@ -12,11 +12,11 @@ final class GetMyUserDataResponse extends Response
     public static function respond(UserDTO $userDTO): self
     {
         return new self([
-            'id' => $userDTO->getId(),
-            'email' => $userDTO->getEmail(),
-            'username' => $userDTO->getUsername(),
-            'firstName' => $userDTO->getFirstName(),
-            'lastName' => $userDTO->getLastName(),
+            'id' => $userDTO->id,
+            'email' => $userDTO->email,
+            'username' => $userDTO->username,
+            'firstName' => $userDTO->firstName,
+            'lastName' => $userDTO->lastName,
         ]);
     }
 }

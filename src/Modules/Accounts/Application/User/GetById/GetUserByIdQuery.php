@@ -8,10 +8,5 @@ use App\Common\Application\Query\Query;
 
 final class GetUserByIdQuery implements Query
 {
-    public function __construct(private string $userId){}
-
-    public function getUserId(): string
-    {
-        return $this->userId;
-    }
+    public function __construct(public readonly string $userId){}
 }
