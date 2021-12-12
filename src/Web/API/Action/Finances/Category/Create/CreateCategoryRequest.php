@@ -10,7 +10,11 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class CreateCategoryRequest extends Request
 {
-    public function __construct(private string $name, private string $type, private string $icon){}
+    public function __construct(
+        public readonly string $name,
+        public readonly string $type,
+        public readonly string $icon
+    ){}
 
     public static function fromRequest(ServerRequest $request): Request
     {
@@ -31,20 +35,5 @@ final class CreateCategoryRequest extends Request
             $type,
             $icon,
         );
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function getIcon(): string
-    {
-        return $this->icon;
     }
 }

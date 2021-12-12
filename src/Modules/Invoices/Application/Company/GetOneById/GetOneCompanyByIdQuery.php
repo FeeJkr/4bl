@@ -8,10 +8,5 @@ use App\Common\Application\Query\Query;
 
 final class GetOneCompanyByIdQuery implements Query
 {
-    public function __construct(private string $companyId){}
-
-    public function getCompanyId(): string
-    {
-        return $this->companyId;
-    }
+    public function __construct(public readonly string $companyId){}
 }

@@ -14,7 +14,7 @@ final class GetAllWalletsAction extends AbstractAction
 
     public function __invoke(): GetAllWalletsResponse
     {
-        $wallets = $this->bus->handle(new GetAllWalletsQuery);
+        $wallets = $this->bus->handle(new GetAllWalletsQuery());
 
         return GetAllWalletsResponse::respond($wallets);
     }

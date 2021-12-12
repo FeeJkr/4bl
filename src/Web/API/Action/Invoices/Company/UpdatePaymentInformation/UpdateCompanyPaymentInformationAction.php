@@ -9,18 +9,18 @@ use App\Modules\Invoices\Application\Company\UpdatePaymentInformation\UpdateComp
 use App\Web\API\Action\AbstractAction;
 use App\Web\API\Action\NoContentResponse;
 
-class UpdateCompanyPaymentInformationAction extends AbstractAction
+final class UpdateCompanyPaymentInformationAction extends AbstractAction
 {
 	public function __construct(private CommandBus $bus){}
 
 	public function __invoke(UpdateCompanyPaymentInformationRequest $request): NoContentResponse
 	{
 		$this->bus->dispatch(new UpdateCompanyPaymentInformationCommand(
-			$request->getId(),
-			$request->getPaymentType(),
-			$request->getPaymentLastDate(),
-			$request->getBank(),
-			$request->getAccountNumber()
+			$request->id,
+			$request->paymentType,
+			$request->paymentLastDate,
+			$request->bank,
+			$request->accountNumber
 		));
 
 	    return NoContentResponse::respond();

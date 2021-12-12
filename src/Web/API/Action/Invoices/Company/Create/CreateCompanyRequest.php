@@ -8,7 +8,7 @@ use App\Web\API\Action\Request;
 use Assert\Assert;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
-class CreateCompanyRequest extends Request
+final class CreateCompanyRequest extends Request
 {
 	private const NAME = 'name';
 	private const IDENTIFICATION_NUMBER = 'identificationNumber';
@@ -19,13 +19,13 @@ class CreateCompanyRequest extends Request
 	private const CITY = 'city';
 
 	private function __construct(
-        private string $name,
-        private string $identificationNumber,
-        private ?string $email,
-        private ?string $phoneNumber,
-        private string $street,
-        private string $zipCode,
-        private string $city,
+        public readonly string $name,
+        public readonly string $identificationNumber,
+        public readonly ?string $email,
+        public readonly ?string $phoneNumber,
+        public readonly string $street,
+        public readonly string $zipCode,
+        public readonly string $city,
     ){}
 
     public static function fromRequest(ServerRequest $request): self
@@ -58,40 +58,5 @@ class CreateCompanyRequest extends Request
             $zipCode,
             $city
         );
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getIdentificationNumber(): string
-    {
-        return $this->identificationNumber;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function getStreet(): string
-    {
-        return $this->street;
-    }
-
-    public function getZipCode(): string
-    {
-        return $this->zipCode;
-    }
-
-    public function getCity(): string
-    {
-        return $this->city;
     }
 }

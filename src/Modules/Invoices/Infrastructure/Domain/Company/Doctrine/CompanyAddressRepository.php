@@ -1,14 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\Invoices\Infrastructure\Domain\Company\Doctrine;
 
 use App\Modules\Invoices\Domain\Company\CompanyAddress;
 use DateTimeImmutable;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\Persistence\ManagerRegistry;
 
 final class CompanyAddressRepository
 {
@@ -34,12 +33,12 @@ final class CompanyAddressRepository
                 'city' => ':city',
             ])
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'street' => $snapshot->getStreet(),
-                'zipCode' => $snapshot->getZipCode(),
-                'city' => $snapshot->getCity(),
+                'id' => $snapshot->id,
+                'street' => $snapshot->street,
+                'zipCode' => $snapshot->zipCode,
+                'city' => $snapshot->city,
             ])
-            ->execute();
+            ->executeStatement();
     }
 
     /**
@@ -51,8 +50,8 @@ final class CompanyAddressRepository
             ->createQueryBuilder()
             ->delete(self::DATABASE_TABLE)
             ->where('id = :id')
-            ->setParameter('id', $address->getSnapshot()->getId())
-            ->execute();
+            ->setParameter('id', $address->getSnapshot()->id)
+            ->executeStatement();
     }
 
     /**
@@ -71,12 +70,12 @@ final class CompanyAddressRepository
             ->set('updated_at', ':updatedAt')
             ->where('id = :id')
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'street' => $snapshot->getStreet(),
-                'zipCode' => $snapshot->getZipCode(),
-                'city' => $snapshot->getCity(),
+                'id' => $snapshot->id,
+                'street' => $snapshot->street,
+                'zipCode' => $snapshot->zipCode,
+                'city' => $snapshot->city,
                 'updatedAt' => (new DateTimeImmutable())->format(self::DATETIME_FORMAT),
             ])
-            ->execute();
+            ->executeStatement();
     }
 }

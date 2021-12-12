@@ -9,14 +9,14 @@ use App\Modules\Invoices\Domain\Invoice\InvoiceId;
 use App\Modules\Invoices\Domain\Invoice\InvoiceRepository;
 use App\Modules\Invoices\Domain\User\UserContext;
 
-class DeleteInvoiceHandler implements CommandHandler
+final class DeleteInvoiceHandler implements CommandHandler
 {
     public function __construct(private InvoiceRepository $repository, private UserContext $userContext){}
 
     public function __invoke(DeleteInvoiceCommand $command): void
     {
         $invoice = $this->repository->fetchOneById(
-            InvoiceId::fromString($command->getInvoiceId()),
+            InvoiceId::fromString($command->invoiceId),
             $this->userContext->getUserId()
         );
 

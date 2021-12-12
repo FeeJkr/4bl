@@ -17,7 +17,6 @@ class GetAllInvoicesHandler implements QueryHandler
 
     /**
      * @throws DBALException
-     * @throws Exception
      */
     public function __invoke(GetAllInvoicesQuery $query): InvoiceDTOCollection
     {
@@ -39,7 +38,7 @@ class GetAllInvoicesHandler implements QueryHandler
             ->join('i', 'invoices_companies', 'buyer', 'buyer.id = i.buyer_company_id')
             ->where('i.user_id = :userId')
             ->setParameter('userId', $this->userContext->getUserId()->toString())
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
 
         $invoices = new InvoiceDTOCollection();

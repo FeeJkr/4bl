@@ -6,15 +6,20 @@ namespace App\Modules\Invoices\Application\Invoice\GetAll;
 
 final class InvoiceDTOCollection
 {
-    public function __construct(private array $items = []){}
+    private array $invoices;
+
+    public function __construct(InvoiceDTO ...$invoices)
+    {
+        $this->invoices = $invoices;
+    }
 
     public function add(InvoiceDTO $invoice): void
     {
-        $this->items[] = $invoice;
+        $this->invoices[] = $invoice;
     }
 
     public function toArray(): array
     {
-        return $this->items;
+        return $this->invoices;
     }
 }

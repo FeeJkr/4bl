@@ -5,7 +5,7 @@ namespace App\Modules\Invoices\Domain\Company;
 
 use JetBrains\PhpStorm\Pure;
 
-class CompanyPaymentInformation
+final class CompanyPaymentInformation
 {
     public function __construct(
         private CompanyPaymentInformationId $id,

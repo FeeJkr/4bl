@@ -8,7 +8,7 @@ use App\Modules\Accounts\Domain\User\PasswordManager;
 use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
-class SymfonyHasherPasswordManager implements PasswordManager
+final class SymfonyHashingPasswordManager implements PasswordManager
 {
     private PasswordHasherInterface $passwordHasher;
 

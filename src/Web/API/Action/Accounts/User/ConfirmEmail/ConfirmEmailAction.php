@@ -17,7 +17,7 @@ class ConfirmEmailAction extends AbstractAction
     public function __invoke(ConfirmEmailRequest $request): RedirectResponse
     {
         $this->bus->dispatch(
-            new ConfirmEmailCommand($request->getToken())
+            new ConfirmEmailCommand($request->token)
         );
 
         return new RedirectResponse('/', Response::HTTP_FOUND);

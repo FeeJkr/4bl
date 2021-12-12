@@ -22,7 +22,7 @@ use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\Pure;
 use Throwable;
 
-class InvoiceRepository implements InvoiceRepositoryInterface
+final class InvoiceRepository implements InvoiceRepositoryInterface
 {
     private const DATETIME_FORMAT = 'Y-m-d H:i:s';
 
@@ -57,22 +57,22 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                     'sold_at' => ':soldAt',
                 ])
                 ->setParameters([
-                    'id' => $snapshot->getId(),
-                    'userId' => $snapshot->getUserId(),
-                    'sellerCompanyId' => $snapshot->getSellerId(),
-                    'buyerCompanyId' => $snapshot->getBuyerId(),
-                    'invoiceNumber' => $snapshot->getParameters()->getInvoiceNumber(),
-                    'generatePlace' => $snapshot->getParameters()->getGeneratePlace(),
-                    'alreadyTakenPrice' => $snapshot->getParameters()->getAlreadyTakenPrice(),
-                    'currencyCode' => $snapshot->getParameters()->getCurrencyCode(),
-                    'vatPercentage' => $snapshot->getParameters()->getVatPercentage(),
-                    'generatedAt' => $snapshot->getParameters()->getGenerateDate()->format(self::DATETIME_FORMAT),
-                    'soldAt' => $snapshot->getParameters()->getSellDate()->format(self::DATETIME_FORMAT),
+                    'id' => $snapshot->id,
+                    'userId' => $snapshot->userId,
+                    'sellerCompanyId' => $snapshot->sellerId,
+                    'buyerCompanyId' => $snapshot->buyerId,
+                    'invoiceNumber' => $snapshot->parameters->invoiceNumber,
+                    'generatePlace' => $snapshot->parameters->generatePlace,
+                    'alreadyTakenPrice' => $snapshot->parameters->alreadyTakenPrice,
+                    'currencyCode' => $snapshot->parameters->currencyCode,
+                    'vatPercentage' => $snapshot->parameters->vatPercentage,
+                    'generatedAt' => $snapshot->parameters->generateDate->format(self::DATETIME_FORMAT),
+                    'soldAt' => $snapshot->parameters->sellDate->format(self::DATETIME_FORMAT),
                 ])
-                ->execute();
+                ->executeStatement();
 
-            foreach ($snapshot->getProducts() as $product) {
-                $this->invoiceProductRepository->store($snapshot->getId(), $product);
+            foreach ($snapshot->products as $product) {
+                $this->invoiceProductRepository->store($snapshot->id, $product);
             }
 
             $this->connection->commit();
@@ -90,7 +90,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
     {
         $rows = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'ii.id as invoice_id',
                 'ii.user_id',
                 'ii.seller_company_id',
@@ -106,7 +106,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 'iip.position',
                 'iip.name',
                 'iip.price',
-            ])
+            )
             ->from('invoices_invoice_products', 'iip')
             ->rightJoin('iip', 'invoices_invoices', 'ii', 'ii.id = iip.invoice_id')
             ->where('ii.id = :id')
@@ -115,7 +115,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 'id' => $invoiceId->toString(),
                 'userId' => $userId->toString(),
             ])
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
 
         if (empty($rows)) {
@@ -150,7 +150,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
 
         foreach ($rows as $row) {
             if ($row['product_id'] === null) {
-                return new InvoiceProductsCollection([]);
+                return new InvoiceProductsCollection(...[]);
             }
 
             $products[] = new InvoiceProduct(
@@ -162,7 +162,7 @@ class InvoiceRepository implements InvoiceRepositoryInterface
             );
         }
 
-        return new InvoiceProductsCollection($products);
+        return new InvoiceProductsCollection(...$products);
     }
 
     /**
@@ -178,8 +178,8 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 ->createQueryBuilder()
                 ->delete('invoices_invoice_products')
                 ->where('invoice_id = :invoiceId')
-                ->setParameter('invoiceId', $snapshot->getId())
-                ->execute();
+                ->setParameter('invoiceId', $snapshot->id)
+                ->executeStatement();
 
             $this->connection
                 ->createQueryBuilder()
@@ -187,10 +187,10 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 ->where('id = :id')
                 ->andWhere('user_id = :userId')
                 ->setParameters([
-                    'id' => $snapshot->getId(),
-                    'userId' => $snapshot->getUserId(),
+                    'id' => $snapshot->id,
+                    'userId' => $snapshot->userId,
                 ])
-                ->execute();
+                ->executeStatement();
 
             $this->connection->commit();
         } catch (Throwable $exception) {
@@ -211,9 +211,9 @@ class InvoiceRepository implements InvoiceRepositoryInterface
             $this->connection->beginTransaction();
 
             $snapshot = $invoice->getSnapshot();
-            $parametersSnapshot = $snapshot->getParameters();
+            $parametersSnapshot = $snapshot->parameters;
 
-            $this->invoiceProductRepository->deleteByInvoiceId($snapshot->getId());
+            $this->invoiceProductRepository->deleteByInvoiceId($snapshot->id);
 
             $this->connection
                 ->createQueryBuilder()
@@ -230,22 +230,22 @@ class InvoiceRepository implements InvoiceRepositoryInterface
                 ->set('updated_at', ':updatedAt')
                 ->where('id = :id')
                 ->setParameters([
-                    'id' => $snapshot->getId(),
-                    'sellerCompanyId' => $snapshot->getSellerId(),
-                    'buyerCompanyId' => $snapshot->getBuyerId(),
-                    'invoiceNumber' => $parametersSnapshot->getInvoiceNumber(),
-                    'generatePlace' => $parametersSnapshot->getGeneratePlace(),
-                    'alreadyTakenPrice' => $parametersSnapshot->getAlreadyTakenPrice(),
-                    'currencyCode' => $parametersSnapshot->getCurrencyCode(),
-                    'vatPercentage' => $parametersSnapshot->getVatPercentage(),
-                    'generatedAt' => $parametersSnapshot->getGenerateDate()->format(self::DATETIME_FORMAT),
-                    'soldAt' => $parametersSnapshot->getSellDate()->format(self::DATETIME_FORMAT),
+                    'id' => $snapshot->id,
+                    'sellerCompanyId' => $snapshot->sellerId,
+                    'buyerCompanyId' => $snapshot->buyerId,
+                    'invoiceNumber' => $parametersSnapshot->invoiceNumber,
+                    'generatePlace' => $parametersSnapshot->generatePlace,
+                    'alreadyTakenPrice' => $parametersSnapshot->alreadyTakenPrice,
+                    'currencyCode' => $parametersSnapshot->currencyCode,
+                    'vatPercentage' => $parametersSnapshot->vatPercentage,
+                    'generatedAt' => $parametersSnapshot->generateDate->format(self::DATETIME_FORMAT),
+                    'soldAt' => $parametersSnapshot->sellDate->format(self::DATETIME_FORMAT),
                     'updatedAt' => (new DateTimeImmutable())->format(self::DATETIME_FORMAT),
                 ])
-                ->execute();
+                ->executeStatement();
 
-            foreach ($snapshot->getProducts() as $product) {
-                $this->invoiceProductRepository->store($snapshot->getId(), $product);
+            foreach ($snapshot->products as $product) {
+                $this->invoiceProductRepository->store($snapshot->id, $product);
             }
 
             $this->connection->commit();

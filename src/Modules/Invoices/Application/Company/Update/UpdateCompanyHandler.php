@@ -12,10 +12,7 @@ use App\Modules\Invoices\Domain\User\UserContext;
 
 class UpdateCompanyHandler implements CommandHandler
 {
-    public function __construct(
-        private CompanyRepository $repository,
-        private UserContext $userContext,
-    ){}
+    public function __construct(private CompanyRepository $repository, private UserContext $userContext){}
 
     /**
      * @throws CompanyException
@@ -23,18 +20,18 @@ class UpdateCompanyHandler implements CommandHandler
     public function __invoke(UpdateCompanyCommand $command): void
     {
         $company = $this->repository->fetchById(
-            CompanyId::fromString($command->getCompanyId()),
+            CompanyId::fromString($command->companyId),
             $this->userContext->getUserId()
-        ) ?? throw CompanyException::notFoundById($command->getCompanyId());
+        ) ?? throw CompanyException::notFoundById($command->companyId);
 
         $company->update(
-            $command->getStreet(),
-            $command->getZipCode(),
-            $command->getCity(),
-            $command->getName(),
-            $command->getIdentificationNumber(),
-            $command->getEmail(),
-            $command->getPhoneNumber(),
+            $command->street,
+            $command->zipCode,
+            $command->city,
+            $command->name,
+            $command->identificationNumber,
+            $command->email,
+            $command->phoneNumber,
         );
 
         $this->repository->save($company);

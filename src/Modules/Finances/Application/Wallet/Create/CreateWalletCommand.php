@@ -9,23 +9,8 @@ use App\Common\Application\Command\Command;
 final class CreateWalletCommand implements Command
 {
     public function __construct(
-        private string $name,
-        private int $startBalance,
-        private string $currency,
+        public readonly string $name,
+        public readonly int $startBalance,
+        public readonly string $currency,
     ){}
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getStartBalance(): int
-    {
-        return $this->startBalance;
-    }
-
-    public function getCurrency(): string
-    {
-        return $this->currency;
-    }
 }

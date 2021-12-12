@@ -7,7 +7,7 @@ namespace App\Modules\Invoices\Domain\Invoice;
 use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
-class InvoiceParameters
+final class InvoiceParameters
 {
     public function __construct(
         private string $invoiceNumber,

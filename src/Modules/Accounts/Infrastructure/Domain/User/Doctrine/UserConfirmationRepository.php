@@ -36,7 +36,7 @@ class UserConfirmationRepository
                     'email' => $email,
                     'confirmationToken' => $confirmationToken,
                 ])
-                ->execute();
+                ->executeStatement();
 
             $this->connection->commit();
         } catch (Throwable $exception) {

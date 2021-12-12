@@ -6,6 +6,6 @@ namespace App\Modules\Invoices\Application\Invoice\GetAll;
 
 use App\Common\Application\Query\Query;
 
-class GetAllInvoicesQuery implements Query
+final class GetAllInvoicesQuery implements Query
 {
 }

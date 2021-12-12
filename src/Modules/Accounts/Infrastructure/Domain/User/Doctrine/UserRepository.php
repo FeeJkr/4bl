@@ -8,7 +8,6 @@ use App\Modules\Accounts\Domain\User\Status;
 use App\Modules\Accounts\Domain\User\User;
 use App\Modules\Accounts\Domain\User\UserRepository as UserRepositoryInterface;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception as DoctrineDriverException;
 use Doctrine\DBAL\Exception;
 use Throwable;
 
@@ -21,7 +20,6 @@ final class UserRepository implements UserRepositoryInterface
      */
     public function store(User $user, string $password): void
     {
-        sleep(10);
         try {
             $this->connection->beginTransaction();
 
@@ -40,13 +38,13 @@ final class UserRepository implements UserRepositoryInterface
                     'status' => ':status'
                 ])
                 ->setParameters([
-                    'id' => $snapshot->getId(),
-                    'email' => $snapshot->getEmail(),
-                    'username' => $snapshot->getUsername(),
-                    'password' => $snapshot->getPassword(),
-                    'firstName' => $snapshot->getFirstName(),
-                    'lastName' => $snapshot->getLastName(),
-                    'status' => $snapshot->getStatus(),
+                    'id' => $snapshot->id,
+                    'email' => $snapshot->email,
+                    'username' => $snapshot->username,
+                    'password' => $snapshot->password,
+                    'firstName' => $snapshot->firstName,
+                    'lastName' => $snapshot->lastName,
+                    'status' => $snapshot->status,
                 ])
                 ->executeStatement();
 
@@ -59,9 +57,9 @@ final class UserRepository implements UserRepositoryInterface
                     'confirmation_token' => ':confirmationToken',
                 ])
                 ->setParameters([
-                    'userId' => $snapshot->getId(),
-                    'email' => $snapshot->getEmail(),
-                    'confirmationToken' => $snapshot->getConfirmationToken(),
+                    'userId' => $snapshot->id,
+                    'email' => $snapshot->email,
+                    'confirmationToken' => $snapshot->confirmationToken,
                 ])
                 ->executeStatement();
 
@@ -88,9 +86,9 @@ final class UserRepository implements UserRepositoryInterface
                 ->update('accounts_users')
                 ->set('status', ':status')
                 ->setParameters([
-                    'status' => $snapshot->getStatus(),
+                    'status' => $snapshot->status,
                 ])
-                ->execute();
+                ->executeStatement();
 
             $this->connection->commit();
         } catch (Throwable $exception) {
@@ -102,7 +100,6 @@ final class UserRepository implements UserRepositoryInterface
 
     /**
      * @throws Exception
-     * @throws DoctrineDriverException
      */
     public function fetchByEmail(string $email): ?User
     {
@@ -125,9 +122,9 @@ final class UserRepository implements UserRepositoryInterface
             ->andWhere('au.status = :status')
             ->setParameters([
                 'email' => $email,
-                'status' => Status::ACTIVE()->getValue(),
+                'status' => Status::ACTIVE->value,
             ])
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         if ($row === false) {
@@ -152,7 +149,7 @@ final class UserRepository implements UserRepositoryInterface
                 'email' => $email,
                 'username' => $username,
             ])
-            ->execute()
+            ->executeQuery()
             ->rowCount();
 
         return $databaseRows > 0;
@@ -160,7 +157,6 @@ final class UserRepository implements UserRepositoryInterface
 
     /**
      * @throws Exception
-     * @throws DoctrineDriverException
      */
     public function fetchByConfirmToken(string $confirmToken): ?User
     {
@@ -184,9 +180,9 @@ final class UserRepository implements UserRepositoryInterface
             ->andWhere('auc.email = au.email')
             ->setParameters([
                 'confirmationToken' => $confirmToken,
-                'status' => Status::EMAIL_VERIFICATION()->getValue(),
+                'status' => Status::EMAIL_VERIFICATION->value,
             ])
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         if ($row === false) {

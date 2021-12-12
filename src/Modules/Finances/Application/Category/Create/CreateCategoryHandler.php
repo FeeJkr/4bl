@@ -19,9 +19,9 @@ final class CreateCategoryHandler implements CommandHandler
         $category = Category::new(
             $this->repository->nextIdentity(),
             $this->userContext->getUserId(),
-            $command->getName(),
-            CategoryType::from($command->getType()),
-            $command->getIcon(),
+            $command->name,
+            CategoryType::from($command->type),
+            $command->icon,
         );
 
         $this->repository->store($category);

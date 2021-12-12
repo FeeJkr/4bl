@@ -15,7 +15,7 @@ final class DeleteCategoryHandler implements CommandHandler
 
     public function __invoke(DeleteCategoryCommand $command): void
     {
-        $id = CategoryId::fromString($command->getId());
+        $id = CategoryId::fromString($command->id);
         $category = $this->repository->getById($id, $this->userContext->getUserId());
 
         $this->repository->delete($category);

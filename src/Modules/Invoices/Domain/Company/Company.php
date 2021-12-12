@@ -8,7 +8,7 @@ use App\Modules\Invoices\Domain\User\UserId;
 use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
-class Company
+final class Company
 {
     public function __construct(
         private CompanyId $id,

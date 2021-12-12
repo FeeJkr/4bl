@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\Invoices\Domain\Invoice;
@@ -7,7 +8,7 @@ use DateTimeImmutable;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
-class InvoiceProduct
+final class InvoiceProduct
 {
     public function __construct(
         private InvoiceProductId $id,

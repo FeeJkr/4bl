@@ -8,7 +8,6 @@ use App\Common\Application\Event\EventHandler;
 use App\Modules\Accounts\Domain\User\Event\UserWasRegistered;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -21,16 +20,16 @@ final class SendUserConfirmationEmailAfterRegister implements EventHandler
     public function __invoke(UserWasRegistered $event): void
     {
         $email = (new TemplatedEmail())
-            ->to($event->getEmail())
+            ->to($event->email)
             ->subject(self::SUBJECT)
             ->htmlTemplate('@accounts.email/email-confirmation.html.twig')
             ->context([
-                'fullName' => sprintf('%s %s', $event->getFirstName(), $event->getLastName()),
-                'username' => $event->getUsername(),
+                'fullName' => sprintf('%s %s', $event->firstName, $event->lastName),
+                'username' => $event->username,
                 'confirmationUrl' => $this->router->generate(
                     'api.v1.accounts.confirm-email',
                     [
-                        'token' => $event->getConfirmationToken()
+                        'token' => $event->confirmationToken
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),

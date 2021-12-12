@@ -16,7 +16,7 @@ final class GetCategoryByIdAction extends AbstractAction
     public function __invoke(GetCategoryByIdRequest $request): GetCategoryByIdResponse
     {
         /** @var CategoryDTO $category */
-        $category = $this->bus->handle(new GetCategoryByIdQuery($request->getId()));
+        $category = $this->bus->handle(new GetCategoryByIdQuery($request->id));
 
         return GetCategoryByIdResponse::respond($category);
     }

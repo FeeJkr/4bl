@@ -8,7 +8,6 @@ use App\Common\Application\NotFoundException;
 use App\Common\Application\Query\QueryHandler;
 use App\Modules\Accounts\Application\User\UserDTO;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Exception as DBALException;
 use Ramsey\Uuid\Uuid;
 
@@ -28,13 +27,13 @@ final class GetUserByIdHandler implements QueryHandler
 
         $row = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'id',
                 'email',
                 'username',
                 'first_name',
                 'last_name',
-            ])
+            )
             ->from('accounts_users')
             ->where('id = :id')
             ->setParameter('id', $query->userId)

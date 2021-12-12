@@ -9,65 +9,15 @@ use App\Common\Application\Command\Command;
 final class GenerateInvoiceCommand implements Command
 {
     public function __construct(
-        private string $invoiceNumber,
-        private string $generateDate,
-        private string $sellDate,
-        private string $generatePlace,
-        private string $sellerId,
-        private string $buyerId,
-        private array $products,
-        private float $alreadyTakenPrice,
-        private string $currency,
-        private int $vatPercentage,
+        public readonly string $invoiceNumber,
+        public readonly string $generateDate,
+        public readonly string $sellDate,
+        public readonly string $generatePlace,
+        public readonly string $sellerId,
+        public readonly string $buyerId,
+        public readonly array $products,
+        public readonly float $alreadyTakenPrice,
+        public readonly string $currency,
+        public readonly int $vatPercentage,
     ){}
-
-    public function getInvoiceNumber(): string
-    {
-        return $this->invoiceNumber;
-    }
-
-    public function getGenerateDate(): string
-    {
-        return $this->generateDate;
-    }
-
-    public function getSellDate(): string
-    {
-        return $this->sellDate;
-    }
-
-    public function getGeneratePlace(): string
-    {
-        return $this->generatePlace;
-    }
-
-    public function getSellerId(): string
-    {
-        return $this->sellerId;
-    }
-
-    public function getBuyerId(): string
-    {
-        return $this->buyerId;
-    }
-
-    public function getProducts(): array
-    {
-        return $this->products;
-    }
-
-    public function getAlreadyTakenPrice(): float
-    {
-        return $this->alreadyTakenPrice;
-    }
-
-    public function getCurrency(): string
-    {
-        return $this->currency;
-    }
-
-    public function getVatPercentage(): int
-    {
-        return $this->vatPercentage;
-    }
 }

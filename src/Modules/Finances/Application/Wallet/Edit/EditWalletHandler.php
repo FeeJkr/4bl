@@ -20,11 +20,11 @@ final class EditWalletHandler implements CommandHandler
 
     public function __invoke(EditWalletCommand $command): void
     {
-        $wallet = $this->repository->getById(WalletId::fromString($command->getId()), $this->userContext->getUserId());
+        $wallet = $this->repository->getById(WalletId::fromString($command->id), $this->userContext->getUserId());
 
         $wallet->update(
-            $command->getName(),
-            new Money($command->getStartBalance(), new Currency($command->getCurrency()))
+            $command->name,
+            new Money($command->startBalance, new Currency($command->currency))
         );
 
         $this->repository->save($wallet);

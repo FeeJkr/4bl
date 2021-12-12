@@ -8,7 +8,7 @@ use App\Common\Application\Query\QueryBus;
 use App\Modules\Invoices\Application\Invoice\GetAll\GetAllInvoicesQuery;
 use App\Web\API\Action\AbstractAction;
 
-class GetAllInvoicesAction extends AbstractAction
+final class GetAllInvoicesAction extends AbstractAction
 {
     public function __construct(private QueryBus $bus){}
 

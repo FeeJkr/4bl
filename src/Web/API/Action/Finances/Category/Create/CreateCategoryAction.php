@@ -16,9 +16,9 @@ final class CreateCategoryAction extends AbstractAction
     public function __invoke(CreateCategoryRequest $request): NoContentResponse
     {
         $command = new CreateCategoryCommand(
-            $request->getName(),
-            $request->getType(),
-            $request->getIcon(),
+            $request->name,
+            $request->type,
+            $request->icon,
         );
 
         $this->bus->dispatch($command);

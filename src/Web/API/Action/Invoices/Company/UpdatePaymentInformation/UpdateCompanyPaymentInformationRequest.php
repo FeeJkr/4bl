@@ -8,14 +8,14 @@ use App\Web\API\Action\Request;
 use Assert\Assert;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
-class UpdateCompanyPaymentInformationRequest extends Request
+final class UpdateCompanyPaymentInformationRequest extends Request
 {
 	public function __construct(
-		private string $id,
-		private string $paymentType,
-		private int $paymentLastDate,
-		private string $bank,
-		private string $accountNumber
+		public readonly string $id,
+        public readonly string $paymentType,
+        public readonly int $paymentLastDate,
+        public readonly string $bank,
+        public readonly string $accountNumber
 	){}
 
 	public static function fromRequest(ServerRequest $request): self
@@ -42,30 +42,5 @@ class UpdateCompanyPaymentInformationRequest extends Request
 			$bank,
 			$accountNumber
 		);
-	}
-
-	public function getId(): string
-	{
-		return $this->id;
-	}
-
-	public function getPaymentType(): string
-	{
-		return $this->paymentType;
-	}
-
-	public function getPaymentLastDate(): int
-	{
-		return $this->paymentLastDate;
-	}
-
-	public function getBank(): string
-	{
-		return $this->bank;
-	}
-
-	public function getAccountNumber(): string
-	{
-		return $this->accountNumber;
 	}
 }

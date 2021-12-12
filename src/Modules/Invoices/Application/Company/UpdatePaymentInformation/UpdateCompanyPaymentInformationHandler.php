@@ -10,12 +10,9 @@ use App\Modules\Invoices\Domain\Company\CompanyId;
 use App\Modules\Invoices\Domain\Company\CompanyRepository;
 use App\Modules\Invoices\Domain\User\UserContext;
 
-class UpdateCompanyPaymentInformationHandler implements CommandHandler
+final class UpdateCompanyPaymentInformationHandler implements CommandHandler
 {
-    public function __construct(
-        private CompanyRepository $repository,
-        private UserContext $userContext,
-    ){}
+    public function __construct(private CompanyRepository $repository, private UserContext $userContext){}
 
     /**
      * @throws CompanyException
@@ -23,15 +20,15 @@ class UpdateCompanyPaymentInformationHandler implements CommandHandler
     public function __invoke(UpdateCompanyPaymentInformationCommand $command): void
     {
         $company = $this->repository->fetchById(
-            CompanyId::fromString($command->getCompanyId()),
+            CompanyId::fromString($command->companyId),
             $this->userContext->getUserId()
-        ) ?? throw CompanyException::notFoundById($command->getCompanyId());
+        ) ?? throw CompanyException::notFoundById($command->companyId);
 
         $company->updatePaymentInformation(
-            $command->getPaymentType(),
-            $command->getPaymentLastDate(),
-            $command->getBank(),
-            $command->getAccountNumber(),
+            $command->paymentType,
+            $command->paymentLastDate,
+            $command->bank,
+            $command->accountNumber,
         );
 
         $this->repository->save($company);

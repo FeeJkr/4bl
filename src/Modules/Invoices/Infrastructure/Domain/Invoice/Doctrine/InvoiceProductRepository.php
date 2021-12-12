@@ -8,12 +8,16 @@ use App\Modules\Invoices\Domain\Invoice\InvoiceProduct;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProductSnapshot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class InvoiceProductRepository
 {
     public function __construct(private Connection $connection){}
 
+    /**
+     * @throws Exception
+     */
     public function store(string $invoiceId, InvoiceProductSnapshot $snapshot): void
     {
         $this->connection
@@ -27,15 +31,18 @@ final class InvoiceProductRepository
                 'price' => ':price',
             ])
             ->setParameters([
-                'id' => $snapshot->getId(),
+                'id' => $snapshot->id,
                 'invoiceId' => $invoiceId,
-                'position' => $snapshot->getPosition(),
-                'name' => $snapshot->getName(),
-                'price' => $snapshot->getNetPrice(),
+                'position' => $snapshot->position,
+                'name' => $snapshot->name,
+                'price' => $snapshot->netPrice,
             ])
-            ->execute();
+            ->executeStatement();
     }
 
+    /**
+     * @throws Exception
+     */
     public function deleteByInvoiceId(string $invoiceId): void
     {
         $this->connection
@@ -43,6 +50,6 @@ final class InvoiceProductRepository
             ->delete('invoices_invoice_products')
             ->where('invoice_id = :invoiceId')
             ->setParameter('invoiceId', $invoiceId)
-            ->execute();
+            ->executeStatement();
     }
 }

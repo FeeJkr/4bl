@@ -19,8 +19,8 @@ final class CreateWalletHandler implements CommandHandler
     {
         $wallet = Wallet::create(
             $this->userContext->getUserId(),
-            $command->getName(),
-            new Money($command->getStartBalance(), new Currency($command->getCurrency()))
+            $command->name,
+            new Money($command->startBalance, new Currency($command->currency))
         );
 
         $this->repository->store($wallet);

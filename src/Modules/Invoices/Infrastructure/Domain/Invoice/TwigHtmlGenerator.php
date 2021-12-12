@@ -5,21 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Invoices\Infrastructure\Domain\Invoice;
 
 use App\Common\Application\Query\QueryBus;
-use App\Modules\Invoices\Application\Company\GetOneById\CompanyDTO;
+use App\Modules\Invoices\Application\Company\CompanyDTO;
 use App\Modules\Invoices\Application\Company\GetOneById\GetOneCompanyByIdQuery;
 use App\Modules\Invoices\Domain\Invoice\HtmlGenerator;
-use App\Modules\Invoices\Domain\Invoice\Invoice;
-use App\Modules\Invoices\Domain\Invoice\InvoiceProduct;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProductSnapshot;
 use App\Modules\Invoices\Domain\Invoice\InvoiceSnapshot;
 use App\Modules\Invoices\Domain\Invoice\PriceTransformer;
 use DateInterval;
-use Doctrine\Common\Collections\Collection;
-use Exception;
+use RuntimeException;
 use Throwable;
-use Twig\Environment;
 
-class TwigHtmlGenerator implements HtmlGenerator
+final class TwigHtmlGenerator implements HtmlGenerator
 {
     public function __construct(
         private PriceTransformer $priceTransformer,
@@ -30,72 +26,72 @@ class TwigHtmlGenerator implements HtmlGenerator
     {
         try {
             /** @var CompanyDTO $seller */
-            $seller = $this->queryBus->handle(new GetOneCompanyByIdQuery($snapshot->getSellerId()));
+            $seller = $this->queryBus->handle(new GetOneCompanyByIdQuery($snapshot->sellerId));
 
             /** @var CompanyDTO $buyer */
-            $buyer = $this->queryBus->handle(new GetOneCompanyByIdQuery($snapshot->getBuyerId()));
-            $paymentLastDate = clone $snapshot->getParameters()->getSellDate();
-            $paymentLastDate->add(new DateInterval(sprintf('P%dD', $seller->getPaymentLastDate())));
+            $buyer = $this->queryBus->handle(new GetOneCompanyByIdQuery($snapshot->buyerId));
+            $paymentLastDate = clone $snapshot->parameters->sellDate;
+            $paymentLastDate->add(new DateInterval(sprintf('P%dD', $seller->paymentLastDate)));
             $toPayPrice = $this->calculateToPayPrice($snapshot);
 
             return [
-                'invoiceNumber' => $snapshot->getParameters()->getInvoiceNumber(),
-                'generateDate' => $snapshot->getParameters()->getGenerateDate()->format('d-m-Y'),
-                'sellDate' => $snapshot->getParameters()->getSellDate()->format('d-m-Y'),
-                'generatePlace' => $snapshot->getParameters()->getGeneratePlace(),
+                'invoiceNumber' => $snapshot->parameters->invoiceNumber,
+                'generateDate' => $snapshot->parameters->generateDate->format('d-m-Y'),
+                'sellDate' => $snapshot->parameters->sellDate->format('d-m-Y'),
+                'generatePlace' => $snapshot->parameters->generatePlace,
                 'seller' => [
-                    'name' => $seller->getName(),
-                    'street' => $seller->getStreet(),
-                    'zipCode' => $seller->getZipCode(),
-                    'city' => $seller->getCity(),
-                    'identificationNumber' => $seller->getIdentificationNumber(),
-                    'email' => $seller->getEmail(),
-                    'phoneNumber' => $seller->getPhoneNumber(),
+                    'name' => $seller->name,
+                    'street' => $seller->street,
+                    'zipCode' => $seller->zipCode,
+                    'city' => $seller->city,
+                    'identificationNumber' => $seller->identificationNumber,
+                    'email' => $seller->email,
+                    'phoneNumber' => $seller->phoneNumber,
                 ],
                 'buyer' => [
-                    'name' => $buyer->getName(),
-                    'street' => $buyer->getStreet(),
-                    'zipCode' => $buyer->getZipCode(),
-                    'city' => $buyer->getCity(),
-                    'identificationNumber' => $buyer->getIdentificationNumber(),
-                    'email' => $buyer->getEmail(),
-                    'phoneNumber' => $buyer->getPhoneNumber(),
+                    'name' => $buyer->name,
+                    'street' => $buyer->street,
+                    'zipCode' => $buyer->zipCode,
+                    'city' => $buyer->city,
+                    'identificationNumber' => $buyer->identificationNumber,
+                    'email' => $buyer->email,
+                    'phoneNumber' => $buyer->phoneNumber,
                 ],
-                'products' => $this->prepareProducts($snapshot->getProducts()),
+                'products' => $this->prepareProducts($snapshot->products),
                 'totalNetPrice' => array_sum(
                     array_map(
                         static fn (InvoiceProductSnapshot $product): float => $product->getNetPrice(),
-                        $snapshot->getProducts()
+                        $snapshot->products
                     )
                 ),
                 'totalTaxPrice' => array_sum(
                     array_map(
                         static fn (InvoiceProductSnapshot $product): float => $product->getTaxPrice(),
-                        $snapshot->getProducts()
+                        $snapshot->products
                     )
                 ),
                 'totalGrossPrice' => array_sum(
                     array_map(
                         static fn (InvoiceProductSnapshot $product): float => $product->getGrossPrice(),
-                        $snapshot->getProducts()
+                        $snapshot->products
                     )
                 ),
-                'paymentType' => $seller->getPaymentType(),
+                'paymentType' => $seller->paymentType,
                 'paymentLastDate' => $snapshot
-                    ->getParameters()
-                    ->getSellDate()
-                    ->modify('+' . $seller->getPaymentLastDate() . ' days')
+                    ->parameters
+                    ->sellDate
+                    ->modify('+' . $seller->paymentLastDate . ' days')
                     ->format('d-m-Y'),
-                'paymentBankName' => $seller->getBank(),
-                'paymentAccountNumber' => $seller->getAccountNumber(),
-                'alreadyTakenPrice' => $snapshot->getParameters()->getAlreadyTakenPrice(),
+                'paymentBankName' => $seller->bank,
+                'paymentAccountNumber' => $seller->accountNumber,
+                'alreadyTakenPrice' => $snapshot->parameters->alreadyTakenPrice,
                 'toPayPrice' => $toPayPrice,
-                'currencyCode' => $snapshot->getParameters()->getCurrencyCode(),
+                'currencyCode' => $snapshot->parameters->currencyCode,
                 'translatePrice' => $this->priceTransformer->transformToText($toPayPrice),
-                'vatPercentage' => $snapshot->getParameters()->getVatPercentage(),
+                'vatPercentage' => $snapshot->parameters->vatPercentage,
             ];
         } catch (Throwable $exception) {
-            throw new Exception($exception->getMessage());
+            throw new RuntimeException($exception->getMessage());
         }
     }
 
@@ -104,9 +100,9 @@ class TwigHtmlGenerator implements HtmlGenerator
         return array_sum(
             array_map(
                 static fn (InvoiceProductSnapshot $product): float => $product->getGrossPrice(),
-                $snapshot->getProducts()
+                $snapshot->products
             )
-        ) - $snapshot->getParameters()->getAlreadyTakenPrice();
+        ) - $snapshot->parameters->alreadyTakenPrice;
     }
 
     private function prepareProducts(array $collection): array

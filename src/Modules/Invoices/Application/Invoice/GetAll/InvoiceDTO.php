@@ -9,59 +9,14 @@ use DateTimeImmutable;
 final class InvoiceDTO
 {
     public function __construct(
-        private string $id,
-        private string $invoiceNumber,
-        private DateTimeImmutable $generatedAt,
-        private DateTimeImmutable $soldAt,
-        private string $sellerName,
-        private string $buyerName,
-        private float $totalNetPrice,
-        private string $currencyCode,
-        private int $vatPercentage,
+        public readonly string $id,
+        public readonly string $invoiceNumber,
+        public readonly DateTimeImmutable $generatedAt,
+        public readonly DateTimeImmutable $soldAt,
+        public readonly string $sellerName,
+        public readonly string $buyerName,
+        public readonly float $totalNetPrice,
+        public readonly string $currencyCode,
+        public readonly int $vatPercentage,
     ){}
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getInvoiceNumber(): string
-    {
-        return $this->invoiceNumber;
-    }
-
-    public function getGeneratedAt(): DateTimeImmutable
-    {
-        return $this->generatedAt;
-    }
-
-    public function getSoldAt(): DateTimeImmutable
-    {
-        return $this->soldAt;
-    }
-
-    public function getSellerName(): string
-    {
-        return $this->sellerName;
-    }
-
-    public function getBuyerName(): string
-    {
-        return $this->buyerName;
-    }
-
-    public function getTotalNetPrice(): float
-    {
-        return $this->totalNetPrice;
-    }
-
-    public function getCurrencyCode(): string
-    {
-        return $this->currencyCode;
-    }
-
-    public function getVatPercentage(): int
-    {
-        return $this->vatPercentage;
-    }
 }

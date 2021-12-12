@@ -43,7 +43,7 @@ final class Category
             $this->id->toString(),
             $this->userId->toString(),
             $this->name,
-            $this->type->getValue(),
+            $this->type->value,
             $this->icon,
         );
     }

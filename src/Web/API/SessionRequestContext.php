@@ -6,7 +6,6 @@ namespace App\Web\API;
 
 use App\Common\Infrastructure\Request\HttpRequestContext;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class SessionRequestContext implements HttpRequestContext
 {

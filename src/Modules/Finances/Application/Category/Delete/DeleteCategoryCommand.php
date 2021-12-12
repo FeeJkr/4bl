@@ -8,10 +8,5 @@ use App\Common\Application\Command\Command;
 
 final class DeleteCategoryCommand implements Command
 {
-    public function __construct(private string $id){}
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
+    public function __construct(public readonly string $id){}
 }

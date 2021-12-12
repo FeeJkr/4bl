@@ -14,18 +14,18 @@ final class GetOneInvoiceResponse extends Response
     public static function respond(InvoiceDTO $invoice): self
     {
         return new self([
-            'id' => $invoice->getId(),
-            'userId' => $invoice->getUserId(),
-            'sellerId' => $invoice->getSellerId(),
-            'buyerId' => $invoice->getBuyerId(),
-            'invoiceNumber' => $invoice->getInvoiceNumber(),
-            'alreadyTakenPrice' => $invoice->getAlreadyTakenPrice(),
-            'generatePlace' => $invoice->getGeneratePlace(),
-            'currencyCode' => $invoice->getCurrencyCode(),
-            'vatPercentage' => $invoice->getVatPercentage(),
-            'generatedAt' => $invoice->getGeneratedAt()->format('d-m-Y'),
-            'soldAt' => $invoice->getSoldAt()->format('d-m-Y'),
-            'products' => self::buildProducts($invoice->getProducts()),
+            'id' => $invoice->id,
+            'userId' => $invoice->userId,
+            'sellerId' => $invoice->sellerId,
+            'buyerId' => $invoice->buyerId,
+            'invoiceNumber' => $invoice->invoiceNumber,
+            'alreadyTakenPrice' => $invoice->alreadyTakenPrice,
+            'generatePlace' => $invoice->generatePlace,
+            'currencyCode' => $invoice->currencyCode,
+            'vatPercentage' => $invoice->vatPercentage,
+            'generatedAt' => $invoice->generatedAt->format('d-m-Y'),
+            'soldAt' => $invoice->soldAt->format('d-m-Y'),
+            'products' => self::buildProducts($invoice->products),
         ]);
     }
 
@@ -33,9 +33,9 @@ final class GetOneInvoiceResponse extends Response
     {
         return array_map(
             static fn(InvoiceProductDTO $product) => [
-                'position' => $product->getPosition(),
-                'name' => $product->getName(),
-                'price' => $product->getPrice(),
+                'position' => $product->position,
+                'name' => $product->name,
+                'price' => $product->price,
             ],
             $products->toArray()
         );

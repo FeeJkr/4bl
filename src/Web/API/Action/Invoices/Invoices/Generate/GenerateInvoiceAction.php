@@ -9,23 +9,23 @@ use App\Modules\Invoices\Application\Invoice\Generate\GenerateInvoiceCommand;
 use App\Web\API\Action\AbstractAction;
 use App\Web\API\Action\NoContentResponse;
 
-class GenerateInvoiceAction extends AbstractAction
+final class GenerateInvoiceAction extends AbstractAction
 {
     public function __construct(private CommandBus $bus){}
 
     public function __invoke(GenerateInvoiceRequest $request): NoContentResponse
     {
 		$command = new GenerateInvoiceCommand(
-		    $request->getInvoiceNumber(),
-            $request->getGenerateDate(),
-            $request->getSellDate(),
-            $request->getGeneratePlace(),
-            $request->getSellerId(),
-            $request->getBuyerId(),
-            $request->getProducts(),
-            $request->getAlreadyTakenPrice(),
-            $request->getCurrencyCode(),
-            $request->getVatPercentage()
+		    $request->invoiceNumber,
+            $request->generateDate,
+            $request->sellDate,
+            $request->generatePlace,
+            $request->sellerId,
+            $request->buyerId,
+            $request->products,
+            $request->alreadyTakenPrice,
+            $request->currencyCode,
+            $request->vatPercentage,
 		);
 
 		$this->bus->dispatch($command);

@@ -6,12 +6,7 @@ namespace App\Modules\Invoices\Application\Company\Delete;
 
 use App\Common\Application\Command\Command;
 
-class DeleteCompanyCommand implements Command
+final class DeleteCompanyCommand implements Command
 {
-    public function __construct(private string $companyId){}
-
-    public function getCompanyId(): string
-    {
-        return $this->companyId;
-    }
+    public function __construct(public readonly string $companyId){}
 }

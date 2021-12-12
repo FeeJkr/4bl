@@ -20,7 +20,7 @@ final class UserFactory
             $row['password'],
             $row['first_name'],
             $row['last_name'],
-            new Status($row['status']),
+            Status::from($row['status']),
             $row['confirmation_token'] ? new ConfirmationToken($row['confirmation_token']) : null,
         );
     }

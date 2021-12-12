@@ -9,17 +9,12 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class GetOneCompanyRequest extends Request
 {
-    public function __construct(private string $companyId){}
+    public function __construct(public readonly string $companyId){}
 
     public static function fromRequest(ServerRequest $request): Request
     {
         return new self(
             $request->get('id')
         );
-    }
-
-    public function getCompanyId(): string
-    {
-        return $this->companyId;
     }
 }

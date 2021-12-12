@@ -9,7 +9,7 @@ use App\Common\Application\Command\CommandBus;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class MessengerCommandBus implements CommandBus
+final class MessengerCommandBus implements CommandBus
 {
     public function __construct(private MessageBusInterface $commandBus){}
 

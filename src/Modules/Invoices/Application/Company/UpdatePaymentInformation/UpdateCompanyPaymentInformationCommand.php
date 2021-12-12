@@ -6,38 +6,13 @@ namespace App\Modules\Invoices\Application\Company\UpdatePaymentInformation;
 
 use App\Common\Application\Command\Command;
 
-class UpdateCompanyPaymentInformationCommand implements Command
+final class UpdateCompanyPaymentInformationCommand implements Command
 {
     public function __construct(
-        private string $companyId,
-        private string $paymentType,
-        private int $paymentLastDate,
-        private string $bank,
-        private string $accountNumber,
+        public readonly string $companyId,
+        public readonly string $paymentType,
+        public readonly int $paymentLastDate,
+        public readonly string $bank,
+        public readonly string $accountNumber,
     ){}
-
-    public function getCompanyId(): string
-    {
-        return $this->companyId;
-    }
-
-    public function getPaymentType(): string
-    {
-        return $this->paymentType;
-    }
-
-    public function getPaymentLastDate(): int
-    {
-        return $this->paymentLastDate;
-    }
-
-    public function getBank(): string
-    {
-        return $this->bank;
-    }
-
-    public function getAccountNumber(): string
-    {
-        return $this->accountNumber;
-    }
 }

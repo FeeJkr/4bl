@@ -9,35 +9,10 @@ use App\Common\Domain\DomainEvent;
 final class UserWasRegistered implements DomainEvent
 {
     public function __construct(
-        private string $email,
-        private string $username,
-        private string $firstName,
-        private string $lastName,
-        private string $confirmationToken
+        public readonly string $email,
+        public readonly string $username,
+        public readonly string $firstName,
+        public readonly string $lastName,
+        public readonly string $confirmationToken
     ){}
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function getConfirmationToken(): string
-    {
-        return $this->confirmationToken;
-    }
 }

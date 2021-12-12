@@ -35,7 +35,7 @@ final class CompanyRepository implements CompanyRepositoryInterface
     {
         $row = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'c.id as company_id',
                 'c.user_id',
                 'c.name',
@@ -51,7 +51,7 @@ final class CompanyRepository implements CompanyRepositoryInterface
                 'ca.street',
                 'ca.zip_code',
                 'ca.city',
-            ])
+            )
             ->from(self::DATABASE_TABLE, 'c')
             ->leftJoin('c', 'invoices_company_addresses', 'ca', 'ca.id = c.company_address_id')
             ->leftJoin('c', 'invoices_company_payment_information', 'cpi', 'cpi.id = c.company_payment_information_id')
@@ -61,7 +61,7 @@ final class CompanyRepository implements CompanyRepositoryInterface
                 'id' => $id->toString(),
                 'userId' => $userId->toString(),
             ])
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         if ($row === false) {
@@ -123,16 +123,16 @@ final class CompanyRepository implements CompanyRepositoryInterface
                 'phone_number' => ':phoneNumber',
             ])
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'userId' => $snapshot->getUserId(),
-                'companyAddressId' => $snapshot->getAddressId(),
-                'companyPaymentInformationId' => $snapshot->getPaymentInformationId(),
-                'name' => $snapshot->getName(),
-                'identificationNumber' => $snapshot->getIdentificationNumber(),
-                'email' => $snapshot->getEmail(),
-                'phoneNumber' => $snapshot->getPhoneNumber(),
+                'id' => $snapshot->id,
+                'userId' => $snapshot->userId,
+                'companyAddressId' => $snapshot->addressId,
+                'companyPaymentInformationId' => $snapshot->paymentInformationId,
+                'name' => $snapshot->name,
+                'identificationNumber' => $snapshot->identificationNumber,
+                'email' => $snapshot->email,
+                'phoneNumber' => $snapshot->phoneNumber,
             ])
-            ->execute();
+            ->executeStatement();
     }
 
     /**
@@ -154,10 +154,10 @@ final class CompanyRepository implements CompanyRepositoryInterface
             ->where('id = :id')
             ->andWhere('user_id = :userId')
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'userId' => $snapshot->getUserId(),
+                'id' => $snapshot->id,
+                'userId' => $snapshot->userId,
             ])
-            ->execute();
+            ->executeStatement();
     }
 
     /**
@@ -184,14 +184,14 @@ final class CompanyRepository implements CompanyRepositoryInterface
             ->set('updated_at', ':updatedAt')
             ->where('id = :id')
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'companyPaymentInformationId' => $snapshot->getPaymentInformationId(),
-                'name' => $snapshot->getName(),
-                'identificationNumber' => $snapshot->getIdentificationNumber(),
-                'email' => $snapshot->getEmail(),
-                'phoneNumber' => $snapshot->getPhoneNumber(),
+                'id' => $snapshot->id,
+                'companyPaymentInformationId' => $snapshot->paymentInformationId,
+                'name' => $snapshot->name,
+                'identificationNumber' => $snapshot->identificationNumber,
+                'email' => $snapshot->email,
+                'phoneNumber' => $snapshot->phoneNumber,
                 'updatedAt' => (new DateTimeImmutable())->format(self::DATETIME_FORMAT),
             ])
-            ->execute();
+            ->executeStatement();
     }
 }

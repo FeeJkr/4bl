@@ -9,13 +9,13 @@ use App\Modules\Invoices\Application\Company\Delete\DeleteCompanyCommand;
 use App\Web\API\Action\AbstractAction;
 use App\Web\API\Action\NoContentResponse;
 
-class DeleteCompanyAction extends AbstractAction
+final class DeleteCompanyAction extends AbstractAction
 {
     public function __construct(private CommandBus $bus){}
 
     public function __invoke(DeleteCompanyRequest $request): NoContentResponse
     {
-        $this->bus->dispatch(new DeleteCompanyCommand($request->getCompanyId()));
+        $this->bus->dispatch(new DeleteCompanyCommand($request->companyId));
 
         return NoContentResponse::respond();
     }

@@ -9,13 +9,13 @@ use App\Modules\Invoices\Application\Invoice\Delete\DeleteInvoiceCommand;
 use App\Web\API\Action\AbstractAction;
 use App\Web\API\Action\NoContentResponse;
 
-class DeleteInvoiceAction extends AbstractAction
+final class DeleteInvoiceAction extends AbstractAction
 {
     public function __construct(private CommandBus $bus){}
 
     public function __invoke(DeleteInvoiceRequest $request): NoContentResponse
     {
-        $this->bus->dispatch(new DeleteInvoiceCommand($request->getInvoiceId()));
+        $this->bus->dispatch(new DeleteInvoiceCommand($request->invoiceId));
 
         return NoContentResponse::respond();
     }

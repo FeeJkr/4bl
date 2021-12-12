@@ -7,29 +7,9 @@ namespace App\Modules\Invoices\Domain\Company;
 final class CompanyAddressSnapshot
 {
     public function __construct(
-        private string $id,
-        private string $street,
-        private string $zipCode,
-        private string $city,
+        public readonly string $id,
+        public readonly string $street,
+        public readonly string $zipCode,
+        public readonly string $city,
     ){}
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getStreet(): string
-    {
-        return $this->street;
-    }
-
-    public function getZipCode(): string
-    {
-        return $this->zipCode;
-    }
-
-    public function getCity(): string
-    {
-        return $this->city;
-    }
 }

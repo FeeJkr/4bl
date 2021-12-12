@@ -15,7 +15,7 @@ final class DeleteWalletAction extends AbstractAction
 
     public function __invoke(DeleteWalletRequest $request): NoContentResponse
     {
-        $command = new DeleteWalletCommand($request->getId());
+        $command = new DeleteWalletCommand($request->id);
 
         $this->bus->dispatch($command);
 

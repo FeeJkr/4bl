@@ -7,22 +7,24 @@ namespace App\Modules\Finances\Application\Category\GetById;
 use App\Common\Application\Query\QueryHandler;
 use App\Modules\Finances\Application\Category\CategoryDTO;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 
 final class GetCategoryByIdHandler implements QueryHandler
 {
     public function __construct(private Connection $connection){}
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(GetCategoryByIdQuery $query): CategoryDTO
     {
-        $queryBuilder = $this->connection
+        $row = $this->connection
             ->createQueryBuilder()
             ->select(['id', 'name', 'type', 'icon'])
             ->from('categories')
             ->where('id = :id')
-            ->setParameter('id', $query->getId());
-
-        $row = $this->connection
-            ->executeQuery($queryBuilder->getSQL(), $queryBuilder->getParameters())
+            ->setParameter('id', $query->id)
+            ->executeQuery()
             ->fetchAssociative();
 
         return CategoryDTO::createFromRow($row);

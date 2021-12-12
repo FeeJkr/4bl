@@ -12,7 +12,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Exception as DBALException;
 
-class GetInvoiceByIdHandler implements QueryHandler
+final class GetInvoiceByIdHandler implements QueryHandler
 {
     private const DATETIME_FORMAT = 'Y-m-d H:i:s';
 
@@ -20,7 +20,6 @@ class GetInvoiceByIdHandler implements QueryHandler
 
     /**
      * @throws NotFoundException
-     * @throws Exception
      * @throws DBALException
      */
     public function __invoke(GetInvoiceByIdQuery $query): InvoiceDTO
@@ -44,17 +43,17 @@ class GetInvoiceByIdHandler implements QueryHandler
             ->where('id = :id')
             ->andWhere('user_id = :userId')
             ->setParameters([
-                'id' => $query->getInvoiceId(),
+                'id' => $query->invoiceId,
                 'userId' => $this->userContext->getUserId()->toString(),
             ])
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         if ($row === false) {
-            throw NotFoundException::notFoundById($query->getInvoiceId());
+            throw NotFoundException::notFoundById($query->invoiceId);
         }
 
-        $products = $this->prepareInvoiceProducts($query->getInvoiceId());
+        $products = $this->prepareInvoiceProducts($query->invoiceId);
 
         return new InvoiceDTO(
             $row['id'],
@@ -74,23 +73,22 @@ class GetInvoiceByIdHandler implements QueryHandler
 
     /**
      * @throws DBALException
-     * @throws Exception
      */
     private function prepareInvoiceProducts(string $invoiceId): InvoiceProductDTOCollection
     {
         $products = new InvoiceProductDTOCollection();
         $rows = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'id',
                 'position',
                 'name',
                 'price',
-            ])
+            )
             ->from('invoices_invoice_products')
             ->where('invoice_id = :invoiceId')
             ->setParameter('invoiceId', $invoiceId)
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
 
         foreach ($rows as $row) {

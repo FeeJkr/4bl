@@ -7,7 +7,7 @@ namespace App\Modules\Invoices\Application\Filesystem\GetFileByName;
 use App\Common\Application\Query\QueryHandler;
 use App\Modules\Invoices\Domain\Filesystem\Dropbox;
 
-class GetFileByNameHandler implements QueryHandler
+final class GetFileByNameHandler implements QueryHandler
 {
     public function __construct(private Dropbox $dropbox){}
 

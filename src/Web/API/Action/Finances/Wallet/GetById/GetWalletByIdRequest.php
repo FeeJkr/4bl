@@ -12,7 +12,7 @@ final class GetWalletByIdRequest extends Request
 {
     private const ID = 'id';
 
-    public function __construct(private string $id){}
+    public function __construct(public readonly string $id){}
 
     public static function fromRequest(ServerRequest $request): self
     {
@@ -23,10 +23,5 @@ final class GetWalletByIdRequest extends Request
             ->verifyNow();
 
         return new self($id);
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
     }
 }

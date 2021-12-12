@@ -18,7 +18,7 @@ class ConfirmEmailHandler implements CommandHandler
      */
     public function __invoke(ConfirmEmailCommand $command): void
     {
-        $user = $this->service->confirmEmail($command->getToken());
+        $user = $this->service->confirmEmail($command->token);
 
         $this->repository->save($user);
     }

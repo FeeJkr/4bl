@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\Invoices\Infrastructure\Domain\Filesystem;
@@ -10,7 +11,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
 use Throwable;
 
-class DropboxApiIntegration implements Dropbox
+final class DropboxApiIntegration implements Dropbox
 {
     private const DROPBOX_UPLOAD_URL = 'https://content.dropboxapi.com/2/files/upload';
     private const DROPBOX_DOWNLOAD_URL = 'https://content.dropboxapi.com/2/files/download';

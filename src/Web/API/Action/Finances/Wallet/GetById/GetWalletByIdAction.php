@@ -15,7 +15,7 @@ final class GetWalletByIdAction extends AbstractAction
     public function __invoke(GetWalletByIdRequest $request): GetWalletByIdResponse
     {
         $wallet = $this->bus->handle(
-            new GetWalletByIdQuery($request->getId())
+            new GetWalletByIdQuery($request->id)
         );
 
         return GetWalletByIdResponse::respond($wallet);

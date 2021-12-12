@@ -7,7 +7,7 @@ namespace App\Modules\Invoices\Domain\Company;
 use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
-class CompanyAddress
+final class CompanyAddress
 {
     public function __construct(
         private CompanyAddressId $id,

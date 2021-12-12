@@ -8,17 +8,17 @@ use App\Web\API\Action\Request;
 use Assert\Assert;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
-class UpdateCompanyRequest extends Request
+final class UpdateCompanyRequest extends Request
 {
 	public function __construct(
-		private string $companyId,
-		private string $name,
-		private string $identificationNumber,
-		private ?string $email,
-		private ?string $phoneNumber,
-		private string $street,
-		private string $zipCode,
-		private string $city,
+		public readonly string $companyId,
+        public readonly string $name,
+        public readonly string $identificationNumber,
+        public readonly ?string $email,
+        public readonly ?string $phoneNumber,
+        public readonly string $street,
+        public readonly string $zipCode,
+        public readonly string $city,
 	){}
 
 	public static function fromRequest(ServerRequest $request): self
@@ -54,45 +54,5 @@ class UpdateCompanyRequest extends Request
 			$zipCode,
 			$city
 		);
-	}
-
-	public function getCompanyId(): string
-	{
-		return $this->companyId;
-	}
-
-	public function getName(): string
-	{
-		return $this->name;
-	}
-
-	public function getIdentificationNumber(): string
-	{
-		return $this->identificationNumber;
-	}
-
-	public function getEmail(): ?string
-	{
-		return $this->email;
-	}
-
-	public function getPhoneNumber(): ?string
-	{
-		return $this->phoneNumber;
-	}
-
-	public function getStreet(): string
-	{
-		return $this->street;
-	}
-
-	public function getZipCode(): string
-	{
-		return $this->zipCode;
-	}
-
-	public function getCity(): string
-	{
-		return $this->city;
 	}
 }

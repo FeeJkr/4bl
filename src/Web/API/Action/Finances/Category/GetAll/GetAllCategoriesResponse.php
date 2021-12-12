@@ -14,10 +14,10 @@ final class GetAllCategoriesResponse extends Response
     {
         return new self(
             array_map(static fn(CategoryDTO $category) => [
-                'id' => $category->getId(),
-                'name' => $category->getName(),
-                'type' => $category->getType(),
-                'icon' => $category->getIcon(),
+                'id' => $category->id,
+                'name' => $category->name,
+                'type' => $category->type,
+                'icon' => $category->icon,
             ], $categories->toArray())
         );
     }

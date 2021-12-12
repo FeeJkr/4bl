@@ -34,13 +34,13 @@ final class CompanyPaymentInformationRepository
                 'account_number' => ':accountNumber',
             ])
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'paymentType' => $snapshot->getPaymentType(),
-                'paymentLastDay' => $snapshot->getPaymentLastDay(),
-                'bank' => $snapshot->getBank(),
-                'accountNumber' => $snapshot->getAccountNumber(),
+                'id' => $snapshot->id,
+                'paymentType' => $snapshot->paymentType,
+                'paymentLastDay' => $snapshot->paymentLastDay,
+                'bank' => $snapshot->bank,
+                'accountNumber' => $snapshot->accountNumber,
             ])
-            ->execute();
+            ->executeStatement();
     }
 
     /**
@@ -52,8 +52,8 @@ final class CompanyPaymentInformationRepository
             ->createQueryBuilder()
             ->delete(self::DATABASE_TABLE)
             ->where('id = :id')
-            ->setParameter('id', $paymentInformation->getSnapshot()->getId())
-            ->execute();
+            ->setParameter('id', $paymentInformation->getSnapshot()->id)
+            ->executeStatement();
     }
 
     /**
@@ -63,7 +63,7 @@ final class CompanyPaymentInformationRepository
     {
         $snapshot = $paymentInformation->getSnapshot();
 
-        if (!$this->existsById($snapshot->getId())) {
+        if (!$this->existsById($snapshot->id)) {
             $this->store($paymentInformation);
 
             return;
@@ -79,14 +79,14 @@ final class CompanyPaymentInformationRepository
             ->set('updated_at', ':updatedAt')
             ->where('id = :id')
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'paymentType' => $snapshot->getPaymentType(),
-                'paymentLastDay' => $snapshot->getPaymentLastDay(),
-                'bank' => $snapshot->getBank(),
-                'accountNumber' => $snapshot->getAccountNumber(),
+                'id' => $snapshot->id,
+                'paymentType' => $snapshot->paymentType,
+                'paymentLastDay' => $snapshot->paymentLastDay,
+                'bank' => $snapshot->bank,
+                'accountNumber' => $snapshot->accountNumber,
                 'updatedAt' => (new DateTimeImmutable())->format(self::DATETIME_FORMAT),
             ])
-            ->execute();
+            ->executeStatement();
     }
 
     /**
@@ -100,7 +100,7 @@ final class CompanyPaymentInformationRepository
             ->from(self::DATABASE_TABLE)
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute()
+            ->executeQuery()
             ->rowCount() > 0;
     }
 }

@@ -16,15 +16,15 @@ final class GetAllInvoicesResponse extends Response
     public static function respond(InvoiceDTOCollection $invoices): self
     {
         return new self(array_map(static fn (InvoiceDTO $invoice) => [
-            'id' => $invoice->getId(),
-            'invoiceNumber' => $invoice->getInvoiceNumber(),
-            'generatedAt' => $invoice->getGeneratedAt()->format('Y-m-d'),
-            'soldAt' => $invoice->getSoldAt()->format('Y-m-d'),
-            'sellerName' => $invoice->getSellerName(),
-            'buyerName' => $invoice->getBuyerName(),
-            'totalNetPrice' => $invoice->getTotalNetPrice(),
-            'currencyCode' => $invoice->getCurrencyCode(),
-            'vatPercentage' => $invoice->getVatPercentage(),
+            'id' => $invoice->id,
+            'invoiceNumber' => $invoice->invoiceNumber,
+            'generatedAt' => $invoice->generatedAt->format('Y-m-d'),
+            'soldAt' => $invoice->soldAt->format('Y-m-d'),
+            'sellerName' => $invoice->sellerName,
+            'buyerName' => $invoice->buyerName,
+            'totalNetPrice' => $invoice->totalNetPrice,
+            'currencyCode' => $invoice->currencyCode,
+            'vatPercentage' => $invoice->vatPercentage,
         ], $invoices->toArray()));
     }
 }

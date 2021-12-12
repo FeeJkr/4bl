@@ -14,10 +14,10 @@ final class GetAllWalletsResponse extends Response
     {
         return new self(
             array_map(static fn(WalletDTO $wallet) => [
-                'id' => $wallet->getId(),
-                'name' => $wallet->getName(),
-                'startBalance' => $wallet->getStartBalance(),
-                'currency' => $wallet->getCurrency(),
+                'id' => $wallet->id,
+                'name' => $wallet->name,
+                'startBalance' => $wallet->startBalance,
+                'currency' => $wallet->currency,
             ], $collection->toArray())
         );
     }

@@ -15,9 +15,9 @@ final class CreateWalletRequest extends Request
     private const CURRENCY = 'currency';
 
     public function __construct(
-        private string $name,
-        private int $startBalance,
-        private string $currency,
+        public readonly string $name,
+        public readonly int $startBalance,
+        public readonly string $currency,
     ){}
 
     public static function fromRequest(ServerRequest $request): self
@@ -39,20 +39,5 @@ final class CreateWalletRequest extends Request
             $startBalance,
             $currency,
         );
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getStartBalance(): int
-    {
-        return $this->startBalance;
-    }
-
-    public function getCurrency(): string
-    {
-        return $this->currency;
     }
 }

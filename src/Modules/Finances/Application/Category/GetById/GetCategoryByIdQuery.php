@@ -8,10 +8,5 @@ use App\Common\Application\Query\Query;
 
 final class GetCategoryByIdQuery implements Query
 {
-    public function __construct(private string $id){}
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
+    public function __construct(public readonly string $id){}
 }

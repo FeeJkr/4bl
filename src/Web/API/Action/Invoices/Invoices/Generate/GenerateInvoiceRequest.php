@@ -10,7 +10,7 @@ use Assert\InvalidArgumentException;
 use Assert\LazyAssertionException;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
-class GenerateInvoiceRequest extends Request
+final class GenerateInvoiceRequest extends Request
 {
 	private const INVOICE_NUMBER = 'invoiceNumber';
 	private const SELLER_ID = 'sellerId';
@@ -24,16 +24,16 @@ class GenerateInvoiceRequest extends Request
 	private const VAT_PERCENTAGE = 'vatPercentage';
 
 	public function __construct(
-	    private string $invoiceNumber,
-        private string $sellerId,
-        private string $buyerId,
-        private string $generatePlace,
-        private float $alreadyTakenPrice,
-        private string $generateDate,
-        private string $sellDate,
-        private string $currencyCode,
-        private array $products,
-        private int $vatPercentage,
+	    public readonly string $invoiceNumber,
+        public readonly string $sellerId,
+        public readonly string $buyerId,
+        public readonly string $generatePlace,
+        public readonly float $alreadyTakenPrice,
+        public readonly string $generateDate,
+        public readonly string $sellDate,
+        public readonly string $currencyCode,
+        public readonly array $products,
+        public readonly int $vatPercentage,
     ){}
 
     public static function fromRequest(ServerRequest $request): self
@@ -89,55 +89,5 @@ class GenerateInvoiceRequest extends Request
             $products,
             $vatPercentage
         );
-    }
-
-    public function getInvoiceNumber(): string
-    {
-        return $this->invoiceNumber;
-    }
-
-    public function getSellerId(): string
-    {
-        return $this->sellerId;
-    }
-
-    public function getBuyerId(): string
-    {
-        return $this->buyerId;
-    }
-
-    public function getGeneratePlace(): string
-    {
-        return $this->generatePlace;
-    }
-
-    public function getAlreadyTakenPrice(): float
-    {
-        return $this->alreadyTakenPrice;
-    }
-
-    public function getGenerateDate(): string
-    {
-        return $this->generateDate;
-    }
-
-    public function getSellDate(): string
-    {
-        return $this->sellDate;
-    }
-
-    public function getCurrencyCode(): string
-    {
-        return $this->currencyCode;
-    }
-
-    public function getProducts(): array
-    {
-        return $this->products;
-    }
-
-    public function getVatPercentage(): int
-    {
-        return $this->vatPercentage;
     }
 }

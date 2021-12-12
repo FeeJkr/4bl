@@ -6,11 +6,11 @@ namespace App\Modules\Invoices\Domain\Invoice;
 
 class InvoiceProductsCollection
 {
-    public function __construct(private array $products) {}
+    private array $products;
 
-    public function getProducts(): array
+    public function __construct(InvoiceProduct ...$products)
     {
-        return $this->products;
+        $this->products = $products;
     }
 
     public function toArray(): array
@@ -31,6 +31,6 @@ class InvoiceProductsCollection
             $products
         );
 
-        return new self($mappedProducts);
+        return new self(...$mappedProducts);
     }
 }

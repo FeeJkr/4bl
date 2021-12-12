@@ -9,77 +9,17 @@ use DateTimeImmutable;
 final class InvoiceDTO
 {
     public function __construct(
-        private string $id,
-        private string $userId,
-        private string $sellerId,
-        private string $buyerId,
-        private string $invoiceNumber,
-        private string $generatePlace,
-        private float $alreadyTakenPrice,
-        private string $currencyCode,
-        private int $vatPercentage,
-        private DateTimeImmutable $generatedAt,
-        private DateTimeImmutable $soldAt,
-        private InvoiceProductDTOCollection $products,
+        public readonly string $id,
+        public readonly string $userId,
+        public readonly string $sellerId,
+        public readonly string $buyerId,
+        public readonly string $invoiceNumber,
+        public readonly string $generatePlace,
+        public readonly float $alreadyTakenPrice,
+        public readonly string $currencyCode,
+        public readonly int $vatPercentage,
+        public readonly DateTimeImmutable $generatedAt,
+        public readonly DateTimeImmutable $soldAt,
+        public readonly InvoiceProductDTOCollection $products,
     ){}
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getUserId(): string
-    {
-        return $this->userId;
-    }
-
-    public function getSellerId(): string
-    {
-        return $this->sellerId;
-    }
-
-    public function getBuyerId(): string
-    {
-        return $this->buyerId;
-    }
-
-    public function getInvoiceNumber(): string
-    {
-        return $this->invoiceNumber;
-    }
-
-    public function getGeneratePlace(): string
-    {
-        return $this->generatePlace;
-    }
-
-    public function getAlreadyTakenPrice(): float
-    {
-        return $this->alreadyTakenPrice;
-    }
-
-    public function getCurrencyCode(): string
-    {
-        return $this->currencyCode;
-    }
-
-    public function getVatPercentage(): int
-    {
-        return $this->vatPercentage;
-    }
-
-    public function getGeneratedAt(): DateTimeImmutable
-    {
-        return $this->generatedAt;
-    }
-
-    public function getSoldAt(): DateTimeImmutable
-    {
-        return $this->soldAt;
-    }
-
-    public function getProducts(): InvoiceProductDTOCollection
-    {
-        return $this->products;
-    }
 }

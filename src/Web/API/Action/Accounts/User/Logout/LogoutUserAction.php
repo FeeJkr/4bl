@@ -9,9 +9,8 @@ use App\Common\Infrastructure\Request\HttpRequestContext;
 use App\Modules\Accounts\Application\User\SignOut\SignOutUserCommand;
 use App\Web\API\Action\AbstractAction;
 use App\Web\API\Action\NoContentResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class LogoutUserAction extends AbstractAction
+final class LogoutUserAction extends AbstractAction
 {
     public function __construct(private CommandBus $bus, private HttpRequestContext $requestContext){}
 

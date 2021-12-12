@@ -9,21 +9,21 @@ use App\Modules\Invoices\Application\Company\Update\UpdateCompanyCommand;
 use App\Web\API\Action\AbstractAction;
 use App\Web\API\Action\NoContentResponse;
 
-class UpdateCompanyAction extends AbstractAction
+final class UpdateCompanyAction extends AbstractAction
 {
 	public function __construct(private CommandBus $bus){}
 
 	public function __invoke(UpdateCompanyRequest $request): NoContentResponse
 	{
 		$this->bus->dispatch(new UpdateCompanyCommand(
-			$request->getCompanyId(),
-			$request->getStreet(),
-			$request->getZipCode(),
-			$request->getCity(),
-			$request->getName(),
-			$request->getIdentificationNumber(),
-			$request->getEmail(),
-			$request->getPhoneNumber(),
+			$request->companyId,
+			$request->street,
+			$request->zipCode,
+			$request->city,
+			$request->name,
+			$request->identificationNumber,
+			$request->email,
+			$request->phoneNumber,
 		));
 
 		return NoContentResponse::respond();

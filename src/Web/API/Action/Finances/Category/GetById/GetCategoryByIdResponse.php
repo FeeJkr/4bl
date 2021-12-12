@@ -12,10 +12,10 @@ final class GetCategoryByIdResponse extends Response
     public static function respond(CategoryDTO $category): self
     {
         return new self([
-            'id' => $category->getId(),
-            'name' => $category->getName(),
-            'type' => $category->getType(),
-            'icon' => $category->getIcon(),
+            'id' => $category->id,
+            'name' => $category->name,
+            'type' => $category->type,
+            'icon' => $category->icon,
         ]);
     }
 }

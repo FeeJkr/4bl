@@ -18,7 +18,7 @@ use DateTime;
 use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
-class UpdateInvoiceHandler implements CommandHandler
+final class UpdateInvoiceHandler implements CommandHandler
 {
     public function __construct(
         private InvoiceRepository $repository,
@@ -29,25 +29,25 @@ class UpdateInvoiceHandler implements CommandHandler
     public function __invoke(UpdateInvoiceCommand $command): void
     {
         $invoice = $this->repository->fetchOneById(
-            InvoiceId::fromString($command->getId()),
+            InvoiceId::fromString($command->id),
             $this->userContext->getUserId()
         );
 
         $invoiceParameters = new InvoiceParameters(
-            $command->getInvoiceNumber(),
-            $command->getGeneratePlace(),
-            $command->getAlreadyTakenPrice(),
-            $command->getCurrency(),
-            $command->getVatPercentage(),
-            DateTimeImmutable::createFromFormat('d-m-Y', $command->getGenerateDate()),
-            DateTimeImmutable::createFromFormat('d-m-Y', $command->getSellDate()),
+            $command->invoiceNumber,
+            $command->generatePlace,
+            $command->alreadyTakenPrice,
+            $command->currency,
+            $command->vatPercentage,
+            DateTimeImmutable::createFromFormat('d-m-Y', $command->generateDate),
+            DateTimeImmutable::createFromFormat('d-m-Y', $command->sellDate),
         );
 
         $invoice->update(
-            CompanyId::fromString($command->getSellerId()),
-            CompanyId::fromString($command->getBuyerId()),
+            CompanyId::fromString($command->sellerId),
+            CompanyId::fromString($command->buyerId),
             $invoiceParameters,
-            InvoiceProductsCollection::fromArray($command->getProducts(), $command->getVatPercentage())
+            InvoiceProductsCollection::fromArray($command->products, $command->vatPercentage)
         );
 
         $this->pdfFromHtmlGenerator->generate($invoice->getSnapshot());

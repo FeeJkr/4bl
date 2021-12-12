@@ -9,17 +9,12 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class GetOneInvoiceRequest extends Request
 {
-    public function __construct(private string $invoiceId){}
+    public function __construct(public readonly string $invoiceId){}
 
     public static function fromRequest(ServerRequest $request): Request
     {
         return new self(
             $request->get('id')
         );
-    }
-
-    public function getInvoiceId(): string
-    {
-        return $this->invoiceId;
     }
 }
