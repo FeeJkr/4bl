@@ -6,17 +6,13 @@ namespace App\Modules\Invoices\Application\Invoice\Update;
 
 use App\Common\Application\Command\CommandHandler;
 use App\Modules\Invoices\Domain\Company\CompanyId;
-use App\Modules\Invoices\Domain\Company\CompanyRepository;
 use App\Modules\Invoices\Domain\Invoice\InvoiceId;
 use App\Modules\Invoices\Domain\Invoice\InvoiceParameters;
-use App\Modules\Invoices\Domain\Invoice\InvoiceProduct;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProductsCollection;
 use App\Modules\Invoices\Domain\Invoice\InvoiceRepository;
 use App\Modules\Invoices\Domain\Invoice\PdfFromHtmlGenerator;
 use App\Modules\Invoices\Domain\User\UserContext;
-use DateTime;
 use DateTimeImmutable;
-use JetBrains\PhpStorm\Pure;
 
 final class UpdateInvoiceHandler implements CommandHandler
 {

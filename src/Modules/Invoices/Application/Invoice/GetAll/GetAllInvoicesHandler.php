@@ -8,7 +8,6 @@ use App\Common\Application\Query\QueryHandler;
 use App\Modules\Invoices\Domain\User\UserContext;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Exception as DBALException;
 
 class GetAllInvoicesHandler implements QueryHandler

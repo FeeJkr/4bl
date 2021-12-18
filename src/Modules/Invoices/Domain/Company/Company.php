@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Invoices\Domain\Company;
 
 use App\Modules\Invoices\Domain\User\UserId;
-use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
 final class Company
@@ -85,8 +84,8 @@ final class Company
         return new CompanySnapshot(
             $this->id->toString(),
             $this->userId->toString(),
-            $this->address->getSnapshot()->getId(),
-            $this->paymentInformation?->getSnapshot()->getId(),
+            $this->address->getSnapshot()->id,
+            $this->paymentInformation?->getSnapshot()->id,
             $this->name,
             $this->identificationNumber,
             $this->email,

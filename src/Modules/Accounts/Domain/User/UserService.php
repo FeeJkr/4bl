@@ -42,7 +42,7 @@ final class UserService
     {
         $user = $this->repository->fetchByEmail($email) ?? throw UserException::notFoundByEmail($email);
 
-        if (!$this->passwordManager->isValid($password, $user->getSnapshot()->getPassword())) {
+        if (!$this->passwordManager->isValid($password, $user->getSnapshot()->password)) {
             throw UserException::withInvalidCredentials();
         }
 

@@ -6,7 +6,6 @@ namespace App\Web\API\Action\Accounts\User\SignIn;
 
 use App\Web\API\Action\Request;
 use Assert\Assert;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class SignInUserRequest extends Request

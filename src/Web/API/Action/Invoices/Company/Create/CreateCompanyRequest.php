@@ -13,7 +13,7 @@ final class CreateCompanyRequest extends Request
 	private const NAME = 'name';
 	private const IDENTIFICATION_NUMBER = 'identificationNumber';
 	private const EMAIL = 'email';
-	private const PHONE_NUMBER = 'phone_number';
+	private const PHONE_NUMBER = 'phoneNumber';
 	private const STREET = 'street';
 	private const ZIP_CODE = 'zipCode';
 	private const CITY = 'city';

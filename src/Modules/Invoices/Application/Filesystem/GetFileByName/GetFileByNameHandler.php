@@ -13,6 +13,6 @@ final class GetFileByNameHandler implements QueryHandler
 
     public function __invoke(GetFileByNameQuery $query): string
     {
-        return $this->dropbox->getByName($query->getFilename());
+        return $this->dropbox->getByName($query->filename);
     }
 }

@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Infrastructure\Domain\Invoice\Doctrine;
 
-use App\Modules\Invoices\Domain\Invoice\InvoiceProduct;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProductSnapshot;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\Persistence\ManagerRegistry;
 
 final class InvoiceProductRepository
 {

@@ -18,7 +18,6 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\ORMException;
 use JetBrains\PhpStorm\Pure;
 use Throwable;
 

@@ -9,7 +9,7 @@ use App\Modules\Invoices\Domain\Filesystem\Dropbox;
 
 final class MoveFileToDropboxHandler implements CommandHandler
 {
-    public function __construct(private Dropbox $dropbox,){}
+    public function __construct(private Dropbox $dropbox){}
 
     public function __invoke(MoveFileToDropboxCommand $command): void
     {

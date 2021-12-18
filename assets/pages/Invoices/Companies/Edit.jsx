@@ -19,7 +19,7 @@ function Edit() {
 
     function handleChange(e) {
         const { name, value } = e.target;
-        company[name] = value;
+        company[name] = value === '' ? null : value;
     }
 
     function handleBasicInformationSubmit(e) {

@@ -16,10 +16,10 @@ final class EditWalletAction extends AbstractAction
     public function __invoke(EditWalletRequest $request): NoContentResponse
     {
         $command = new EditWalletCommand(
-            $request->getId(),
-            $request->getName(),
-            $request->getStartBalance(),
-            $request->getCurrency(),
+            $request->id,
+            $request->name,
+            $request->startBalance,
+            $request->currency,
         );
 
         $this->bus->dispatch($command);

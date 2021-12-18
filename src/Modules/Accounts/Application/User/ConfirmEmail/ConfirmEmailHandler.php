@@ -9,7 +9,7 @@ use App\Modules\Accounts\Domain\User\UserException;
 use App\Modules\Accounts\Domain\User\UserRepository;
 use App\Modules\Accounts\Domain\User\UserService;
 
-class ConfirmEmailHandler implements CommandHandler
+final class ConfirmEmailHandler implements CommandHandler
 {
     public function __construct(private UserService $service, private UserRepository $repository){}
 

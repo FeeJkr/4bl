@@ -25,7 +25,7 @@ final class SignInUserAction extends AbstractAction
         /** @var SignInResult $signInResult */
         $signInResult = $stamp->getResult();
 
-        $this->requestContext->setUserIdentity($signInResult->getUser()->getId());
+        $this->requestContext->setUserIdentity($signInResult->user->id);
 
         return NoContentResponse::respond();
     }

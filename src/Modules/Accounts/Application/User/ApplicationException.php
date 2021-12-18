@@ -14,10 +14,4 @@ final class ApplicationException extends Exception
     {
         return new self($exception->getMessage(), $exception->getCode(), $exception);
     }
-
-    #[Pure]
-    public static function internalError(): self
-    {
-        return new self('Internal server error.');
-    }
 }

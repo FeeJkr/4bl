@@ -8,19 +8,19 @@ function Create() {
     const validationErrors = useSelector(state => state.companies.validationErrors);
     let errors = [];
     const [inputs, setInputs] = useState({
-        name: '',
-        identificationNumber: '',
-        phoneNumber: '',
-        email: '',
-        street: '',
-        city: '',
-        zipCode: '',
+        name: null,
+        identificationNumber: null,
+        phoneNumber: null,
+        email: null,
+        street: null,
+        city: null,
+        zipCode: null,
     });
     const navigate = useNavigate();
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setInputs(inputs => ({ ...inputs, [name]: value }));
+        setInputs(inputs => ({ ...inputs, [name]: value === '' ? null : value }));
     }
 
     function handleSubmit(e) {

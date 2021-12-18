@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Domain\Company;
 
-use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
 final class CompanyAddress

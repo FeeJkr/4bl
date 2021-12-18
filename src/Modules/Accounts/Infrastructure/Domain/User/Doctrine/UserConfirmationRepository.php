@@ -9,7 +9,7 @@ use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Exception;
 use Throwable;
 
-class UserConfirmationRepository
+final class UserConfirmationRepository
 {
     public function __construct(private Connection $connection){}
 

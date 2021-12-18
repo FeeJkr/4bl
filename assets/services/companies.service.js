@@ -20,6 +20,8 @@ function deleteCompany(id) {
 }
 
 function createCompany(formData) {
+    console.log(formData);
+
     return axios.post(companiesDictionary.CREATE_URL, {
         name: formData.name,
         identificationNumber: formData.identificationNumber,

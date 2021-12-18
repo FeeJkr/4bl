@@ -27,7 +27,7 @@ function Generate() {
         currencyCode: 'PLN',
         vatPercentage: 23,
         products: [
-            {name: '', price: 0.00},
+            {name: '', unit: 'test', quantity: 1, priceNetto: 0.00, vatRate: 23, priceGross: 0.00},
         ],
     });
 
@@ -65,16 +65,51 @@ function Generate() {
         setInputs(inputs => ({ ...inputs, [property]: new Date(today.getFullYear(), today.getMonth(), 0)}));
     }
 
+    function setLastDayCurrentMonth(property) {
+        const today = new Date;
+        setInputs(inputs => ({ ...inputs, [property]: new Date(today.getFullYear(), today.getMonth() + 1, 0)}));
+    }
+
     function addNewProduct() {
         const products = inputs.products;
-        products.push({name: '', price: 0.00});
+        products.push({name: '', unit: 'test', quantity: 1, priceNetto: 0.00, vatRate: 23, priceGross: 0.00});
 
         setInputs(inputs => ({...inputs, products}));
     }
 
     function handleProductsParametersChange(e, index) {
         let products = inputs.products;
-        const { name, value } = e.target;
+        let { name, value } = e.target;
+
+        if (name === 'name') {
+            e.target.style.height = 'inherit';
+            e.target.style.height = `${e.target.scrollHeight}px`;
+            e.target.style.height = `${Math.min(e.target.scrollHeight, 54)}px`
+        }
+
+        if (name === 'priceGross') {
+            if (products[index].vatRate === 0) {
+                products[index] = {...products[index], priceNetto: value.toFixed(2)};
+            } else {
+                products[index] = {...products[index], priceNetto: (parseFloat(value) / (1 + (products[index].vatRate / 100))).toFixed(2)};
+            }
+        }
+
+        if (name === 'priceNetto') {
+            if (products[index].vatRate === 0) {
+                products[index] = {...products[index], priceGross: value.toFixed(2)};
+            } else {
+                products[index] = {...products[index], priceGross: (parseFloat(value) + (parseFloat(value) * (products[index].vatRate / 100))).toFixed(2)};
+            }
+        }
+
+        if (name === 'vatRate') {
+            if (value === 0) {
+                products[index] = {...products[index], priceGross: (products[index].priceNetto).toFixed(2)};
+            } else {
+                products[index] = {...products[index], priceGross: (parseFloat(products[index].priceNetto) + (parseFloat(products[index].priceNetto) * (value / 100))).toFixed(2)};
+            }
+        }
 
         products[index] = { ...products[index], [name]: value};
         setInputs(inputs => ({ ...inputs, products }));
@@ -105,6 +140,19 @@ function Generate() {
 
         setInputs(inputs => ({ ...inputs, products }));
     }
+
+    const setFixedFloatPrice = (e, index) => {
+        let products = inputs.products;
+        let { name, value } = e.target;
+
+        products[index] = { ...products[index], [name]: parseFloat(value).toFixed(2)};
+        setInputs(inputs => ({ ...inputs, products }));
+    }
+
+    const customStyles = {
+        control: (provided) => ({...provided, fontSize: '.8125rem', fontWeight: 400, lineHeight: 1.5, minHeight: '36px', height: 'calc(1.5em + .5rem + 2px)'}),
+        option: (provided) => ({...provided, fontSize: '.8125rem', fontWeight: 400, lineHeight: 1.5, minHeight: '36px', height: 'calc(1.5em + .5rem + 2px)'})
+    };
 
     return (
         <div className="container-fluid">
@@ -151,24 +199,6 @@ function Generate() {
                                             }
                                         </div>
                                         <div className="mb-3 form-group">
-                                            <label htmlFor="sellerId"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}
-                                            >
-                                                Seller
-                                            </label>
-                                            <AsyncSelect
-                                                name="sellerId"
-                                                loadOptions={companiesOptions}
-                                                defaultOptions
-                                                placeholder={'Choose seller'}
-                                                style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                onChange={handleSelectChange}
-                                            />
-                                            {errors['sellerId'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['sellerId'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
                                             <label htmlFor="buyerId"
                                                    style={{marginBottom: '.5rem', fontWeight: 500}}>Buyer</label>
                                             <AsyncSelect
@@ -203,6 +233,13 @@ function Generate() {
                                                 >
                                                     Last Day Previous Month
                                                 </button>
+                                                <button className="btn btn-outline-secondary"
+                                                        type="button"
+                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, zIndex: 0}}
+                                                        onClick={() => setLastDayCurrentMonth('generatedAt')}
+                                                >
+                                                    Last Day Current Month
+                                                </button>
                                             </div>
                                             {errors['generatedAt'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['generatedAt'].message}</span>
@@ -227,6 +264,13 @@ function Generate() {
                                                         onClick={() => setLastDayPreviousMonth('soldAt')}
                                                 >
                                                     Last Day Previous Month
+                                                </button>
+                                                <button className="btn btn-outline-secondary"
+                                                        type="button"
+                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, zIndex: 0}}
+                                                        onClick={() => setLastDayCurrentMonth('soldAt')}
+                                                >
+                                                    Last Day Current Month
                                                 </button>
                                             </div>
                                             {errors['soldAt'] &&
@@ -264,14 +308,42 @@ function Generate() {
                                             }
                                         </div>
                                         <div className="mb-3 form-group">
+                                            <label htmlFor="daysForPayment"
+                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Days For Payment</label>
+                                            <input name="daysForPayment" placeholder="Enter days for payment"
+                                                   type="number" className="form-control"
+                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                   onChange={handleChange}
+                                                   step='1'
+                                                   value={inputs.daysForPayment}
+                                            />
+                                            {errors['daysForPayment'] &&
+                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['daysForPayment'].message}</span>
+                                            }
+                                        </div>
+                                        <div className="mb-3 form-group">
+                                            <label htmlFor="paymentType"
+                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Payment Type</label>
+                                            <Select
+                                                options={[
+                                                    {value: 'bankTransfer', label: 'Bank transfer'}
+                                                ]}
+                                                defaultValue={{value: 'bankTransfer', label: 'Bank transfer'}}
+                                                isDisabled={true}
+                                            />
+                                            {errors['paymentType'] &&
+                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['paymentType'].message}</span>
+                                            }
+                                        </div>
+                                        <div className="mb-3 form-group">
                                             <label htmlFor="language"
                                                    style={{marginBottom: '.5rem', fontWeight: 500}}>Language</label>
                                             <Select
                                                 options={[
                                                     {value: 'pl', label: 'Poland'}
                                                 ]}
-                                                placeholder="Select language"
                                                 defaultValue={{value: 'pl', label: 'Poland'}}
+                                                isDisabled={true}
                                             />
                                             {errors['language'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['language'].message}</span>
@@ -280,33 +352,15 @@ function Generate() {
                                         <div className="mb-3 form-group">
                                             <label htmlFor="currencyCode"
                                                    style={{marginBottom: '.5rem', fontWeight: 500}}>Currency Code</label>
-                                            <input name="currencyCode"
-                                                   placeholder="Enter currency code..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                                   value={inputs.currencyCode}
-                                                   readOnly
+                                            <Select
+                                                options={[
+                                                    {value: 'pln', label: 'PLN'}
+                                                ]}
+                                                defaultValue={{value: 'pln', label: 'PLN'}}
+                                                isDisabled={true}
                                             />
                                             {errors['currencyCode'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['currencyCode'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="vatPercentage"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>VAT Percentage</label>
-                                            <Select
-                                                options={[
-                                                    {value: 0, label: '0%'},
-                                                    {value: 23, label: '23%'},
-                                                ]}
-                                                name="vatPercentage"
-                                                placeholder="Select VAT percentage"
-                                                defaultValue={{value: 23, label: '23%'}}
-                                                onChange={handleSelectChange}
-                                            />
-                                            {errors['vatPercentage'] &&
-                                            <span style={{color: 'red', fontSize: '10px'}}>{errors['vatPercentage'].message}</span>
                                             }
                                         </div>
                                     </div>
@@ -321,6 +375,15 @@ function Generate() {
 
                                 <div className="inner form-group mb-0 row">
                                     <div className="inner">
+                                        <div className="row">
+                                            <div className="col-4" style={{textAlign: 'center'}}>Product name</div>
+                                            <div className="col-1" style={{textAlign: 'center'}}>Unit</div>
+                                            <div className="col-1" style={{textAlign: 'center'}}>Quantity</div>
+                                            <div className="col-2" style={{textAlign: 'center'}}>Price netto</div>
+                                            <div className="col-1" style={{textAlign: 'center'}}>Rate</div>
+                                            <div className="col-2" style={{textAlign: 'center'}}>Price gross</div>
+                                        </div>
+
                                         <DragDropContext
                                             onDragEnd={onProductsDragEnd}
                                         >
@@ -336,13 +399,12 @@ function Generate() {
                                                                             {...provided.dragHandleProps}
                                                                             ref={provided.innerRef}
                                                                         >
-                                                                            <div className="row align-items-center" style={{padding: '3px', marginBottom: '2px'}}>
-                                                                                <div className="col-9">
-                                                                                    <div style={{display: 'inline-block', width: '3%'}}>
-                                                                                        <i className="bi bi-grip-vertical col-1"
+                                                                            <div className="row gx-1 align-items-center" style={{padding: '4px', marginBottom: '2px', fontSize: '8px'}}>
+                                                                                <div className="col-4" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                                                                    <div>
+                                                                                        <i className="bi bi-grip-vertical"
                                                                                            style={{
                                                                                                minWidth: '1.5rem',
-                                                                                               display: 'inline-block',
                                                                                                paddingBottom: '.125em',
                                                                                                fontSize: '1.25rem',
                                                                                                lineHeight: '1.40625rem',
@@ -351,38 +413,91 @@ function Generate() {
                                                                                            }}
                                                                                         />
                                                                                     </div>
-                                                                                    <div style={{display: 'inline-block', width: '97%'}}>
-                                                                                        <input
+
+                                                                                    <div style={{height: '100%', width: '100%'}}>
+                                                                                        <textarea
+                                                                                            rows="1"
                                                                                             name="name"
-                                                                                            type="text"
                                                                                             className="form-control"
                                                                                             placeholder="Invoice product name"
-                                                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                                                            style={{
+                                                                                                padding: '.47rem .75rem',
+                                                                                                fontSize: '.8125rem',
+                                                                                                fontWeight: 400,
+                                                                                                lineHeight: 1.5,
+                                                                                                resize: 'none',
+                                                                                            }}
                                                                                             value={element.name}
                                                                                             onChange={(e) => handleProductsParametersChange(e, key)}
                                                                                         />
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="col-2">
+                                                                                <div className="col-1">
                                                                                     <input
-                                                                                        name="price"
-                                                                                        type="number"
-                                                                                        step="0.01"
+                                                                                        name="unit"
+                                                                                        type="text"
                                                                                         className="form-control"
-                                                                                        placeholder="Invoice product price"
                                                                                         style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                                                        value={element.price}
+                                                                                        value={element.unit}
                                                                                         onChange={(e) => handleProductsParametersChange(e, key)}
                                                                                     />
                                                                                 </div>
-
+                                                                                <div className="col-1">
+                                                                                    <input
+                                                                                        name="quantity"
+                                                                                        type="number"
+                                                                                        step="1"
+                                                                                        className="form-control"
+                                                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                                                        value={element.quantity}
+                                                                                        onChange={(e) => handleProductsParametersChange(e, key)}
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-2">
+                                                                                    <input
+                                                                                        name="priceNetto"
+                                                                                        type="number"
+                                                                                        step="0.01"
+                                                                                        className="form-control"
+                                                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                                                        value={element.priceNetto}
+                                                                                        onBlur={(e) => setFixedFloatPrice(e, key)}
+                                                                                        onChange={(e) => handleProductsParametersChange(e, key)}
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-1">
+                                                                                    <Select
+                                                                                        options={[
+                                                                                            {value: -1, label: 'n/a'},
+                                                                                            {value: 0, label: '0%'},
+                                                                                            {value: 23, label: '23%'},
+                                                                                        ]}
+                                                                                        styles={customStyles}
+                                                                                        name="vatPercentage"
+                                                                                        placeholder="Select VAT percentage"
+                                                                                        defaultValue={{value: 23, label: '23%'}}
+                                                                                        onChange={handleSelectChange}
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-2">
+                                                                                    <input
+                                                                                        name="priceGross"
+                                                                                        type="number"
+                                                                                        step="0.01"
+                                                                                        className="form-control"
+                                                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                                                        value={element.priceGross}
+                                                                                        onBlur={(e) => setFixedFloatPrice(e, key)}
+                                                                                        onChange={(e) => handleProductsParametersChange(e, key)}
+                                                                                    />
+                                                                                </div>
                                                                                 <div className="col-1">
                                                                                     <button type="button"
                                                                                             className="btn btn-danger"
                                                                                             style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, width: '100%'}}
                                                                                             onClick={() => deleteProduct(key)}
                                                                                     >
-                                                                                        Remove
+                                                                                        X
                                                                                     </button>
                                                                                 </div>
                                                                             </div>
@@ -401,10 +516,10 @@ function Generate() {
                                                 <button
                                                     type="button"
                                                     className="inner btn btn-success"
-                                                    style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                    style={{fontSize: '1rem', display: 'block', fontWeight: 2000, lineHeight: 1.5, padding: '.1rem .5rem'}}
                                                     onClick={addNewProduct}
                                                 >
-                                                    Add Product
+                                                    +
                                                 </button>
                                             </div>
                                         </div>

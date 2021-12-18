@@ -24,7 +24,7 @@ final class EditWalletHandler implements CommandHandler
 
         $wallet->update(
             $command->name,
-            new Money($command->startBalance, new Currency($command->currency))
+            new Money($command->startBalance, Currency::from($command->currency))
         );
 
         $this->repository->save($wallet);
