@@ -8,5 +8,5 @@ use App\Common\Application\Command\Command;
 
 final class DeleteCompanyCommand implements Command
 {
-    public function __construct(public readonly string $companyId){}
+    public function __construct(public readonly string $id){}
 }

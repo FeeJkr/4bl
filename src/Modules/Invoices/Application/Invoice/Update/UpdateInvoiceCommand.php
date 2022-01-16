@@ -11,14 +11,15 @@ final class UpdateInvoiceCommand implements Command
     public function __construct(
         public readonly string $id,
         public readonly string $invoiceNumber,
-        public readonly string $generateDate,
-        public readonly string $sellDate,
         public readonly string $generatePlace,
-        public readonly string $sellerId,
-        public readonly string $buyerId,
-        public readonly array $products,
         public readonly float $alreadyTakenPrice,
-        public readonly string $currency,
-        public readonly int $vatPercentage,
+        public readonly int $daysForPayment,
+        public readonly string $paymentType,
+        public readonly ?string $bankAccountId,
+        public readonly string $currencyCode,
+        public readonly string $contractorId,
+        public readonly string $generatedAt,
+        public readonly string $soldAt,
+        public readonly array $products,
     ){}
 }

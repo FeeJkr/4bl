@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Domain\Company;
 
+use App\Modules\Invoices\Domain\Address\AddressId;
+use App\Modules\Invoices\Domain\Company\BankAccount\BankAccountId;
 use App\Modules\Invoices\Domain\User\UserId;
 use JetBrains\PhpStorm\Pure;
 
@@ -12,82 +14,65 @@ final class Company
     public function __construct(
         private CompanyId $id,
         private UserId $userId,
-        private CompanyAddress $address,
-        private ?CompanyPaymentInformation $paymentInformation,
+        private AddressId $addressId,
         private string $name,
         private string $identificationNumber,
+        private bool $isVatPayer,
+        private ?VatRejectionReason $vatRejectionReason,
         private ?string $email,
         private ?string $phoneNumber,
     ){}
 
     public static function create(
         UserId $userId,
-        CompanyAddress $address,
+        AddressId $addressId,
         string $name,
         string $identificationNumber,
+        bool $isVatPayer,
+        ?VatRejectionReason $vatRejectionReason,
         ?string $email,
         ?string $phoneNumber,
     ): self {
         return new self(
             CompanyId::generate(),
             $userId,
-            $address,
-            null,
+            $addressId,
             $name,
             $identificationNumber,
+            $isVatPayer,
+            $vatRejectionReason,
             $email,
             $phoneNumber,
         );
     }
 
     public function update(
-        string $street,
-        string $zipCode,
-        string $city,
         string $name,
         string $identificationNumber,
+        bool $isVatPayer,
+        ?VatRejectionReason $vatRejectionReason,
         ?string $email,
         ?string $phoneNumber,
     ): void {
-        $this->address->update($street, $zipCode, $city);
-
         $this->name = $name;
         $this->identificationNumber = $identificationNumber;
+        $this->isVatPayer = $isVatPayer;
+        $this->vatRejectionReason = $vatRejectionReason;
         $this->email = $email;
         $this->phoneNumber = $phoneNumber;
     }
 
-    public function updatePaymentInformation(
-        string $paymentType,
-        int $paymentLastDate,
-        string $bank,
-        string $accountNumber
-    ): void {
-    	$this->paymentInformation = $this->paymentInformation === null
-            ? CompanyPaymentInformation::create($paymentType, $paymentLastDate, $bank, $accountNumber)
-            : $this->paymentInformation->update($paymentType, $paymentLastDate, $bank, $accountNumber);
-    }
-
-    public function getAddress(): CompanyAddress
-    {
-        return $this->address;
-    }
-
-    public function getPaymentInformation(): ?CompanyPaymentInformation
-    {
-        return $this->paymentInformation;
-    }
-
     #[Pure]
-    public function getSnapshot(): CompanySnapshot
+    public function snapshot(): CompanySnapshot
     {
         return new CompanySnapshot(
             $this->id->toString(),
             $this->userId->toString(),
-            $this->address->getSnapshot()->id,
-            $this->paymentInformation?->getSnapshot()->id,
+            $this->addressId->toString(),
             $this->name,
             $this->identificationNumber,
+            $this->isVatPayer,
+            $this->vatRejectionReason?->value,
             $this->email,
             $this->phoneNumber,
         );

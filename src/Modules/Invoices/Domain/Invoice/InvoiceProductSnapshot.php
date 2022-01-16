@@ -10,9 +10,11 @@ final class InvoiceProductSnapshot
         public readonly string $id,
         public readonly int $position,
         public readonly string $name,
+        public readonly string $unit,
+        public readonly int $quantity,
         public readonly float $netPrice,
         public readonly float $taxPrice,
         public readonly float $grossPrice,
-        public readonly int $vatPercentage,
+        public readonly int $tax,
     ){}
 }

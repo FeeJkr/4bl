@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Invoices\Infrastructure\Domain\Invoice;
 
 use App\Modules\Invoices\Application\Filesystem\MoveFileToDropbox\MoveFileToDropboxCommand;
-use App\Modules\Invoices\Domain\Invoice\HtmlGenerator;
 use App\Modules\Invoices\Domain\Invoice\InvoiceSnapshot;
-use App\Modules\Invoices\Domain\Invoice\PdfFromHtmlGenerator as PdfFromHtmlGeneratorInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class PdfFromHtmlGenerator implements PdfFromHtmlGeneratorInterface
+final class PdfFromHtmlGenerator
 {
     public function __construct(
         private Client $httpClient,
         private MessageBusInterface $bus,
-        private HtmlGenerator $htmlGenerator,
+        private TwigHtmlGenerator $htmlGenerator,
         private string $host,
     ){}
 

@@ -8,5 +8,5 @@ use App\Common\Application\Command\Command;
 
 final class DeleteInvoiceCommand implements Command
 {
-    public function __construct(public readonly string $invoiceId){}
+    public function __construct(public readonly string $id){}
 }

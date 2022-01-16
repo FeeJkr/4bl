@@ -44,7 +44,7 @@ RUN apt purge -y $PHPSIZE_DEPS \
 # COMPOSER
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && ln -s $(composer config --global home) /root/composer
-ENV PATH=$PATH:/root/composer/vendor/bin COMPOSER_ALLOW_SUPERUSER=1
+ENV PATH=$PATH:/root/composer/vendor/bin
 
 # NODE JS
 RUN curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
@@ -53,12 +53,10 @@ RUN apt-get update \
  nodejs
 
 # PHP RUNTIME
-WORKDIR /app
+RUN mkdir /app
 RUN chown -R www-data:www-data /app
-USER www-data
-COPY --chown=www-data:www-data . .
-
-USER root
+RUN chown -R www-data:www-data /var/www
+WORKDIR /app
 
 # PHP-FPM
 COPY .docker/config/php.ini $PHP_INI_DIR/php.ini
@@ -69,7 +67,12 @@ COPY .docker/config/fpm.conf /usr/local/etc/php-fpm.d/www.conf
 RUN rm /etc/nginx/nginx.conf && chown -R www-data:www-data /var/www/html /run /var/lib/nginx /var/log/nginx
 COPY .docker/config/nginx.conf /etc/nginx/nginx.conf
 
+RUN groupadd local -g 1000 -o
+RUN usermod -aG local www-data
+
 USER www-data
+
+COPY --chown=www-data:www-data . .
 
 EXPOSE 8080
 ENTRYPOINT [ "/app/entrypoint.sh" ]

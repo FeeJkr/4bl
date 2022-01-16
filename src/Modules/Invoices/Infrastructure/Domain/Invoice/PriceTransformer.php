@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Infrastructure\Domain\Invoice;
 
-use App\Modules\Invoices\Domain\Invoice\PriceTransformer as PriceTransformerInterface;
 use PHPHtmlParser\Dom;
 use Throwable;
 
-final class PriceTransformer implements PriceTransformerInterface
+final class PriceTransformer
 {
     private const API_URL = 'https://slownie.pl/%s';
     private const API_DATA_SELECTOR = '#dataWord';

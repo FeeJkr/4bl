@@ -9,8 +9,9 @@ final class InvoiceSnapshot
     public function __construct(
         public readonly string $id,
         public readonly string $userId,
-        public readonly string $sellerId,
-        public readonly string $buyerId,
+        public readonly string $companyId,
+        public readonly string $contractorId,
+        public readonly string $status,
         public readonly InvoiceParametersSnapshot $parameters,
         public readonly array $products,
     ){}

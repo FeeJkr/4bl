@@ -17,35 +17,29 @@ final class GetOneCompanyByIdHandler implements QueryHandler
     public function __invoke(GetOneCompanyByIdQuery $query): CompanyDTO
     {
         try {
-            $row = $this->connection
+            $company = $this->connection
                 ->createQueryBuilder()
                 ->select(
-                    'c.id',
-                    'c.name',
-                    'ca.street',
-                    'ca.zip_code',
-                    'ca.city',
-                    'c.identification_number',
-                    'c.email',
-                    'c.phone_number',
-                    'cpi.payment_type',
-                    'cpi.payment_last_day',
-                    'cpi.bank',
-                    'cpi.account_number',
+                    'id',
+                    'invoices_addresses_id',
+                    'invoices_companies_bank_accounts_id',
+                    'name',
+                    'identification_number',
+                    'is_vat_payer',
+                    'vat_rejection_reason',
+                    'email',
+                    'phone_number',
                 )
-                ->from('invoices_companies', 'c')
-                ->leftJoin('c', 'invoices_company_addresses', 'ca', 'ca.id = c.company_address_id')
-                ->leftJoin('c', 'invoices_company_payment_information', 'cpi', 'cpi.id = c.company_payment_information_id')
+                ->from('invoices_companies')
                 ->where('c.id = :id')
                 ->andWhere('c.user_id = :userId')
                 ->setParameters([
-                    'id' => $query->companyId,
+                    'id' => $query->id,
                     'userId' => $this->userContext->getUserId()->toString(),
                 ])
-                ->executeQuery()
                 ->fetchAssociative();
 
-            return CompanyDTO::fromArray($row);
+            return CompanyDTO::fromStorage($company);
         } catch (Throwable $exception) {
             throw $exception; // TODO: change exception to application.
         }

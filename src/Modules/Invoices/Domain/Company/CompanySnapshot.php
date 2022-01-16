@@ -10,9 +10,10 @@ final class CompanySnapshot
         public readonly string $id,
         public readonly string $userId,
         public readonly string $addressId,
-        public readonly ?string $paymentInformationId,
         public readonly string $name,
         public readonly string $identificationNumber,
+        public readonly bool $isVatPayer,
+        public readonly ?int $vatRejectionReason,
         public readonly ?string $email,
         public readonly ?string $phoneNumber,
     ){}

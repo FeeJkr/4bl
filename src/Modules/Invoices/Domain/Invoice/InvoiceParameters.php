@@ -13,10 +13,9 @@ final class InvoiceParameters
         private string $invoiceNumber,
         private string $generatePlace,
         private float $alreadyTakenPrice,
-        private string $currencyCode,
-        private int $vatPercentage,
-        private DateTimeImmutable $generateDate,
-        private DateTimeImmutable $sellDate,
+        private PaymentParameters $paymentParameters,
+        private DateTimeImmutable $generatedAt,
+        private DateTimeImmutable $soldAt,
     ){}
 
     #[Pure]
@@ -26,10 +25,12 @@ final class InvoiceParameters
             $this->invoiceNumber,
             $this->generatePlace,
             $this->alreadyTakenPrice,
-            $this->currencyCode,
-            $this->vatPercentage,
-            $this->generateDate,
-            $this->sellDate,
+            $this->paymentParameters->daysForPayment,
+            $this->paymentParameters->paymentType->value,
+            $this->paymentParameters->bankAccountId?->toString(),
+            $this->paymentParameters->currencyCode,
+            $this->generatedAt,
+            $this->soldAt,
         );
     }
 }
