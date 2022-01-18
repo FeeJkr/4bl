@@ -31,6 +31,6 @@ final class CreateCompanyHandler implements CommandHandler
             $command->contactInformation->phoneNumber,
         );
 
-        $this->repository->store($company);
+        $this->repository->store($company->snapshot());
     }
 }

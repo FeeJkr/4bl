@@ -20,7 +20,7 @@ final class CreateBankAccountHandler implements CommandHandler
         private UserContext $userContext
     ){}
 
-    public function __invoke(CreateBankAccountCommand $command): void
+    public function __invoke(CreateBankAccountCommand $command): string
     {
         $company = $this->companyRepository->fetchByUserId(
             $this->userContext->getUserId()
@@ -36,5 +36,7 @@ final class CreateBankAccountHandler implements CommandHandler
         );
 
         $this->bankAccountRepository->store($bankAccount->snapshot());
+
+        return $bankAccount->snapshot()->id;
     }
 }
