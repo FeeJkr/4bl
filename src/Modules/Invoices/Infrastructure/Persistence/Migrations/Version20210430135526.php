@@ -33,7 +33,7 @@ final class Version20210430135526 extends AbstractMigration
         $this->addSql('
             create table invoices_companies
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_companies primary key,
+                id uuid default gen_random_uuid() not null unique constraint invoices_companies_pk primary key,
                 users_id uuid not null constraint invoices_companies_accounts_users_id_fk references accounts_users on delete cascade,
                 invoices_addresses_id uuid not null constraint invoices_companies_invoices_addresses_id_fk references invoices_addresses on delete set null,
                 name varchar(255) not null,
@@ -51,7 +51,7 @@ final class Version20210430135526 extends AbstractMigration
             create table invoices_companies_bank_accounts
             (
                 id uuid default gen_random_uuid() not null unique constraint invoices_companies_bank_accounts_pk primary key,
-                invoices_companies_id uuid not null constraint invoices_companies_bank_accounts_invoices_companies_id_fk on delete cascade,
+                invoices_companies_id uuid not null constraint invoices_companies_bank_accounts_invoices_companies_id_fk references invoices_companies on delete cascade,
                 name varchar(255) not null,
                 bank_name varchar(255) not null,
                 bank_account_number varchar(255) not null,
@@ -62,11 +62,11 @@ final class Version20210430135526 extends AbstractMigration
         ');
 
         $this->addSql('
-            create table invoices_contracts
+            create table invoices_contractors
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_contracts_pk primary key,
-                users_id uuid not null constraint invoices_contracts_accounts_users_id_fk references accounts_users on delete cascade,
-                invoices_addresses_id uuid not null constraint invoices_contracts_invoices_addresses_id_fk references invoices_addresses on delete set null,
+                id uuid default gen_random_uuid() not null unique constraint invoices_contractors_pk primary key,
+                users_id uuid not null constraint invoices_contractors_accounts_users_id_fk references accounts_users on delete cascade,
+                invoices_addresses_id uuid not null constraint invoices_contractors_invoices_addresses_id_fk references invoices_addresses on delete set null,
                 name varchar(255) not null,
                 identification_number varchar(255) not null,
                 created_at timestamp default now() not null,

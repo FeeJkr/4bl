@@ -10,11 +10,12 @@ import {List as CompaniesList} from "./pages/Invoices/Companies/List";
 import {Generate} from "./pages/Invoices/Documents/Generate";
 import DocumentsLayout from "./layouts/invoices/DocumentsLayout";
 import {Create as CreateCompany} from "./pages/Invoices/Companies/Create";
-import CompaniesLayout from "./layouts/invoices/CompaniesLayout";
+import ContractorsLayout from "./layouts/invoices/ContractorsLayout";
 import {Edit as EditCompany} from "./pages/Invoices/Companies/Edit";
 import {Edit as EditDocument} from "./pages/Invoices/Documents/Edit";
 import Profile from "./pages/Account/Profile";
 import Settings from "./pages/Account/Settings";
+import CompanyLayout from "./layouts/invoices/CompanyLayout";
 
 export default function Router() {
     return useRoutes([
@@ -37,6 +38,10 @@ export default function Router() {
                     path: 'invoices',
                     children: [
                         {
+                            path: 'company',
+                            element: <CompanyLayout/>,
+                        },
+                        {
                             path: 'documents',
                             element: <DocumentsLayout/>,
                             children: [
@@ -47,7 +52,7 @@ export default function Router() {
                         },
                         {
                             path: 'companies',
-                            element: <CompaniesLayout/>,
+                            element: <ContractorsLayout/>,
                             children: [
                                 { path: '', element: <CompaniesList/> },
                                 { path: 'new', element: <CreateCompany/> },

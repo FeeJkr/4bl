@@ -1,6 +1,6 @@
 import React from "react";
 import {Outlet} from "react-router-dom";
 
-export default function CompaniesLayout() {
+export default function ContractorsLayout() {
     return (<Outlet/>);
 }

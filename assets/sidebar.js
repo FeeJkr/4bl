@@ -9,6 +9,11 @@ const sidebar = [
         icon: 'bi-receipt',
         children: [
             {
+                title: 'Company',
+                path: '/invoices/company',
+                icon: 'bi-building',
+            },
+            {
                 title: 'Documents',
                 path: '/invoices/documents',
                 icon: 'bi-file-earmark-binary',
