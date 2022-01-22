@@ -5,4 +5,6 @@ finances:
   resource: finances.yaml
 
 invoices:
-  resource: invoices.yaml
+  resource: invoices/routes.yaml
+  name_prefix: api.v1.invoices.
+  prefix: /api/v1/invoices

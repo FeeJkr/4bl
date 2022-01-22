@@ -1,0 +1,24 @@
+create:
+  path: /
+  controller: App\Web\API\Action\Invoices\Contractor\Create\CreateContractorAction
+  methods: POST
+
+delete:
+  path: /{id}
+  controller: App\Web\API\Action\Invoices\Contractor\Delete\DeleteContractorAction
+  methods: DELETE
+
+get.all:
+  path: /
+  controller: App\Web\API\Action\Invoices\Contractor\GetAll\GetAllContractorsAction
+  methods: GET
+
+get.one:
+  path: /{id}
+  controller: App\Web\API\Action\Invoices\Contractor\GetOneById\GetOneContractorByIdAction
+  methods: GET
+
+update:
+  path: /{id}
+  controller: App\Web\API\Action\Invoices\Contractor\Update\UpdateContractorAction
+  methods: POST

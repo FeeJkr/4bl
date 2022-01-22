@@ -1,0 +1,4 @@
+get.by.name:
+  path: /{filename}
+  controller: App\Web\API\Action\Invoices\Filesystem\GetFileByName\GetFileByNameAction
+  methods: GET

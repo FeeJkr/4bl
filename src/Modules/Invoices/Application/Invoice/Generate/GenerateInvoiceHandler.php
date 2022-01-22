@@ -14,7 +14,6 @@ use App\Modules\Invoices\Domain\Invoice\InvoiceProduct;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProductId;
 use App\Modules\Invoices\Domain\Invoice\PaymentParameters;
 use App\Modules\Invoices\Domain\Invoice\PaymentType;
-use App\Modules\Invoices\Domain\Invoice\PdfFromHtmlGenerator;
 use App\Modules\Invoices\Domain\Invoice\InvoiceParameters;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProductsCollection;
 use App\Modules\Invoices\Domain\Invoice\InvoiceRepository;
@@ -31,7 +30,7 @@ final class GenerateInvoiceHandler implements CommandHandler
         private UserContext $userContext,
     ){}
 
-    public function __invoke(GenerateInvoiceCommand $command): void
+    public function __invoke(GenerateInvoiceCommand $command): string
     {
         $invoiceParameters = new InvoiceParameters(
                 $command->invoiceNumber,
@@ -40,7 +39,7 @@ final class GenerateInvoiceHandler implements CommandHandler
                 new PaymentParameters(
                     $command->daysForPayment,
                     PaymentType::from($command->paymentType),
-                    $command->bankAccountId ? BankAccountId::fromString($command->bankAccountId) : null,
+                    BankAccountId::fromString($command->bankAccountId),
                     $command->currencyCode,
                 ),
                 DateTimeImmutable::createFromFormat('d-m-Y', $command->generatedAt),
@@ -58,7 +57,9 @@ final class GenerateInvoiceHandler implements CommandHandler
             $this->prepareProducts($command->products),
         );
 
-        $this->invoiceRepository->store($invoice);
+        $this->invoiceRepository->store($invoice->snapshot());
+
+        return $invoice->snapshot()->id;
     }
 
     private function prepareProducts(array $products): InvoiceProductsCollection
@@ -71,7 +72,7 @@ final class GenerateInvoiceHandler implements CommandHandler
                     $product['name'],
                     Unit::from($product['unit']),
                     (int) $product['quantity'],
-                    (float) $product['net_price'],
+                    (float) $product['netPrice'],
                     Tax::from((int) $product['tax']),
                 ),
                 $products

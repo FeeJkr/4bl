@@ -7,6 +7,7 @@ namespace App\Web\API\Action\Invoices\Company\BankAccount\Create;
 use App\Common\Application\Command\CommandBus;
 use App\Modules\Invoices\Application\Company\BankAccount\Create\CreateBankAccountCommand;
 use App\Web\API\Action\AbstractAction;
+use App\Web\API\Action\CreatedResponse;
 use App\Web\API\Action\Response;
 
 final class CreateBankAccountAction extends AbstractAction
@@ -24,6 +25,6 @@ final class CreateBankAccountAction extends AbstractAction
             )
         );
 
-        return CreateBankAccountResponse::respond($id);
+        return CreatedResponse::respond($id);
     }
 }

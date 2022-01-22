@@ -7,6 +7,7 @@ namespace App\Web\API\Action\Invoices\Address\Create;
 use App\Common\Application\Command\CommandBus;
 use App\Modules\Invoices\Application\Address\Create\CreateAddressCommand;
 use App\Web\API\Action\AbstractAction;
+use App\Web\API\Action\CreatedResponse;
 use App\Web\API\Action\Response;
 
 final class CreateAddressAction extends AbstractAction
@@ -24,6 +25,6 @@ final class CreateAddressAction extends AbstractAction
             )
         );
 
-        return CreateAddressResponse::respond($id);
+        return CreatedResponse::respond($id);
     }
 }

@@ -13,10 +13,27 @@ final class InvoiceDTO
         public readonly string $invoiceNumber,
         public readonly DateTimeImmutable $generatedAt,
         public readonly DateTimeImmutable $soldAt,
-        public readonly string $sellerName,
-        public readonly string $buyerName,
+        public readonly string $status,
+        public readonly string $companyName,
+        public readonly string $contractorName,
         public readonly float $totalNetPrice,
+        public readonly float $totalGrossPrice,
         public readonly string $currencyCode,
-        public readonly int $vatPercentage,
     ){}
+
+    public static function fromStorage(array $storage): self
+    {
+        return new self(
+            $storage['id'],
+            $storage['invoice_number'],
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['generated_at']),
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['sold_at']),
+            $storage['status'],
+            $storage['company_name'],
+            $storage['contractor_name'],
+            (float) $storage['total_net_price'],
+            (float) $storage['total_gross_price'],
+            $storage['currency_code'],
+        );
+    }
 }

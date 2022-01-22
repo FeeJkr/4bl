@@ -11,7 +11,6 @@ final class CompanyDTO
     public function __construct(
         public readonly string $id,
         public readonly string $addressId,
-        public readonly string $bankAccountId,
         public readonly string $name,
         public readonly string $identificationNumber,
         public readonly bool $isVatPayer,
@@ -26,7 +25,6 @@ final class CompanyDTO
         return new self(
             $storage['id'],
             $storage['invoices_addresses_id'],
-            $storage['invoices_companies_bank_accounts_id'],
             $storage['name'],
             $storage['identification_number'],
             (bool) $storage['is_vat_payer'],

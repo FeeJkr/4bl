@@ -1,0 +1,24 @@
+create:
+  path: /
+  controller: App\Web\API\Action\Invoices\Invoice\Create\CreateInvoiceAction
+  methods: POST
+
+delete:
+  path: /{id}
+  controller: App\Web\API\Action\Invoices\Invoice\Delete\DeleteInvoiceAction
+  methods: DELETE
+
+get.all:
+  path: /
+  controller: App\Web\API\Action\Invoices\Invoice\GetAll\GetAllInvoicesAction
+  methods: GET
+
+get.one:
+  path: /{id}
+  controller: App\Web\API\Action\Invoices\Invoice\GetOneById\GetOneInvoiceByIdAction
+  methods: GET
+
+update:
+  path: /{id}
+  controller: App\Web\API\Action\Invoices\Invoice\Update\UpdateInvoiceAction
+  methods: POST

@@ -109,6 +109,7 @@ final class Version20210430135526 extends AbstractMigration
                 unit varchar(10) not null,
                 quantity int not null,
                 net_price float not null,
+                gross_price float not null,
                 tax_percentage int not null,
                 created_at timestamp default now() not null,
                 updated_at timestamp

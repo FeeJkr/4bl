@@ -22,7 +22,6 @@ final class GetOneCompanyByIdHandler implements QueryHandler
                 ->select(
                     'id',
                     'invoices_addresses_id',
-                    'invoices_companies_bank_accounts_id',
                     'name',
                     'identification_number',
                     'is_vat_payer',

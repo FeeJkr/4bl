@@ -16,7 +16,7 @@ final class CreateCompanyHandler implements CommandHandler
 {
     public function __construct(private CompanyRepository $repository, private UserContext $userContext){}
 
-    public function __invoke(CreateCompanyCommand $command): void
+    public function __invoke(CreateCompanyCommand $command): string
     {
         $company = Company::create(
             $this->userContext->getUserId(),
@@ -32,5 +32,7 @@ final class CreateCompanyHandler implements CommandHandler
         );
 
         $this->repository->store($company->snapshot());
+
+        return $company->snapshot()->id;
     }
 }

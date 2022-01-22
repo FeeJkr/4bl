@@ -61,6 +61,7 @@ final class InvoiceProductDbRepository
                 'unit' => ':unit',
                 'quantity' => ':quantity',
                 'net_price' => ':netPrice',
+                'gross_price' => ':grossPrice',
                 'tax_percentage' => ':taxPercentage',
             ])
             ->setParameters([
@@ -71,6 +72,7 @@ final class InvoiceProductDbRepository
                 'unit' => $snapshot->unit,
                 'quantity' => $snapshot->quantity,
                 'netPrice' => $snapshot->netPrice,
+                'grossPrice' => $snapshot->grossPrice,
                 'taxPercentage' => $snapshot->tax,
             ])
             ->executeStatement();
