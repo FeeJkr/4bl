@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Application\Address;
 
+use JetBrains\PhpStorm\Pure;
+
 final class AddressDTO
 {
     public function __construct(
@@ -14,6 +16,7 @@ final class AddressDTO
         public readonly string $city,
     ){}
 
+    #[Pure]
     public static function fromStorage(array $storage): self
     {
         return new self(

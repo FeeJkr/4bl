@@ -1,19 +1,19 @@
-import {financesCategoriesConstants} from "../../../constants/finances.categories.constants";
+import {contractorsConstants as constants} from "../../../constants/invoices/contractors/constants";
 
 export function create(state = {items: []}, action) {
     switch (action.type) {
-        case financesCategoriesConstants.CREATE_REQUEST:
+        case constants.CREATE_REQUEST:
             return {
                 request: action.request,
                 isLoading: true,
             };
-        case financesCategoriesConstants.CREATE_SUCCESS:
+        case constants.CREATE_SUCCESS:
             return {};
-        case financesCategoriesConstants.CREATE_FAILURE:
+        case constants.CREATE_FAILURE:
             return {
                 errors: action.errors,
             };
-        case financesCategoriesConstants.CREATE_VALIDATION_FAILURE:
+        case constants.CREATE_VALIDATION_FAILURE:
             return {
                 validationErrors: action.errors,
             };

@@ -1,16 +1,15 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
+import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 
 function Create() {
     const dispatch = useDispatch();
-    const validationErrors = useSelector(state => state.companies.validationErrors);
+    const validationErrors = useSelector(state => state.invoices.contractors.create.validationErrors);
     let errors = [];
     const [inputs, setInputs] = useState({
         name: null,
         identificationNumber: null,
-        phoneNumber: null,
-        email: null,
         street: null,
         city: null,
         zipCode: null,
@@ -25,7 +24,7 @@ function Create() {
     function handleSubmit(e) {
         e.preventDefault();
 
-        dispatch(companiesActions.createCompany(inputs, navigate));
+        dispatch(contractorsActions.createContractor(inputs, navigate));
     }
 
     if(validationErrors) {
@@ -43,12 +42,12 @@ function Create() {
                     <nav>
                         <ol className="breadcrumb m-0">
                             <li className="breadcrumb-item">
-                                <Link to={'/invoices/companies'}
-                                   style={{textDecoration: 'none', color: '#495057'}}>Companies</Link>
+                                <Link to={'/invoices/contractors'}
+                                   style={{textDecoration: 'none', color: '#495057'}}>Contractors</Link>
                             </li>
                             <li className="active breadcrumb-item">
-                                <Link to={'/invoices/companies/new'}
-                                   style={{textDecoration: 'none', color: '#74788d'}}>Add Company</Link>
+                                <Link to={'/invoices/contractors/new'}
+                                   style={{textDecoration: 'none', color: '#74788d'}}>Add Contractor</Link>
                             </li>
                         </ol>
                     </nav>
@@ -62,13 +61,13 @@ function Create() {
                             <div className="mb-4" style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}>Basic
                                 Information
                             </div>
-                            <form id="create-company-form" onSubmit={handleSubmit}>
+                            <form id="create-contractor-form" onSubmit={handleSubmit}>
                                 <div className="row">
                                     <div className="col-sm-6">
                                         <div className="mb-3 form-group">
                                             <label htmlFor="name" style={{marginBottom: '.5rem', fontWeight: 500}}>Company
                                                 name</label>
-                                            <input id="name" name="name" placeholder="Enter company name..." type="text"
+                                            <input id="name" name="name" placeholder="Enter contractor name..." type="text"
                                                    className="form-control"
                                                    style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                    onChange={handleChange}
@@ -89,31 +88,6 @@ function Create() {
                                             />
                                             {errors['identificationNumber'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['identificationNumber'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="phoneNumber"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Phone number</label>
-                                            <input id="phoneNumber" name="phoneNumber"
-                                                   placeholder="Enter company phone number..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['phoneNumber'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['phoneNumber'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="email"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Email</label>
-                                            <input id="email" name="email" placeholder="Enter company email..."
-                                                   type="email" className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['email'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['email'].message}</span>
                                             }
                                         </div>
                                     </div>

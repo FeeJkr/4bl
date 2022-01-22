@@ -74,7 +74,7 @@ final class AddressDbRepository implements AddressRepository
             ])
             ->setParameters([
                 'id' => $address->id,
-                'users_id' => $address->userId,
+                'userId' => $address->userId,
                 'name' => $address->name,
                 'street' => $address->street,
                 'zipCode' => $address->zipCode,

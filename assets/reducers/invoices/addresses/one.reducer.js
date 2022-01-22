@@ -1,4 +1,4 @@
-import {contractorsConstants as constants} from "../../../constants/invoices/contractors/constants";
+import {addressesConstants as constants} from "../../../constants/invoices/addresses/constants";
 
 export function one(state = {}, action) {
     switch (action.type) {

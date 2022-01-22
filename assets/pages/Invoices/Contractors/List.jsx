@@ -4,20 +4,20 @@ import {useDispatch, useSelector} from "react-redux";
 import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {Link} from "react-router-dom";
 import {Toast} from "react-bootstrap";
+import {addressesActions} from "../../../actions/invoices/addresses/actions";
+import ContractorListElement from "./ContractorListElement";
 
 function List() {
     const contractors = useSelector(state => state.invoices.contractors.all.items);
+    const addresses = useSelector(state => state.invoices.addresses.all.items);
+
     const dispatch = useDispatch();
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
         dispatch(contractorsActions.getAll());
+        dispatch(addressesActions.getAll());
     }, []);
-
-    function handleDelete(id) {
-        dispatch(contractorsActions.deleteContractor(id));
-        setShowToast(true);
-    }
 
     return (
         <div className="container-fluid">
@@ -29,8 +29,8 @@ function List() {
                         <div className="card-body">
                             <div className="mb-2 row">
                                 <div className="col-md-12" style={{textAlign: 'right'}}>
-                                    <Link to={'/invoices/companies/new'} className="button-create-new btn btn-success"
-                                            id="button-create-new-company">
+                                    <Link to={'/invoices/contractors/new'} className="button-create-new btn btn-success"
+                                            id="button-create-new-contractor">
                                         <i className="bi bi-plus"/>
                                         Create new
                                     </Link>
@@ -50,30 +50,12 @@ function List() {
                                     </thead>
                                     <tbody id="table-companies-body">
                                     {contractors && contractors.map(function (contractor, key) {
-                                        return (
-                                            <tr key={contractor.id}>
-                                                <th scope="row">{++key}</th>
-                                                <td>{contractor.name}</td>
-                                                <td>{contractor.identificationNumber}</td>
-                                                <td>{contractor.street}, {contractor.zipCode} {contractor.city}</td>
-                                                <td>
-                                                    <div className="gap-3"
-                                                         style={{display: 'flex', gridGap: '1 rem'}}>
-                                                        <Link to={'/invoices/contractors/edit/' + contractor.id}>
-                                                            <i className="bi bi-pencil edit-contractors-button"
-                                                                style={{color: '#34c38f'}}
-                                                            />
-                                                        </Link>
-                                                        <a onClick={() => handleDelete(contractor.id)}
-                                                              style={{color: '#f46a6a', fontSize: '18 px', cursor: 'pointer'}}>
-                                                            <i className="bi bi-trash delete-contractors-button"
-                                                                style={{color: '#f46a6a'}}
-                                                            />
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
+                                        return <ContractorListElement
+                                            key={key}
+                                            contractor={contractor}
+                                            addresses={addresses}
+                                            setShowToast={setShowToast}
+                                        />
                                     })}
                                     </tbody>
                                 </table>

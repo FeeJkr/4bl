@@ -4,7 +4,7 @@ create:
   methods: POST
 
 delete:
-  path: /{id}
+  path: /{id}/
   controller: App\Web\API\Action\Invoices\Contractor\Delete\DeleteContractorAction
   methods: DELETE
 
@@ -14,11 +14,11 @@ get.all:
   methods: GET
 
 get.one:
-  path: /{id}
+  path: /{id}/
   controller: App\Web\API\Action\Invoices\Contractor\GetOneById\GetOneContractorByIdAction
   methods: GET
 
 update:
-  path: /{id}
+  path: /{id}/
   controller: App\Web\API\Action\Invoices\Contractor\Update\UpdateContractorAction
   methods: POST

@@ -4,7 +4,7 @@ create:
   methods: POST
 
 delete:
-  path: /{id}
+  path: /{id}/
   controller: App\Web\API\Action\Invoices\Company\Delete\DeleteCompanyAction
   methods: DELETE
 
@@ -14,12 +14,12 @@ get.all:
   methods: GET
 
 get.one:
-  path: /{id}
+  path: /{id}/
   controller: App\Web\API\Action\Invoices\Company\GetOneById\GetOneCompanyByIdAction
   methods: GET
 
 update:
-  path: /{id}
+  path: /{id}/
   controller: App\Web\API\Action\Invoices\Company\Update\UpdateCompanyAction
   methods: POST
 
