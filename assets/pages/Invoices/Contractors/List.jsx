@@ -1,27 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import './List.css';
 import {useDispatch, useSelector} from "react-redux";
-import {companiesActions} from "../../../actions/companies.actions";
+import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {Link} from "react-router-dom";
 import {Toast} from "react-bootstrap";
 
 function List() {
-    const companies = useSelector(state => state.companies.items);
+    const contractors = useSelector(state => state.invoices.contractors.all.items);
     const dispatch = useDispatch();
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
-        dispatch(companiesActions.getAll());
+        dispatch(contractorsActions.getAll());
     }, []);
 
     function handleDelete(id) {
-        dispatch(companiesActions.deleteCompany(id));
+        dispatch(contractorsActions.deleteContractor(id));
         setShowToast(true);
     }
 
     return (
         <div className="container-fluid">
-            <h4 style={{fontSize: '18px', fontWeight: 600, textTransform: 'uppercase', color: '#495057'}}>Companies</h4>
+            <h4 style={{fontSize: '18px', fontWeight: 600, textTransform: 'uppercase', color: '#495057'}}>Contractors</h4>
 
             <div className="row">
                 <div className="col-12">
@@ -45,35 +45,28 @@ function List() {
                                         <th>Name</th>
                                         <th>Identification Number</th>
                                         <th>Address</th>
-                                        <th width="100px">Payment Information</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-companies-body">
-                                    {companies && companies.map(function (company, key) {
+                                    {contractors && contractors.map(function (contractor, key) {
                                         return (
-                                            <tr key={company.id}>
+                                            <tr key={contractor.id}>
                                                 <th scope="row">{++key}</th>
-                                                <td>{company.name}</td>
-                                                <td>{company.identificationNumber}</td>
-                                                <td>{company.street}, {company.zipCode} {company.city}</td>
-                                                <td align="center">
-                                                    {company.paymentType
-                                                        ? (<i className="bi bi-check-circle" style={{color: '#34c38f', fontSize: '18px'}}/>)
-                                                        : (<i className="bi bi-x-circle" style={{color: '#f46a6a', fontSize: '18px'}}/>)
-                                                    }
-                                                </td>
+                                                <td>{contractor.name}</td>
+                                                <td>{contractor.identificationNumber}</td>
+                                                <td>{contractor.street}, {contractor.zipCode} {contractor.city}</td>
                                                 <td>
                                                     <div className="gap-3"
                                                          style={{display: 'flex', gridGap: '1 rem'}}>
-                                                        <Link to={'/invoices/companies/edit/' + company.id}>
-                                                            <i className="bi bi-pencil edit-company-button"
+                                                        <Link to={'/invoices/contractors/edit/' + contractor.id}>
+                                                            <i className="bi bi-pencil edit-contractors-button"
                                                                 style={{color: '#34c38f'}}
                                                             />
                                                         </Link>
-                                                        <a onClick={() => handleDelete(company.id)}
+                                                        <a onClick={() => handleDelete(contractor.id)}
                                                               style={{color: '#f46a6a', fontSize: '18 px', cursor: 'pointer'}}>
-                                                            <i className="bi bi-trash delete-company-button"
+                                                            <i className="bi bi-trash delete-contractors-button"
                                                                 style={{color: '#f46a6a'}}
                                                             />
                                                         </a>
@@ -100,7 +93,7 @@ function List() {
                     <strong className="me-auto" style={{color: '#fff'}}>Success!</strong>
                 </Toast.Header>
                 <Toast.Body style={{color: '#fff'}}>
-                    Company was successfully deleted.
+                    Contractor was successfully deleted.
                 </Toast.Body>
             </Toast>
         </div>

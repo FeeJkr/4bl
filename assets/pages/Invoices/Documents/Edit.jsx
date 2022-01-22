@@ -7,10 +7,10 @@ import AsyncSelect from "react-select/async/dist/react-select.esm";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {companiesService} from "../../../services/companies.service";
+import {contractorsService} from "../../../services/invoices/contractors/crud.service";
 import './Invoices.css';
 import 'boxicons/css/boxicons.min.css';
-import {companiesActions} from "../../../actions/companies.actions";
+import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 
 function Edit() {
     const {id} = useParams();

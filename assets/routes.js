@@ -6,12 +6,12 @@ import SignUp from "./pages/Authentication/SignUp";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import {List as DocumentsList} from "./pages/Invoices/Documents/List";
-import {List as CompaniesList} from "./pages/Invoices/Companies/List";
+import {List as ContractorsList} from "./pages/Invoices/Contractors/List";
 import {Generate} from "./pages/Invoices/Documents/Generate";
 import DocumentsLayout from "./layouts/invoices/DocumentsLayout";
-import {Create as CreateCompany} from "./pages/Invoices/Companies/Create";
+import {Create as CreateContractor} from "./pages/Invoices/Contractors/Create";
 import ContractorsLayout from "./layouts/invoices/ContractorsLayout";
-import {Edit as EditCompany} from "./pages/Invoices/Companies/Edit";
+import {Edit as EditContractor} from "./pages/Invoices/Contractors/Edit";
 import {Edit as EditDocument} from "./pages/Invoices/Documents/Edit";
 import Profile from "./pages/Account/Profile";
 import Settings from "./pages/Account/Settings";
@@ -51,12 +51,12 @@ export default function Router() {
                             ],
                         },
                         {
-                            path: 'companies',
+                            path: 'contractors',
                             element: <ContractorsLayout/>,
                             children: [
-                                { path: '', element: <CompaniesList/> },
-                                { path: 'new', element: <CreateCompany/> },
-                                { path: 'edit/:id', element: <EditCompany/> },
+                                { path: '', element: <ContractorsList/> },
+                                { path: 'new', element: <CreateContractor/> },
+                                { path: 'edit/:id', element: <EditContractor/> },
                             ],
                         },
                     ],

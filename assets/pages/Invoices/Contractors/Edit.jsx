@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {companiesActions} from "../../../actions/companies.actions";
+import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {useDispatch, useSelector} from "react-redux";
 import {Toast} from "react-bootstrap";
 
@@ -14,7 +14,7 @@ function Edit() {
     let errors = [];
 
     useEffect(() => {
-        dispatch(companiesActions.getOne(id));
+        dispatch(contractorsActions.getOneById(id));
     }, []);
 
     function handleChange(e) {
@@ -25,18 +25,11 @@ function Edit() {
     function handleBasicInformationSubmit(e) {
         e.preventDefault();
 
-        dispatch(companiesActions.updateCompanyBasicInformation(id, company));
-    }
-
-
-    function handlePaymentInformationSubmit(e) {
-        e.preventDefault();
-
-        dispatch(companiesActions.updateCompanyPaymentInformation(id, company));
+        dispatch(contractorsActions.updateContractor(id, company));
     }
 
     function closeToast() {
-        dispatch(companiesActions.clearAlerts());
+        dispatch(contractorsActions.clearAlerts());
     }
 
     if(validationErrors) {

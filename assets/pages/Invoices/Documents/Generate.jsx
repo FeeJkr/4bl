@@ -5,7 +5,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {invoicesActions} from "../../../actions/invoices.actions";
 import AsyncSelect from 'react-select/async';
-import {companiesService} from "../../../services/companies.service";
+import {contractorsService} from "../../../services/invoices/contractors/crud.service";
 import Flatpickr from "react-flatpickr";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import Select from "react-select";
