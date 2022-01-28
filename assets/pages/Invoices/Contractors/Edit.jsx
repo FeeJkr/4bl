@@ -3,13 +3,15 @@ import {Link, useParams} from 'react-router-dom';
 import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {useDispatch, useSelector} from "react-redux";
 import {Toast} from "react-bootstrap";
+import {addressesActions} from "../../../actions/invoices/addresses/actions";
 
 function Edit() {
     const dispatch = useDispatch();
     const contractor = useSelector(state => state.invoices.contractors.one.item);
     const address = useSelector(state => state.invoices.addresses.one.item);
     const validationErrors = useSelector(state => state.invoices.contractors.update.validationErrors);
-    let isUpdated = useSelector(state => state.invoices.contractors.update.isUpdated);
+    const isUpdatedContractor = useSelector(state => state.invoices.contractors.update.isUpdated);
+    const isUpdatedAddress = useSelector(state => state.invoices.addresses.update.isUpdated);
     const {id} = useParams();
     let errors = [];
 
@@ -17,15 +19,16 @@ function Edit() {
         dispatch(contractorsActions.getOneById(id));
     }, []);
 
-    function handleChange(e) {
+    function handleChange(e, object) {
         const { name, value } = e.target;
-        contractor[name] = value === '' ? null : value;
+        object[name] = value === '' ? null : value;
     }
 
     function handleSubmit(e) {
         e.preventDefault();
 
         dispatch(contractorsActions.updateContractor(id, contractor));
+        dispatch(addressesActions.updateAddress(address.id, address));
     }
 
     function closeToast() {
@@ -80,7 +83,10 @@ function Edit() {
                                                        className="form-control"
                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                        defaultValue={contractor.name}
-                                                       onChange={handleChange}
+                                                       onChange={e => {
+                                                           handleChange(e, contractor);
+                                                           handleChange(e, address);
+                                                       }}
                                                 />
                                                 {errors['name'] &&
                                                     <span style={{color: 'red', fontSize: '10px'}}>{errors['name'].message}</span>
@@ -94,7 +100,7 @@ function Edit() {
                                                        className="form-control"
                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                        defaultValue={contractor.identificationNumber}
-                                                       onChange={handleChange}
+                                                       onChange={e => handleChange(e, contractor)}
                                                 />
                                                 {errors['identificationNumber'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['identificationNumber'].message}</span>
@@ -113,7 +119,7 @@ function Edit() {
                                                            className="form-control"
                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                            defaultValue={address.street}
-                                                           onChange={handleChange}
+                                                           onChange={e => handleChange(e, address)}
                                                     />
                                                     {errors['street'] &&
                                                         <span style={{color: 'red', fontSize: '10px'}}>{errors['street'].message}</span>
@@ -126,7 +132,7 @@ function Edit() {
                                                            type="text" className="form-control"
                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                            defaultValue={address.city}
-                                                           onChange={handleChange}
+                                                           onChange={e => handleChange(e, address)}
                                                     />
                                                     {errors['city'] &&
                                                         <span style={{color: 'red', fontSize: '10px'}}>{errors['city'].message}</span>
@@ -140,7 +146,7 @@ function Edit() {
                                                            className="form-control"
                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                            defaultValue={address.zipCode}
-                                                           onChange={handleChange}
+                                                           onChange={e => handleChange(e, address)}
                                                     />
                                                     {errors['zipCode'] &&
                                                         <span style={{color: 'red', fontSize: '10px'}}>{errors['zipCode'].message}</span>
@@ -168,7 +174,7 @@ function Edit() {
                 <div style={{position: 'absolute', bottom: 80, right: 20}}>
                     <Toast style={{backgroundColor: '#00ca72'}}
                            onClose={closeToast}
-                           show={!!isUpdated}
+                           show={!!isUpdatedContractor && !!isUpdatedAddress}
                            delay={3000}
                            autohide
                     >

@@ -17,6 +17,7 @@ use JetBrains\PhpStorm\Pure;
 final class AddressDbRepository implements AddressRepository
 {
     private const DATABASE_TABLE = 'invoices_addresses';
+    private const DATABASE_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     public function __construct(private Connection $connection){}
 
@@ -105,7 +106,7 @@ final class AddressDbRepository implements AddressRepository
                 'street' => $address->street,
                 'zipCode' => $address->zipCode,
                 'city' => $address->city,
-                'updatedAt' => new DateTimeImmutable(),
+                'updatedAt' => (new DateTimeImmutable())->format(self::DATABASE_DATETIME_FORMAT),
             ])
             ->executeStatement();
     }

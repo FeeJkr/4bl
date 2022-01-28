@@ -4,6 +4,7 @@ import {addressesConstants} from "../../../constants/invoices/addresses/constant
 export const addressesActions = {
     getAll,
     getOneById,
+    updateAddress,
 };
 
 function getAll() {
@@ -36,4 +37,26 @@ function getOneById(id) {
     function request() { return { type: addressesConstants.GET_ONE_REQUEST } }
     function success(contractor) { return { type: addressesConstants.GET_ONE_SUCCESS, item: contractor } }
     function failure(errors) { return { type: addressesConstants.GET_ONE_FAILURE, errors } }
+}
+
+function updateAddress(id, formData) {
+    return dispatch => {
+        dispatch(request());
+
+        addressesService.updateAddress(id, formData)
+            .then(
+                () => dispatch(success(formData)),
+                errors => dispatch(failure(errors))
+            );
+    }
+
+    function request(request) { return { type: addressesConstants.UPDATE_REQUEST, request } }
+    function success(formData) { return { type: addressesConstants.UPDATE_SUCCESS, item: formData } }
+    function failure(errors) {
+        if (errors.type === 'DomainError') {
+            return { type: addressesConstants.UPDATE_FAILURE, errors }
+        }
+
+        return { type: addressesConstants.UPDATE_FAILURE, errors: errors.errors }
+    }
 }

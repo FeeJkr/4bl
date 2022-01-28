@@ -15,7 +15,8 @@ import {Edit as EditContractor} from "./pages/Invoices/Contractors/Edit";
 import {Edit as EditDocument} from "./pages/Invoices/Documents/Edit";
 import Profile from "./pages/Account/Profile";
 import Settings from "./pages/Account/Settings";
-import CompanyLayout from "./layouts/invoices/CompanyLayout";
+import CompaniesLayout from "./layouts/invoices/CompaniesLayout";
+import {List as CompanyList} from "./pages/Invoices/Companies/List";
 
 export default function Router() {
     return useRoutes([
@@ -38,8 +39,13 @@ export default function Router() {
                     path: 'invoices',
                     children: [
                         {
-                            path: 'company',
-                            element: <CompanyLayout/>,
+                            path: 'companies',
+                            element: <CompaniesLayout/>,
+                            children: [
+                                { path: '', element: <CompanyList/> },
+                                { path: 'new', element: <CreateContractor/> },
+                                { path: 'edit/:id', element: <EditContractor/> },
+                            ],
                         },
                         {
                             path: 'documents',

@@ -1,0 +1,30 @@
+.button-create-new {
+    text-decoration: none;
+    border-radius: 30px;
+    background-color: #34c38f;
+    border-color: #34c38f;
+    color: #fff;
+    font-size: 13px;
+}
+
+.button-create-new:hover {
+    background-color: #2ca67a;
+    border-color: #2ca67a;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #556ee6;
+    border-color: #556ee6;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #485ec4;
+    border-color: #485ec4;
+}
+
+.card {
+    margin-bottom: 24px;
+    box-shadow: 0 0.75rem 1.5rem rgba(18, 38, 63, 0.03);
+}

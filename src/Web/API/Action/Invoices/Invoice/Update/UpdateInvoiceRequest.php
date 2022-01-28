@@ -18,6 +18,7 @@ final class UpdateInvoiceRequest extends Request
     private const PAYMENT_TYPE = 'paymentType';
     private const BANK_ACCOUNT_ID = 'bankAccountId';
     private const CURRENCY_CODE = 'currencyCode';
+    private const COMPANY_ID = 'companyId';
     private const CONTRACTOR_ID = 'contractorId';
     private const GENERATED_AT = 'generatedAt';
     private const SOLD_AT = 'soldAt';
@@ -42,6 +43,7 @@ final class UpdateInvoiceRequest extends Request
         public readonly string $paymentType,
         public readonly ?string $bankAccountId,
         public readonly string $currencyCode,
+        public readonly string $companyId,
         public readonly string $contractorId,
         public readonly string $generatedAt,
         public readonly string $soldAt,
@@ -59,6 +61,7 @@ final class UpdateInvoiceRequest extends Request
         $paymentType = $requestData[self::PAYMENT_TYPE] ?? null;
         $bankAccountId = $requestData[self::BANK_ACCOUNT_ID] ?? null;
         $currencyCode = $requestData[self::CURRENCY_CODE] ?? null;
+        $companyId = $requestData[self::COMPANY_ID] ?? null;
         $contractorId = $requestData[self::CONTRACTOR_ID] ?? null;
         $generatedAt = $requestData[self::GENERATED_AT] ?? null;
         $soldAt = $requestData[self::SOLD_AT] ?? null;
@@ -73,6 +76,7 @@ final class UpdateInvoiceRequest extends Request
             ->that($paymentType, self::PAYMENT_TYPE)->string()->notEmpty()
             ->that($bankAccountId, self::BANK_ACCOUNT_ID)->nullOr()->uuid()
             ->that($currencyCode, self::CURRENCY_CODE)->string()->notEmpty()
+            ->that($companyId, self::COMPANY_ID)->uuid()->notEmpty()
             ->that($contractorId, self::CONTRACTOR_ID)->uuid()->notEmpty()
             ->that($generatedAt, self::GENERATED_AT)->date('Y-m-d')->notEmpty()
             ->that($soldAt, self::SOLD_AT)->date('Y-m-d')->notEmpty()
@@ -99,6 +103,7 @@ final class UpdateInvoiceRequest extends Request
             $paymentType,
             $bankAccountId,
             $currencyCode,
+            $companyId,
             $contractorId,
             $generatedAt,
             $soldAt,

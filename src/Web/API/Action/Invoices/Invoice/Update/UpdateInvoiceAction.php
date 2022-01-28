@@ -26,6 +26,7 @@ final class UpdateInvoiceAction extends AbstractAction
                 $request->paymentType,
                 $request->bankAccountId,
                 $request->currencyCode,
+                $request->companyId,
                 $request->contractorId,
                 $request->generatedAt,
                 $request->soldAt,

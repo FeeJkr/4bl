@@ -1,14 +1,14 @@
-import {financesCategoriesConstants} from "../../../constants/finances.categories.constants";
+import {contractorsConstants as constants} from "../../../constants/invoices/contractors/constants";
 
 export function _delete(state = {items: []}, action) {
     switch (action.type) {
-        case financesCategoriesConstants.DELETE_REQUEST:
+        case constants.DELETE_REQUEST:
             return {
                 request: action.request
             };
-        case financesCategoriesConstants.DELETE_SUCCESS:
+        case constants.DELETE_SUCCESS:
             return {};
-        case financesCategoriesConstants.DELETE_FAILURE:
+        case constants.DELETE_FAILURE:
             return {
                 errors: action.errors,
             };

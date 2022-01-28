@@ -26,7 +26,6 @@ final class GenerateInvoiceHandler implements CommandHandler
 {
     public function __construct(
         private InvoiceRepository $invoiceRepository,
-        private CompanyRepository $companyRepository,
         private UserContext $userContext,
     ){}
 
@@ -47,11 +46,10 @@ final class GenerateInvoiceHandler implements CommandHandler
         );
 
         $userId = $this->userContext->getUserId();
-        $company = $this->companyRepository->fetchByUserId($userId);
 
         $invoice = Invoice::create(
             $userId,
-            CompanyId::fromString($company->snapshot()->id),
+            CompanyId::fromString($command->companyId),
             ContractorId::fromString($command->contractorId),
             $invoiceParameters,
             $this->prepareProducts($command->products),

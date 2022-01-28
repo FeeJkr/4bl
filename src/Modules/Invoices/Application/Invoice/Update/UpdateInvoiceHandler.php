@@ -6,6 +6,7 @@ namespace App\Modules\Invoices\Application\Invoice\Update;
 
 use App\Common\Application\Command\CommandHandler;
 use App\Modules\Invoices\Domain\Company\BankAccount\BankAccountId;
+use App\Modules\Invoices\Domain\Company\CompanyId;
 use App\Modules\Invoices\Domain\Contractor\ContractorId;
 use App\Modules\Invoices\Domain\Invoice\InvoiceId;
 use App\Modules\Invoices\Domain\Invoice\InvoiceParameters;
@@ -49,6 +50,7 @@ final class UpdateInvoiceHandler implements CommandHandler
         );
 
         $invoice->update(
+            CompanyId::fromString($command->companyId),
             ContractorId::fromString($command->contractorId),
             $invoiceParameters,
             $this->prepareProducts($command->products),

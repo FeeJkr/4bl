@@ -18,6 +18,7 @@ use JetBrains\PhpStorm\Pure;
 final class ContractorDbRepository implements ContractorRepository
 {
     private const DATABASE_TABLE = 'invoices_contractors';
+    private const DATABASE_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     public function __construct(private Connection $connection){}
 
@@ -99,7 +100,7 @@ final class ContractorDbRepository implements ContractorRepository
                 'userId' => $contractor->userId,
                 'name' => $contractor->name,
                 'identificationNumber' => $contractor->identificationNumber,
-                'updatedAt' => new DateTimeImmutable(),
+                'updatedAt' => (new DateTimeImmutable())->format(self::DATABASE_DATETIME_FORMAT),
             ])
             ->executeStatement();
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Invoices\Infrastructure\Domain\Invoice;
 
 use App\Common\Application\Query\QueryBus;
-use App\Modules\Invoices\Application\Company\CompanyDTO;
+use App\Modules\Invoices\Application\Company\GetAll\CompanyDTO;
 use App\Modules\Invoices\Application\Company\GetOneById\GetOneCompanyByIdQuery;
 use App\Modules\Invoices\Domain\Invoice\InvoiceProductSnapshot;
 use App\Modules\Invoices\Domain\Invoice\InvoiceSnapshot;

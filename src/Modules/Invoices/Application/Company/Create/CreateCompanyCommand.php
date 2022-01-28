@@ -14,7 +14,9 @@ final class CreateCompanyCommand implements Command
         public readonly string $name,
         public readonly string $identificationNumber,
         public readonly string $addressId,
-        public readonly ContactInformationDTO $contactInformation,
-        public readonly VatInformationDTO $vatInformationDTO,
+        public readonly ?string $email,
+        public readonly ?string $phoneNumber,
+        public readonly bool $isVatPayer,
+        public readonly ?int $reason,
     ){}
 }

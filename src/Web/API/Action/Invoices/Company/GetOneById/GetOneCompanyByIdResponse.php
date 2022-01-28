@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Web\API\Action\Invoices\Company\GetOneById;
 
-use App\Modules\Invoices\Application\Company\CompanyDTO;
+use App\Modules\Invoices\Application\Company\GetAll\CompanyDTO;
 use App\Web\API\Action\Response;
 
 final class GetOneCompanyByIdResponse extends Response

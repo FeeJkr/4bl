@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Invoices\Application\Company\GetOneById;
 
 use App\Common\Application\Query\QueryHandler;
-use App\Modules\Invoices\Application\Company\CompanyDTO;
+use App\Modules\Invoices\Application\Company\GetAll\CompanyDTO;
 use App\Modules\Invoices\Domain\User\UserContext;
 use Doctrine\DBAL\Connection;
 use Throwable;

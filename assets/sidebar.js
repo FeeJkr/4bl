@@ -9,8 +9,8 @@ const sidebar = [
         icon: 'bi-receipt',
         children: [
             {
-                title: 'Company',
-                path: '/invoices/company',
+                title: 'Companies',
+                path: '/invoices/companies',
                 icon: 'bi-house-door',
             },
             {

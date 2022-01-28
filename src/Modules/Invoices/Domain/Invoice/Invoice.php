@@ -44,6 +44,7 @@ final class Invoice extends Entity
     }
 
     public function update(
+        CompanyId $companyId,
         ContractorId $contractorId,
         InvoiceParameters $parameters,
         InvoiceProductsCollection $products,

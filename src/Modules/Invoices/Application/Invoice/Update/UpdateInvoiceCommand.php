@@ -17,6 +17,7 @@ final class UpdateInvoiceCommand implements Command
         public readonly string $paymentType,
         public readonly ?string $bankAccountId,
         public readonly string $currencyCode,
+        public readonly string $companyId,
         public readonly string $contractorId,
         public readonly string $generatedAt,
         public readonly string $soldAt,

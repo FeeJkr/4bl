@@ -6,6 +6,7 @@ export const addressesService = {
     getAll,
     getOneById,
     createAddress,
+    updateAddress,
 };
 
 function getAll() {
@@ -30,4 +31,13 @@ function createAddress (formData) {
         response => response.data,
         error => Promise.reject(error.response.data)
     );
-};
+}
+
+function updateAddress(id, formData) {
+    return axios.post(addressesDictionary.UPDATE_URL.replace('{id}', id), {
+        name: formData.name,
+        street: formData.street,
+        zipCode: formData.zipCode,
+        city: formData.city,
+    }).catch(error => Promise.reject(error.response.data));
+}

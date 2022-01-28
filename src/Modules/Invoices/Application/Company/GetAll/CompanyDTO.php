@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Invoices\Application\Company;
+namespace App\Modules\Invoices\Application\Company\GetAll;
 
 use JetBrains\PhpStorm\Pure;
 
@@ -10,7 +10,7 @@ final class CompanyDTO
 {
     public function __construct(
         public readonly string $id,
-        public readonly string $addressId,
+        public readonly AddressDTO $address,
         public readonly string $name,
         public readonly string $identificationNumber,
         public readonly bool $isVatPayer,
@@ -24,7 +24,12 @@ final class CompanyDTO
     {
         return new self(
             $storage['id'],
-            $storage['invoices_addresses_id'],
+            new AddressDTO(
+                $storage['address_id'],
+                $storage['address_street'],
+                $storage['address_city'],
+                $storage['address_zip_code'],
+            ),
             $storage['name'],
             $storage['identification_number'],
             (bool) $storage['is_vat_payer'],
