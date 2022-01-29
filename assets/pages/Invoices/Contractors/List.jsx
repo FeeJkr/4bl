@@ -4,19 +4,16 @@ import {useDispatch, useSelector} from "react-redux";
 import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {Link} from "react-router-dom";
 import {Toast} from "react-bootstrap";
-import {addressesActions} from "../../../actions/invoices/addresses/actions";
 import ContractorListElement from "./ContractorListElement";
 
 function List() {
     const contractors = useSelector(state => state.invoices.contractors.all.items);
-    const addresses = useSelector(state => state.invoices.addresses.all.items);
 
     const dispatch = useDispatch();
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
         dispatch(contractorsActions.getAll());
-        dispatch(addressesActions.getAll());
     }, []);
 
     return (
@@ -52,8 +49,8 @@ function List() {
                                     {contractors && contractors.map(function (contractor, key) {
                                         return <ContractorListElement
                                             key={key}
+                                            number={++key}
                                             contractor={contractor}
-                                            addresses={addresses}
                                             setShowToast={setShowToast}
                                         />
                                     })}

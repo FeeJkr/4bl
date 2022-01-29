@@ -12,6 +12,10 @@ const sidebar = [
                 title: 'Companies',
                 path: '/invoices/companies',
                 icon: 'bi-house-door',
+                children: [
+                    { path: '/invoices/companies/new' },
+                    { path: '/invoices/companies/edit/:id' },
+                ],
             },
             {
                 title: 'Documents',

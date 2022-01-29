@@ -15,20 +15,20 @@ final class Address extends Entity
         private UserId $userId,
         private string $name,
         private string $street,
-        private string $zipCode,
         private string $city,
+        private string $zipCode,
     ){}
 
     public function update(
         string $name,
         string $street,
-        string $zipCode,
         string $city,
+        string $zipCode,
     ): void {
         $this->name = $name;
         $this->street = $street;
-        $this->zipCode = $zipCode;
         $this->city = $city;
+        $this->zipCode = $zipCode;
     }
 
     #[Pure]
@@ -39,8 +39,8 @@ final class Address extends Entity
             $this->userId->toString(),
             $this->name,
             $this->street,
-            $this->zipCode,
             $this->city,
+            $this->zipCode,
         );
     }
 }

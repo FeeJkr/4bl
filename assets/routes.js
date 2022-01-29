@@ -17,6 +17,8 @@ import Profile from "./pages/Account/Profile";
 import Settings from "./pages/Account/Settings";
 import CompaniesLayout from "./layouts/invoices/CompaniesLayout";
 import {List as CompanyList} from "./pages/Invoices/Companies/List";
+import {Edit as EditCompany} from "./pages/Invoices/Companies/Edit";
+import {Create as CreateCompany} from "./pages/Invoices/Companies/Create";
 
 export default function Router() {
     return useRoutes([
@@ -43,6 +45,15 @@ export default function Router() {
                             element: <CompaniesLayout/>,
                             children: [
                                 { path: '', element: <CompanyList/> },
+                                { path: 'new', element: <CreateCompany/> },
+                                { path: 'edit/:id', element: <EditCompany/> },
+                            ],
+                        },
+                        {
+                            path: 'contractors',
+                            element: <ContractorsLayout/>,
+                            children: [
+                                { path: '', element: <ContractorsList/> },
                                 { path: 'new', element: <CreateContractor/> },
                                 { path: 'edit/:id', element: <EditContractor/> },
                             ],
@@ -54,15 +65,6 @@ export default function Router() {
                                 { path: '',  element: <DocumentsList/> },
                                 { path: 'new', element: <Generate/> },
                                 { path: 'edit/:id', element: <EditDocument/> },
-                            ],
-                        },
-                        {
-                            path: 'contractors',
-                            element: <ContractorsLayout/>,
-                            children: [
-                                { path: '', element: <ContractorsList/> },
-                                { path: 'new', element: <CreateContractor/> },
-                                { path: 'edit/:id', element: <EditContractor/> },
                             ],
                         },
                     ],

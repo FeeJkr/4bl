@@ -9,8 +9,10 @@ use App\Common\Application\Command\Command;
 final class CreateContractorCommand implements Command
 {
     public function __construct(
-        public readonly string $addressId,
         public readonly string $name,
         public readonly string $identificationNumber,
+        public readonly string $street,
+        public readonly string $city,
+        public readonly string $zipCode,
     ){}
 }

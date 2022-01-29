@@ -13,7 +13,13 @@ final class GetOneContractorByIdResponse extends Response
     {
         return new self([
             'id' => $contractor->id,
-            'addressId' => $contractor->addressId,
+            'address' => [
+                'id' => $contractor->address->id,
+                'name' => $contractor->address->name,
+                'street' => $contractor->address->street,
+                'city' => $contractor->address->city,
+                'zipCode' => $contractor->address->zipCode,
+            ],
             'name' => $contractor->name,
             'identificationNumber' => $contractor->identificationNumber,
         ]);

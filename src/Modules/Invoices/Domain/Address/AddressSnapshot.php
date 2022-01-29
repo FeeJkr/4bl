@@ -11,7 +11,7 @@ final class AddressSnapshot
         public readonly string $userId,
         public readonly string $name,
         public readonly string $street,
-        public readonly string $zipCode,
         public readonly string $city,
+        public readonly string $zipCode,
     ){}
 }

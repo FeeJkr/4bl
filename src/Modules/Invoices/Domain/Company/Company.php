@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Domain\Company;
 
+use App\Modules\Invoices\Domain\Address\Address;
 use App\Modules\Invoices\Domain\Address\AddressId;
-use App\Modules\Invoices\Domain\Company\BankAccount\BankAccountId;
 use App\Modules\Invoices\Domain\User\UserId;
 use JetBrains\PhpStorm\Pure;
 
@@ -14,7 +14,7 @@ final class Company
     public function __construct(
         private CompanyId $id,
         private UserId $userId,
-        private AddressId $addressId,
+        private Address $address,
         private string $name,
         private string $identificationNumber,
         private bool $isVatPayer,
@@ -25,18 +25,27 @@ final class Company
 
     public static function create(
         UserId $userId,
-        AddressId $addressId,
         string $name,
         string $identificationNumber,
         bool $isVatPayer,
         ?VatRejectionReason $vatRejectionReason,
         ?string $email,
         ?string $phoneNumber,
+        string $street,
+        string $city,
+        string $zipCode,
     ): self {
         return new self(
             CompanyId::generate(),
             $userId,
-            $addressId,
+            new Address(
+                AddressId::generate(),
+                $userId,
+                $name,
+                $street,
+                $city,
+                $zipCode,
+            ),
             $name,
             $identificationNumber,
             $isVatPayer,
@@ -53,7 +62,12 @@ final class Company
         ?VatRejectionReason $vatRejectionReason,
         ?string $email,
         ?string $phoneNumber,
+        string $street,
+        string $city,
+        string $zipCode,
     ): void {
+        $this->address->update($name, $street, $city, $zipCode);
+
         $this->name = $name;
         $this->identificationNumber = $identificationNumber;
         $this->isVatPayer = $isVatPayer;
@@ -68,7 +82,7 @@ final class Company
         return new CompanySnapshot(
             $this->id->toString(),
             $this->userId->toString(),
-            $this->addressId->toString(),
+            $this->address->snapshot(),
             $this->name,
             $this->identificationNumber,
             $this->isVatPayer,

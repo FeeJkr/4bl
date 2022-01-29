@@ -1,6 +1,5 @@
 import {contractorsConstants} from "../../../constants/invoices/contractors/constants";
 import {contractorsService} from "../../../services/invoices/contractors/crud.service";
-import {addressesActions} from "../addresses/actions";
 
 export const contractorsActions = {
     getAll,
@@ -35,7 +34,6 @@ function getOneById(id) {
             .then(
                 contractor => {
                     dispatch(success(contractor));
-                    dispatch(addressesActions.getOneById(contractor.addressId));
                 },
                 errors => dispatch(failure(errors))
             );

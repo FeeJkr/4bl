@@ -12,6 +12,7 @@ use App\Modules\Invoices\Domain\User\UserId;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Query\QueryBuilder;
 use JetBrains\PhpStorm\Pure;
 
 final class AddressDbRepository implements AddressRepository
@@ -126,6 +127,26 @@ final class AddressDbRepository implements AddressRepository
                 'userId' => $userId->toString(),
             ])
             ->executeStatement();
+    }
+
+    public function addAddressJoin(
+        QueryBuilder $queryBuilder,
+        string $alias,
+        string $foreignKey,
+        array $select,
+        string $parentKey = 'id',
+    ): QueryBuilder {
+        $localAlias = 'ia';
+        $select = array_map(static fn (string $row) => sprintf('%s.%s', $localAlias, $row), $select);
+
+        return $queryBuilder
+            ->addSelect(...$select)
+            ->join(
+                $alias,
+                'invoices_addresses',
+                $localAlias,
+                sprintf('%s.%s = %s.%s', $localAlias, $parentKey, $alias, $foreignKey),
+            );
     }
 
     #[Pure]

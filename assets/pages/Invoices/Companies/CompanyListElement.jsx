@@ -6,10 +6,6 @@ import {useDispatch} from "react-redux";
 export default function CompanyListElement(props) {
     const dispatch = useDispatch();
     const company = props.company;
-    let number = 0;
-    const currentAddress = props.addresses
-        ? props.addresses.find((address) => company.addressId === address.id)
-        : null;
 
     function handleDelete(id) {
         dispatch(companiesActions.deleteCompany(id));
@@ -18,19 +14,17 @@ export default function CompanyListElement(props) {
 
     return (
         <tr key={company.id}>
-            <th scope="row">{++number}</th>
+            <th scope="row">{props.number}</th>
             <td>{company.name}</td>
             <td>{company.identificationNumber}</td>
-            <td>{currentAddress &&
-                <> {currentAddress.street}, {currentAddress.city}, {currentAddress.zipCode} </>
-            }</td>
+            <td>{company.address.street}, {company.address.city}, {company.address.zipCode}</td>
             <td>
-                {company.isVatPayer}
+                {company.isVatPayer ? 'Yes' : <>No (#{company.vatRejectionReason})</>}
             </td>
             <td>
                 <div className="gap-3"
                      style={{display: 'flex', gridGap: '1 rem'}}>
-                    <Link to={'/invoices/contractors/edit/' + company.id}>
+                    <Link to={'/invoices/companies/edit/' + company.id}>
                         <i className="bi bi-pencil edit-contractors-button"
                            style={{color: '#34c38f'}}
                         />

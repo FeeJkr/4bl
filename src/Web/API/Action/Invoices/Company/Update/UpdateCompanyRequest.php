@@ -16,7 +16,11 @@ final class UpdateCompanyRequest extends Request
     private const EMAIL = 'email';
     private const PHONE_NUMBER = 'phoneNumber';
     private const IS_VAT_PAYER = 'isVatPayer';
-    private const REASON = 'reason';
+    private const VAT_REJECTION_REASON = 'vatRejectionReason';
+    private const ADDRESS = 'address';
+    private const STREET = 'street';
+    private const CITY = 'city';
+    private const ZIP_CODE = 'zipCode';
 
     public function __construct(
         public readonly string $id,
@@ -25,7 +29,10 @@ final class UpdateCompanyRequest extends Request
         public readonly ?string $email,
         public readonly ?string $phoneNumber,
         public readonly bool $isVatPayer,
-        public readonly ?int $reason,
+        public readonly ?int $vatRejectionReason,
+        public readonly string $street,
+        public readonly string $city,
+        public readonly string $zipCode,
     ){}
 
     public static function fromRequest(ServerRequest $request): Request
@@ -37,17 +44,27 @@ final class UpdateCompanyRequest extends Request
         $email = $requestData[self::EMAIL] ?? null;
         $phoneNumber = $requestData[self::PHONE_NUMBER] ?? null;
         $isVatPayer = $requestData[self::IS_VAT_PAYER] ?? null;
-        $reason = $requestData[self::REASON] ?? null;
+        $vatRejectionReason = $requestData[self::VAT_REJECTION_REASON] ?? null;
+        $street = $requestData[self::ADDRESS][self::STREET] ?? null;
+        $city = $requestData[self::ADDRESS][self::CITY] ?? null;
+        $zipCode = $requestData[self::ADDRESS][self::ZIP_CODE] ?? null;
 
-        Assert::lazy()
+        $assert = Assert::lazy()
             ->that($id, self::ID)->uuid()->notEmpty()
             ->that($name, self::NAME)->string()->notEmpty()
             ->that($identificationNumber, self::IDENTIFICATION_NUMBER)->string()->notEmpty()
             ->that($email, self::EMAIL)->nullOr()->email()
             ->that($phoneNumber, self::PHONE_NUMBER)->nullOr()->string()
             ->that($isVatPayer, self::IS_VAT_PAYER)->boolean()
-            ->that($reason, self::REASON)->nullOr()->integer()
-            ->verifyNow();
+            ->that($street, self::STREET)->string()->notEmpty()
+            ->that($city, self::CITY)->string()->notEmpty()
+            ->that($zipCode, self::ZIP_CODE)->string()->notEmpty();
+
+        $isVatPayer === false
+            ? $assert->that($vatRejectionReason, self::VAT_REJECTION_REASON)->integer()->notEmpty()
+            : $assert->that($vatRejectionReason, self::VAT_REJECTION_REASON)->null();
+
+        $assert->verifyNow();
 
         return new self(
             $id,
@@ -56,7 +73,10 @@ final class UpdateCompanyRequest extends Request
             $email,
             $phoneNumber,
             $isVatPayer,
-            $reason,
+            $vatRejectionReason,
+            $street,
+            $city,
+            $zipCode,
         );
     }
 }

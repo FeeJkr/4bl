@@ -1,7 +1,7 @@
-addresses:
-  resource: addresses.yaml
-  name_prefix: addresses.
-  prefix: /addresses
+bank_accounts:
+  resource: bank_accounts.yaml
+  name_prefix: bank_accounts.
+  prefix: /bank-accounts
 
 companies:
   resource: companies.yaml

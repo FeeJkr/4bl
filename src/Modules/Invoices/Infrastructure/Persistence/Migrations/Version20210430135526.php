@@ -48,10 +48,10 @@ final class Version20210430135526 extends AbstractMigration
         ');
 
         $this->addSql('
-            create table invoices_companies_bank_accounts
+            create table invoices_bank_accounts
             (
                 id uuid default gen_random_uuid() not null unique constraint invoices_companies_bank_accounts_pk primary key,
-                invoices_companies_id uuid not null constraint invoices_companies_bank_accounts_invoices_companies_id_fk references invoices_companies on delete cascade,
+                users_id uuid not null constraint invoices_bank_accounts_accounts_users_id_fk references accounts_users on delete cascade,
                 name varchar(255) not null,
                 bank_name varchar(255) not null,
                 bank_account_number varchar(255) not null,

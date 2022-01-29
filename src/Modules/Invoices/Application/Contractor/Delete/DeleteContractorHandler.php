@@ -20,5 +20,4 @@ final class DeleteContractorHandler implements CommandHandler
             $this->userContext->getUserId(),
         );
     }
-
 }

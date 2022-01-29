@@ -12,5 +12,8 @@ final class UpdateContractorCommand implements Command
         public readonly string $id,
         public readonly string $name,
         public readonly string $identificationNumber,
+        public readonly string $street,
+        public readonly string $city,
+        public readonly string $zipCode,
     ){}
 }

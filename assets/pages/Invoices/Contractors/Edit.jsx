@@ -3,15 +3,12 @@ import {Link, useParams} from 'react-router-dom';
 import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {useDispatch, useSelector} from "react-redux";
 import {Toast} from "react-bootstrap";
-import {addressesActions} from "../../../actions/invoices/addresses/actions";
 
 function Edit() {
     const dispatch = useDispatch();
     const contractor = useSelector(state => state.invoices.contractors.one.item);
-    const address = useSelector(state => state.invoices.addresses.one.item);
     const validationErrors = useSelector(state => state.invoices.contractors.update.validationErrors);
-    const isUpdatedContractor = useSelector(state => state.invoices.contractors.update.isUpdated);
-    const isUpdatedAddress = useSelector(state => state.invoices.addresses.update.isUpdated);
+    const isUpdated = useSelector(state => state.invoices.contractors.update.isUpdated);
     const {id} = useParams();
     let errors = [];
 
@@ -19,16 +16,20 @@ function Edit() {
         dispatch(contractorsActions.getOneById(id));
     }, []);
 
-    function handleChange(e, object) {
+    function handleChange(e) {
         const { name, value } = e.target;
-        object[name] = value === '' ? null : value;
+
+        if (['street', 'city', 'zipCode'].includes(name)) {
+            contractor.address[name] = value === '' ? null : value;
+        } else {
+            contractor[name] = value === '' ? null : value;
+        }
     }
 
     function handleSubmit(e) {
         e.preventDefault();
 
         dispatch(contractorsActions.updateContractor(id, contractor));
-        dispatch(addressesActions.updateAddress(address.id, address));
     }
 
     function closeToast() {
@@ -53,11 +54,11 @@ function Edit() {
                         <nav>
                             <ol className="breadcrumb m-0">
                                 <li className="breadcrumb-item">
-                                    <Link to="/invoices/companies"
+                                    <Link to="/invoices/contractors"
                                        style={{textDecoration: 'none', color: '#495057'}}>Contractors</Link>
                                 </li>
                                 <li className="active breadcrumb-item">
-                                    <Link to={'/invoices/companies/' + contractor.id}
+                                    <Link to={'/invoices/contractors/' + contractor.id}
                                        style={{textDecoration: 'none', color: '#74788d'}}>Edit Contractor</Link>
                                 </li>
                             </ol>
@@ -83,10 +84,7 @@ function Edit() {
                                                        className="form-control"
                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                        defaultValue={contractor.name}
-                                                       onChange={e => {
-                                                           handleChange(e, contractor);
-                                                           handleChange(e, address);
-                                                       }}
+                                                       onChange={handleChange}
                                                 />
                                                 {errors['name'] &&
                                                     <span style={{color: 'red', fontSize: '10px'}}>{errors['name'].message}</span>
@@ -100,60 +98,56 @@ function Edit() {
                                                        className="form-control"
                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                        defaultValue={contractor.identificationNumber}
-                                                       onChange={e => handleChange(e, contractor)}
+                                                       onChange={handleChange}
                                                 />
                                                 {errors['identificationNumber'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['identificationNumber'].message}</span>
                                                 }
                                             </div>
                                         </div>
-
-                                        {address &&
-                                        <>
-                                            <div className="col-sm-6">
-                                                <div className="mb-3 form-group">
-                                                    <label htmlFor="street"
-                                                           style={{marginBottom: '.5rem', fontWeight: 500}}>Street</label>
-                                                    <input id="street" name="street"
-                                                           placeholder="Enter company location street..." type="text"
-                                                           className="form-control"
-                                                           style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                           defaultValue={address.street}
-                                                           onChange={e => handleChange(e, address)}
-                                                    />
-                                                    {errors['street'] &&
-                                                        <span style={{color: 'red', fontSize: '10px'}}>{errors['street'].message}</span>
-                                                    }
-                                                </div>
-                                                <div className="mb-3 form-group">
-                                                    <label htmlFor="city"
-                                                           style={{marginBottom: '.5rem', fontWeight: 500}}>City</label>
-                                                    <input id="city" name="city" placeholder="Enter company location city..."
-                                                           type="text" className="form-control"
-                                                           style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                           defaultValue={address.city}
-                                                           onChange={e => handleChange(e, address)}
-                                                    />
-                                                    {errors['city'] &&
-                                                        <span style={{color: 'red', fontSize: '10px'}}>{errors['city'].message}</span>
-                                                    }
-                                                </div>
-                                                <div className="mb-3 form-group">
-                                                    <label htmlFor="zipCode"
-                                                           style={{marginBottom: '.5rem', fontWeight: 500}}>Zip code</label>
-                                                    <input id="zipCode" name="zipCode"
-                                                           placeholder="Enter company location zip code..." type="text"
-                                                           className="form-control"
-                                                           style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                           defaultValue={address.zipCode}
-                                                           onChange={e => handleChange(e, address)}
-                                                    />
-                                                    {errors['zipCode'] &&
-                                                        <span style={{color: 'red', fontSize: '10px'}}>{errors['zipCode'].message}</span>
-                                                    }
-                                                </div>
+                                        <div className="col-sm-6">
+                                            <div className="mb-3 form-group">
+                                                <label htmlFor="street"
+                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Street</label>
+                                                <input id="street" name="street"
+                                                       placeholder="Enter company location street..." type="text"
+                                                       className="form-control"
+                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                       defaultValue={contractor.address.street}
+                                                       onChange={handleChange}
+                                                />
+                                                {errors['street'] &&
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['street'].message}</span>
+                                                }
                                             </div>
-                                        </>}
+                                            <div className="mb-3 form-group">
+                                                <label htmlFor="city"
+                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>City</label>
+                                                <input id="city" name="city" placeholder="Enter company location city..."
+                                                       type="text" className="form-control"
+                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                       defaultValue={contractor.address.city}
+                                                       onChange={handleChange}
+                                                />
+                                                {errors['city'] &&
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['city'].message}</span>
+                                                }
+                                            </div>
+                                            <div className="mb-3 form-group">
+                                                <label htmlFor="zipCode"
+                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Zip code</label>
+                                                <input id="zipCode" name="zipCode"
+                                                       placeholder="Enter company location zip code..." type="text"
+                                                       className="form-control"
+                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                       defaultValue={contractor.address.zipCode}
+                                                       onChange={handleChange}
+                                                />
+                                                {errors['zipCode'] &&
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['zipCode'].message}</span>
+                                                }
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className="justify-content-end row">
@@ -174,7 +168,7 @@ function Edit() {
                 <div style={{position: 'absolute', bottom: 80, right: 20}}>
                     <Toast style={{backgroundColor: '#00ca72'}}
                            onClose={closeToast}
-                           show={!!isUpdatedContractor && !!isUpdatedAddress}
+                           show={!!isUpdated}
                            delay={3000}
                            autohide
                     >

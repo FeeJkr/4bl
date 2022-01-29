@@ -4,24 +4,21 @@ import {useDispatch, useSelector} from "react-redux";
 import {companiesActions} from "../../../actions/invoices/companies/actions";
 import {Link} from "react-router-dom";
 import {Toast} from "react-bootstrap";
-import {addressesActions} from "../../../actions/invoices/addresses/actions";
 import CompanyListElement from "./CompanyListElement";
 
 function List() {
     const companies = useSelector(state => state.invoices.companies.all.items);
-    const addresses = useSelector(state => state.invoices.addresses.all.items);
 
     const dispatch = useDispatch();
     const [showToast, setShowToast] = useState(false);
 
     useEffect(() => {
         dispatch(companiesActions.getAll());
-        dispatch(addressesActions.getAll());
     }, []);
 
     return (
         <div className="container-fluid">
-            <h4 style={{fontSize: '18px', fontWeight: 600, textTransform: 'uppercase', color: '#495057'}}>Contractors</h4>
+            <h4 style={{fontSize: '18px', fontWeight: 600, textTransform: 'uppercase', color: '#495057'}}>Companies</h4>
 
             <div className="row">
                 <div className="col-12">
@@ -29,8 +26,7 @@ function List() {
                         <div className="card-body">
                             <div className="mb-2 row">
                                 <div className="col-md-12" style={{textAlign: 'right'}}>
-                                    <Link to={'/invoices/contractors/new'} className="button-create-new btn btn-success"
-                                          id="button-create-new-contractor">
+                                    <Link to={'/invoices/companies/new'} className="button-create-new btn btn-success">
                                         <i className="bi bi-plus"/>
                                         Create new
                                     </Link>
@@ -53,8 +49,8 @@ function List() {
                                     {companies && companies.map(function (company, key) {
                                         return <CompanyListElement
                                             key={key}
+                                            number={++key}
                                             company={company}
-                                            addresses={addresses}
                                             setShowToast={setShowToast}
                                         />
                                     })}
@@ -76,7 +72,7 @@ function List() {
                     <strong className="me-auto" style={{color: '#fff'}}>Success!</strong>
                 </Toast.Header>
                 <Toast.Body style={{color: '#fff'}}>
-                    Contractor was successfully deleted.
+                    Company was successfully deleted.
                 </Toast.Body>
             </Toast>
         </div>

@@ -42,7 +42,7 @@ function getOneById(id) {
     function failure(errors) { return { type: constants.GET_ONE_FAILURE, errors } }
 }
 
-function createCompany(formData) {
+function createCompany(formData, navigate) {
     return dispatch => {
         dispatch(request(formData));
 
@@ -50,6 +50,7 @@ function createCompany(formData) {
             .then(
                 () => {
                     dispatch(success());
+                    navigate('/invoices/companies');
                 },
                 errors => dispatch(failure(errors, formData))
             );

@@ -6,15 +6,10 @@ namespace App\Modules\Invoices\Application\Contractor;
 
 final class ContractorsCollection
 {
-    private array $items;
+    public readonly array $items;
 
     public function __construct(ContractorDTO ...$items)
     {
         $this->items = $items;
-    }
-
-    public function toArray(): array
-    {
-        return $this->items;
     }
 }

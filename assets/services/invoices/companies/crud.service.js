@@ -22,10 +22,20 @@ function getOneById(id) {
 }
 
 function createCompany(formData) {
+    console.log(formData);
+
     return axios.post(dictionary.CREATE_URL, {
         name: formData.name,
         identificationNumber: formData.identificationNumber,
-        addressId: data.id,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        isVatPayer: formData.isVatPayer,
+        vatRejectionReason: formData.vatRejectionReason,
+        address: {
+            street: formData.address.street,
+            city: formData.address.city,
+            zipCode: formData.address.zipCode,
+        },
     }).catch(error => Promise.reject(error.response.data));
 }
 
@@ -35,9 +45,13 @@ function updateCompany(id, formData) {
         identificationNumber: formData.identificationNumber,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
-        street: formData.street,
-        zipCode: formData.zipCode,
-        city: formData.city,
+        isVatPayer: formData.isVatPayer,
+        vatRejectionReason: formData.vatRejectionReason,
+        address: {
+            street: formData.address.street,
+            zipCode: formData.address.zipCode,
+            city: formData.address.city,
+        }
     }).catch(error => Promise.reject(error.response.data));
 }
 

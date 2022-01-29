@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Web\API\Action\Invoices\Company\GetAll;
 
-use App\Modules\Invoices\Application\Company\GetAll\CompaniesCollection;
-use App\Modules\Invoices\Application\Company\GetAll\CompanyDTO;
+use App\Modules\Invoices\Application\Company\CompaniesCollection;
+use App\Modules\Invoices\Application\Company\CompanyDTO;
 use App\Web\API\Action\Response;
 
 final class GetAllCompaniesResponse extends Response
@@ -24,7 +24,7 @@ final class GetAllCompaniesResponse extends Response
                 'name' => $company->name,
                 'identificationNumber' => $company->identificationNumber,
                 'isVatPayer' => $company->isVatPayer,
-                'reason' => $company->vatRejectionReason,
+                'vatRejectionReason' => $company->vatRejectionReason,
                 'email' => $company->email,
                 'phoneNumber' => $company->phoneNumber,
             ], $companies->items)

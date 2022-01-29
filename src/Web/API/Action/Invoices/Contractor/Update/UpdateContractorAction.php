@@ -21,6 +21,9 @@ final class UpdateContractorAction extends AbstractAction
                 $request->id,
                 $request->name,
                 $request->identificationNumber,
+                $request->street,
+                $request->city,
+                $request->zipCode,
             )
         );
 

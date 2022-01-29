@@ -21,12 +21,15 @@ final class UpdateCompanyHandler implements CommandHandler
         $company->update(
             $command->name,
             $command->identificationNumber,
-            $command->vatInformationDTO->isVatPayer,
-            $command->vatInformationDTO->reason
-                ? VatRejectionReason::from($command->vatInformationDTO->reason)
+            $command->isVatPayer,
+            $command->vatRejectionReason
+                ? VatRejectionReason::from($command->vatRejectionReason)
                 : null,
-            $command->contactInformation->phoneNumber,
-            $command->contactInformation->email,
+            $command->email,
+            $command->phoneNumber,
+            $command->street,
+            $command->city,
+            $command->zipCode,
         );
 
         $this->repository->save($company->snapshot());

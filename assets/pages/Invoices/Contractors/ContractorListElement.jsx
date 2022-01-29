@@ -6,10 +6,6 @@ import {useDispatch} from "react-redux";
 export default function ContractorListElement(props) {
     const dispatch = useDispatch();
     const contractor = props.contractor;
-    let number = 0;
-    const currentAddress = props.addresses
-        ? props.addresses.find((address) => contractor.addressId === address.id)
-        : null;
 
     function handleDelete(id) {
         dispatch(contractorsActions.deleteContractor(id));
@@ -18,12 +14,10 @@ export default function ContractorListElement(props) {
 
     return (
         <tr key={contractor.id}>
-            <th scope="row">{++number}</th>
+            <th scope="row">{props.number}</th>
             <td>{contractor.name}</td>
             <td>{contractor.identificationNumber}</td>
-            <td>{currentAddress &&
-                <> {currentAddress.street}, {currentAddress.city}, {currentAddress.zipCode} </>
-            }</td>
+            <td>{contractor.address.street}, {contractor.address.city}, {contractor.address.zipCode}</td>
             <td>
                 <div className="gap-3"
                      style={{display: 'flex', gridGap: '1 rem'}}>

@@ -1,6 +1,5 @@
 import axios from "axios";
 import {contractorsDictionary} from "../../../helpers/routes/invoices/contractors/dictionary";
-import {addressesService} from "../addresses/crud.service";
 
 export const contractorsService = {
     getAll,
@@ -23,26 +22,26 @@ function getOneById(id) {
 }
 
 function createContractor(formData) {
-    return addressesService
-        .createAddress(formData)
-        .then(data => {
-            return axios.post(contractorsDictionary.CREATE_URL, {
-                name: formData.name,
-                identificationNumber: formData.identificationNumber,
-                addressId: data.id,
-            }).catch(error => Promise.reject(error.response.data));
-        });
+    return axios.post(contractorsDictionary.CREATE_URL, {
+        name: formData.name,
+        identificationNumber: formData.identificationNumber,
+        address: {
+            street: formData.address.street,
+            city: formData.address.city,
+            zipCode: formData.address.zipCode,
+        },
+    }).catch(error => Promise.reject(error.response.data));
 }
 
 function updateContractor(id, formData) {
     return axios.post(contractorsDictionary.UPDATE_URL.replace('{id}', id), {
         name: formData.name,
         identificationNumber: formData.identificationNumber,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        street: formData.street,
-        zipCode: formData.zipCode,
-        city: formData.city,
+        address: {
+            street: formData.address.street,
+            city: formData.address.city,
+            zipCode: formData.address.zipCode,
+        }
     }).catch(error => Promise.reject(error.response.data));
 }
 

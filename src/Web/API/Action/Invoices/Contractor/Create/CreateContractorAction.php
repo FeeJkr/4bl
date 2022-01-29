@@ -18,9 +18,11 @@ final class CreateContractorAction extends AbstractAction
     {
         $id = $this->bus->dispatch(
             new CreateContractorCommand(
-                $request->addressId,
                 $request->name,
                 $request->identificationNumber,
+                $request->street,
+                $request->city,
+                $request->zipCode,
             )
         );
 

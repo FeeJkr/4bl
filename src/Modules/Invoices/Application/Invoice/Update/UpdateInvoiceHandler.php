@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Invoices\Application\Invoice\Update;
 
 use App\Common\Application\Command\CommandHandler;
-use App\Modules\Invoices\Domain\Company\BankAccount\BankAccountId;
+use App\Modules\Invoices\Domain\BankAccount\BankAccountId;
 use App\Modules\Invoices\Domain\Company\CompanyId;
 use App\Modules\Invoices\Domain\Contractor\ContractorId;
 use App\Modules\Invoices\Domain\Invoice\InvoiceId;

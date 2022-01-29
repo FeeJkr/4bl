@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Infrastructure\Domain\Company;
 
-use App\Modules\Invoices\Domain\Address\AddressId;
+use App\Modules\Invoices\Domain\Address\AddressRepository;
 use App\Modules\Invoices\Domain\Company\Company;
 use App\Modules\Invoices\Domain\Company\CompanyId;
 use App\Modules\Invoices\Domain\Company\CompanyRepository;
 use App\Modules\Invoices\Domain\Company\CompanySnapshot;
-use App\Modules\Invoices\Domain\Company\VatRejectionReason;
 use App\Modules\Invoices\Domain\User\UserId;
+use App\Modules\Invoices\Infrastructure\Persistence\QueryBuilder\Company\CompanyQueryBuilder;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -19,40 +19,22 @@ final class CompanyDbRepository implements CompanyRepository
 {
     private const DATABASE_TABLE = 'invoices_companies';
 
-    public function __construct(private Connection $connection){}
+    public function __construct(private Connection $connection, private AddressRepository $addressRepository){}
 
     /**
      * @throws Exception
      */
     public function fetchById(CompanyId $id, UserId $userId): Company
     {
-        $row = $this->connection
-            ->createQueryBuilder()
-            ->select(
-                'id',
-                'users_id',
-                'invoices_addresses_id',
-                'name',
-                'identification_number',
-                'is_vat_payer',
-                'vat_rejection_reason',
-                'email',
-                'phone_number',
-            )
-            ->from(self::DATABASE_TABLE)
-            ->where('id = :id')
-            ->andWhere('users_id = :userId')
-            ->setParameters([
-                'id' => $id->toString(),
-                'userId' => $userId->toString(),
-            ])
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $row = CompanyQueryBuilder::buildSelectWithId($queryBuilder, $userId->toString(), $id->toString())
             ->fetchAssociative();
 
         if ($row === false) {
             throw new \RuntimeException(); // TODO: FIX THIS EXCEPTION
         }
 
-        return $this->createEntityFromRow($row);
+        return CompanyFactory::createFromRow($row);
     }
 
     /**
@@ -60,32 +42,14 @@ final class CompanyDbRepository implements CompanyRepository
      */
     public function fetchByUserId(UserId $userId): Company
     {
-        $row = $this->connection
-            ->createQueryBuilder()
-            ->select(
-                'id',
-                'users_id',
-                'invoices_addresses_id',
-                'name',
-                'identification_number',
-                'is_vat_payer',
-                'vat_rejection_reason',
-                'email',
-                'phone_number',
-            )
-            ->from(self::DATABASE_TABLE)
-            ->where('users_id = :userId')
-            ->setMaxResults(1)
-            ->setParameters([
-                'userId' => $userId->toString(),
-            ])
-            ->fetchAssociative();
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $row = CompanyQueryBuilder::buildSelect($queryBuilder, $userId->toString())->fetchAssociative();
 
         if ($row === false) {
             throw new \RuntimeException(); // TODO: FIX THIS EXCEPTION
         }
 
-        return $this->createEntityFromRow($row);
+        return CompanyFactory::createFromRow($row);
     }
 
     /**
@@ -93,6 +57,8 @@ final class CompanyDbRepository implements CompanyRepository
      */
     public function store(CompanySnapshot $company): void
     {
+        $this->addressRepository->store($company->address);
+
         $this->connection
             ->createQueryBuilder()
             ->insert(self::DATABASE_TABLE)
@@ -110,10 +76,10 @@ final class CompanyDbRepository implements CompanyRepository
             ->setParameters([
                 'id' => $company->id,
                 'userId' => $company->userId,
-                'addressId' => $company->addressId,
+                'addressId' => $company->address->id,
                 'name' => $company->name,
                 'identificationNumber' => $company->identificationNumber,
-                'isVatPayer' => $company->isVatPayer,
+                'isVatPayer' => $company->isVatPayer ? 1 : 0,
                 'vatRejectionReason' => $company->vatRejectionReason,
                 'email' => $company->email,
                 'phoneNumber' => $company->phoneNumber,
@@ -126,6 +92,8 @@ final class CompanyDbRepository implements CompanyRepository
      */
     public function save(CompanySnapshot $company): void
     {
+        $this->addressRepository->save($company->address);
+
         $this->connection
             ->createQueryBuilder()
             ->update(self::DATABASE_TABLE)
@@ -143,11 +111,11 @@ final class CompanyDbRepository implements CompanyRepository
                 'userId' => $company->userId,
                 'name' => $company->name,
                 'identificationNumber' => $company->identificationNumber,
-                'isVatPayer' => $company->isVatPayer,
+                'isVatPayer' => $company->isVatPayer ? 1 : 0,
                 'vatRejectionReason' => $company->vatRejectionReason,
                 'email' => $company->email,
                 'phoneNumber' => $company->phoneNumber,
-                'updatedAt' => new DateTimeImmutable(),
+                'updatedAt' => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
             ])
             ->executeStatement();
     }
@@ -167,20 +135,5 @@ final class CompanyDbRepository implements CompanyRepository
                 'userId' => $userId->toString(),
             ])
             ->executeStatement();
-    }
-
-    private function createEntityFromRow(array $row): Company
-    {
-        return new Company(
-            CompanyId::fromString($row['id']),
-            UserId::fromString($row['users_id']),
-            AddressId::fromString($row['invoices_addresses_id']),
-            $row['name'],
-            $row['identification_number'],
-            (bool) $row['is_vat_payer'],
-            $row['vat_rejection_reason'] ? VatRejectionReason::from($row['vat_rejection_reason']) : null,
-            $row['email'],
-            $row['phone_number'],
-        );
     }
 }

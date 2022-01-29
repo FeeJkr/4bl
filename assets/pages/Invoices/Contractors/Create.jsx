@@ -10,15 +10,25 @@ function Create() {
     const [inputs, setInputs] = useState({
         name: null,
         identificationNumber: null,
-        street: null,
-        city: null,
-        zipCode: null,
+        address: {
+            street: null,
+            city: null,
+            zipCode: null,
+        },
     });
     const navigate = useNavigate();
 
     function handleChange(e) {
         const { name, value } = e.target;
-        setInputs(inputs => ({ ...inputs, [name]: value === '' ? null : value }));
+
+        if (['street', 'city', 'zipCode'].includes(name)) {
+            let address = inputs.address;
+            address[name] = value === '' ? null : value;
+
+            setInputs(inputs => ({ ...inputs, address}));
+        } else {
+            setInputs(inputs => ({ ...inputs, [name]: value === '' ? null : value }));
+        }
     }
 
     function handleSubmit(e) {

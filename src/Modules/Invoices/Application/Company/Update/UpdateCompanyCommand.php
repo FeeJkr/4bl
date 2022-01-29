@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Invoices\Application\Company\Update;
 
 use App\Common\Application\Command\Command;
-use App\Modules\Invoices\Application\Company\ContactInformationDTO;
-use App\Modules\Invoices\Application\Company\VatInformationDTO;
 
 final class UpdateCompanyCommand implements Command
 {
@@ -14,7 +12,12 @@ final class UpdateCompanyCommand implements Command
         public readonly string $id,
         public readonly string $name,
         public readonly string $identificationNumber,
-        public readonly ContactInformationDTO $contactInformation,
-        public readonly VatInformationDTO $vatInformationDTO,
+        public readonly ?string $email,
+        public readonly ?string $phoneNumber,
+        public readonly bool $isVatPayer,
+        public readonly ?int $vatRejectionReason,
+        public readonly string $street,
+        public readonly string $city,
+        public readonly string $zipCode,
     ){}
 }

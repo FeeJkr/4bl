@@ -20,7 +20,13 @@ final class UpdateContractorHandler implements CommandHandler
             $this->userContext->getUserId(),
         );
 
-        $contractor->update($command->name, $command->identificationNumber);
+        $contractor->update(
+            $command->name,
+            $command->identificationNumber,
+            $command->street,
+            $command->city,
+            $command->zipCode
+        );
 
         $this->repository->save($contractor->snapshot());
     }

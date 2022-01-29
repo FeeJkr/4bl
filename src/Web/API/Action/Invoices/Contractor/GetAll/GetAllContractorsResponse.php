@@ -15,10 +15,16 @@ final class GetAllContractorsResponse extends Response
         return new self(
             array_map(static fn (ContractorDTO $contractor) => [
                 'id' => $contractor->id,
-                'addressId' => $contractor->addressId,
+                'address' => [
+                    'id' => $contractor->address->id,
+                    'name' => $contractor->address->name,
+                    'street' => $contractor->address->street,
+                    'city' => $contractor->address->city,
+                    'zipCode' => $contractor->address->zipCode,
+                ],
                 'name' => $contractor->name,
                 'identificationNumber' => $contractor->identificationNumber,
-            ], $contractors->toArray())
+            ], $contractors->items)
         );
     }
 }
