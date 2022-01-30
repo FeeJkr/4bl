@@ -8,4 +8,7 @@ use App\Common\Application\Query\Query;
 
 final class GetAllBankAccountsQuery implements Query
 {
+    public function __construct(
+        public readonly string $companyId,
+    ){}
 }

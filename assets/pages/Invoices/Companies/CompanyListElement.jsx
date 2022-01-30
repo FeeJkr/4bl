@@ -29,6 +29,10 @@ export default function CompanyListElement(props) {
                            style={{color: '#34c38f'}}
                         />
                     </Link>
+                    <a onClick={() => props.handleOpenBankAccountsModal(company)}
+                       style={{color: '#f46a6a', fontSize: '18 px', cursor: 'pointer'}}>
+                        <i className="bi bi-wallet" style={{color: '#00e5ff'}}/>
+                    </a>
                     <a onClick={() => handleDelete(company.id)}
                        style={{color: '#f46a6a', fontSize: '18 px', cursor: 'pointer'}}>
                         <i className="bi bi-trash delete-contractors-button"

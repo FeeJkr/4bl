@@ -7,6 +7,7 @@ namespace App\Modules\Invoices\Application\BankAccount\Create;
 use App\Common\Application\Command\CommandHandler;
 use App\Modules\Invoices\Domain\BankAccount\BankAccount;
 use App\Modules\Invoices\Domain\BankAccount\BankAccountRepository;
+use App\Modules\Invoices\Domain\Company\CompanyId;
 use App\Modules\Invoices\Domain\Currency;
 use App\Modules\Invoices\Domain\User\UserContext;
 
@@ -22,10 +23,11 @@ final class CreateBankAccountHandler implements CommandHandler
         $bankAccount = new BankAccount(
             $this->bankAccountRepository->nextIdentity(),
             $this->userContext->getUserId(),
+            CompanyId::fromString($command->companyId),
             $command->name,
             $command->bankName,
             $command->bankAccountNumber,
-            Currency::from($command->currency),
+            Currency::from(strtolower($command->currency)),
         );
 
         $this->bankAccountRepository->store($bankAccount->snapshot());

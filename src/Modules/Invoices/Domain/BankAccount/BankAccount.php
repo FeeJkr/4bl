@@ -15,6 +15,7 @@ final class BankAccount extends Entity
     public function __construct(
         private BankAccountId $id,
         private UserId $userId,
+        private CompanyId $companyId,
         private string $name,
         private string $bankName,
         private string $bankAccountNumber,
@@ -39,6 +40,7 @@ final class BankAccount extends Entity
         return new BankAccountSnapshot(
             $this->id->toString(),
             $this->userId->toString(),
+            $this->companyId->toString(),
             $this->name,
             $this->bankName,
             $this->bankAccountNumber,

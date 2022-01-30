@@ -9,6 +9,7 @@ use App\Common\Application\Command\Command;
 final class CreateBankAccountCommand implements Command
 {
     public function __construct(
+        public readonly string $companyId,
         public readonly string $name,
         public readonly string $bankName,
         public readonly string $bankAccountNumber,

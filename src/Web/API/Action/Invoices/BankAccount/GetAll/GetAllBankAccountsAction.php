@@ -13,9 +13,9 @@ final class GetAllBankAccountsAction extends AbstractAction
 {
     public function __construct(private QueryBus $bus){}
 
-    public function __invoke(): Response
+    public function __invoke(GetAllBankAccountsRequest $request): Response
     {
-        $bankAccounts = $this->bus->handle(new GetAllBankAccountsQuery());
+        $bankAccounts = $this->bus->handle(new GetAllBankAccountsQuery($request->companyId));
 
         return GetAllBankAccountsResponse::respond($bankAccounts);
     }

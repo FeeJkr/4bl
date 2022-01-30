@@ -52,6 +52,7 @@ final class Version20210430135526 extends AbstractMigration
             (
                 id uuid default gen_random_uuid() not null unique constraint invoices_companies_bank_accounts_pk primary key,
                 users_id uuid not null constraint invoices_bank_accounts_accounts_users_id_fk references accounts_users on delete cascade,
+                invoices_companies_id uuid not null constraint invoices_bank_accounts_invoices_companies_id_fk references invoices_companies on delete cascade,
                 name varchar(255) not null,
                 bank_name varchar(255) not null,
                 bank_account_number varchar(255) not null,
@@ -84,7 +85,7 @@ final class Version20210430135526 extends AbstractMigration
                 users_id uuid not null constraint invoices_invoices_accounts_users_id_fk references accounts_users on delete cascade,
                 invoices_companies_id uuid not null constraint invoices_invoices_invoices_companies_fk references invoices_companies on delete cascade,
                 invoices_contractors_id uuid not null constraint invoices_invoices_invoices_contractors_fk references invoices_contractors on delete cascade,
-                invoices_companies_bank_accounts_id uuid constraint invoices_invoices_invoices_companies_bank_accounts_fk references invoices_companies_bank_accounts on delete cascade,
+                invoices_bank_accounts_id uuid constraint invoices_invoices_invoices_bank_accounts_fk references invoices_bank_accounts on delete cascade,
                 status invoices_invoices_status not null,
                 invoice_number varchar(255) not null,
                 generate_place varchar(255) not null,

@@ -18,6 +18,7 @@ final class CreateBankAccountAction extends AbstractAction
     {
         $id = $this->bus->dispatch(
             new CreateBankAccountCommand(
+                $request->companyId,
                 $request->name,
                 $request->bankName,
                 $request->bankAccountNumber,

@@ -14,6 +14,7 @@ final class BankAccountQueryBuilder
     private const COLUMNS = [
         'id',
         'users_id',
+        'invoices_companies_id',
         'name',
         'bank_name',
         'bank_account_number',
@@ -43,5 +44,15 @@ final class BankAccountQueryBuilder
         return self::buildSelect($queryBuilder, $userId)
             ->andWhere(sprintf('%s.id = :id', self::DATABASE_TABLE_ALIAS))
             ->setParameter('id', $id);
+    }
+
+    public static function buildSelectWithCompanyId(
+        QueryBuilder $queryBuilder,
+        string $userId,
+        string $companyId
+    ): QueryBuilder {
+        return self::buildSelect($queryBuilder, $userId)
+            ->andWhere(sprintf('%s.invoices_companies_id = :companyId', self::DATABASE_TABLE_ALIAS))
+            ->setParameter('companyId', $companyId);
     }
 }

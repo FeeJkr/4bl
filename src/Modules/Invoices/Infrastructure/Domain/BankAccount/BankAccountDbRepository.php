@@ -52,6 +52,7 @@ final class BankAccountDbRepository implements BankAccountRepository
             ->values([
                 'id' => ':id',
                 'users_id' => ':userId',
+                'invoices_companies_id' => ':companyId',
                 'name' => ':name',
                 'bank_name' => ':bankName',
                 'bank_account_number' => ':bankAccountNumber',
@@ -60,6 +61,7 @@ final class BankAccountDbRepository implements BankAccountRepository
             ->setParameters([
                 'id' => $snapshot->id,
                 'userId' => $snapshot->userId,
+                'companyId' => $snapshot->companyId,
                 'name' => $snapshot->name,
                 'bankName' => $snapshot->bankName,
                 'bankAccountNumber' => $snapshot->bankAccountNumber,
@@ -90,7 +92,7 @@ final class BankAccountDbRepository implements BankAccountRepository
                 'bankName' => $snapshot->bankName,
                 'bankAccountNumber' => $snapshot->bankAccountNumber,
                 'currencyCode' => $snapshot->currency,
-                'updated_at' => new DateTimeImmutable(),
+                'updatedAt' => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
             ])
             ->executeStatement();
     }

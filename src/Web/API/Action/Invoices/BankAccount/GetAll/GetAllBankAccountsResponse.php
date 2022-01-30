@@ -19,8 +19,8 @@ final class GetAllBankAccountsResponse extends Response
                 'name' => $bankAccount->name,
                 'bankName' => $bankAccount->bankName,
                 'bankAccountNumber' => $bankAccount->bankAccountNumber,
-                'currency' => $bankAccount->currency,
-            ], $bankAccounts->toArray())
+                'currency' => strtoupper($bankAccount->currency),
+            ], $bankAccounts->items)
         );
     }
 }

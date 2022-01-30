@@ -1,3 +1,8 @@
+bank_accounts:
+  resource: bank_accounts.yaml
+  name_prefix: bank_accounts.
+  prefix: /{companyId}/bank-accounts
+
 create:
   path: /
   controller: App\Web\API\Action\Invoices\Company\Create\CreateCompanyAction

@@ -15,6 +15,6 @@ final class GetAllBankAccountsHandler implements QueryHandler
 
     public function __invoke(GetAllBankAccountsQuery $query): BankAccountsCollection
     {
-        return $this->repository->getAll($this->userContext->getUserId()->toString());
+        return $this->repository->getAll($query->companyId, $this->userContext->getUserId()->toString());
     }
 }

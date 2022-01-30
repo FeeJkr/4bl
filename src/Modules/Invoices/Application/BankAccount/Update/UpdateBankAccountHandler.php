@@ -28,7 +28,7 @@ final class UpdateBankAccountHandler implements CommandHandler
             $command->name,
             $command->bankName,
             $command->bankAccountNumber,
-            Currency::from($command->currency),
+            Currency::from(strtolower($command->currency)),
         );
 
         $this->repository->save($bankAccount->snapshot());

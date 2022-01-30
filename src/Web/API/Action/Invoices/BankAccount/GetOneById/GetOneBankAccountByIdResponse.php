@@ -17,7 +17,7 @@ final class GetOneBankAccountByIdResponse extends Response
             'name' => $bankAccount->name,
             'bankName' => $bankAccount->bankName,
             'bankAccountNumber' => $bankAccount->bankAccountNumber,
-            'currency' => $bankAccount->currency,
+            'currency' => strtoupper($bankAccount->currency),
         ]);
     }
 }

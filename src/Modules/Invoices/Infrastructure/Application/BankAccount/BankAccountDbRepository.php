@@ -18,10 +18,11 @@ final class BankAccountDbRepository implements BankAccountRepository
     /**
      * @throws Exception
      */
-    public function getAll(string $userId): BankAccountsCollection
+    public function getAll(string $companyId, string $userId): BankAccountsCollection
     {
         $queryBuilder = $this->connection->createQueryBuilder();
-        $rows = BankAccountQueryBuilder::buildSelect($queryBuilder, $userId)->fetchAllAssociative();
+        $rows = BankAccountQueryBuilder::buildSelectWithCompanyId($queryBuilder, $userId, $companyId)
+            ->fetchAllAssociative();
 
         return new BankAccountsCollection(
             ...array_map(static fn (array $row) => BankAccountDTO::fromStorage($row), $rows)

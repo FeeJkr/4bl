@@ -3,14 +3,11 @@ import {Link, useParams} from 'react-router-dom';
 import {invoicesActions} from "../../../actions/invoices.actions";
 import {useDispatch, useSelector} from "react-redux";
 import {Toast} from "react-bootstrap";
-import AsyncSelect from "react-select/async/dist/react-select.esm";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {contractorsService} from "../../../services/invoices/contractors/crud.service";
 import './Invoices.css';
 import 'boxicons/css/boxicons.min.css';
-import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 
 function Edit() {
     const {id} = useParams();

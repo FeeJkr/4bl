@@ -1,8 +1,3 @@
-bank_accounts:
-  resource: bank_accounts.yaml
-  name_prefix: bank_accounts.
-  prefix: /bank-accounts
-
 companies:
   resource: companies.yaml
   name_prefix: companies.
