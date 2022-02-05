@@ -19,6 +19,7 @@ final class GetAllInvoicesResponse extends Response
                 'generatedAt' => $invoice->generatedAt->format('d-m-Y'),
                 'soldAt' => $invoice->soldAt->format('d-m-Y'),
                 'status' => $invoice->status,
+                'companyName' => $invoice->companyName,
                 'contractorName' => $invoice->contractorName,
                 'totalNetPrice' => $invoice->totalNetPrice,
                 'totalGrossPrice' => $invoice->totalGrossPrice,

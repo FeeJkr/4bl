@@ -1,7 +1,7 @@
 import axios from "axios";
 import {documentsDictionary as dictionary} from "../../../helpers/routes/invoices/documents/dictionary";
 
-export const contractorsService = {
+export const documentsService = {
     getAll,
     getOneById,
     createDocument,

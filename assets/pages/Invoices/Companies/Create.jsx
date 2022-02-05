@@ -193,7 +193,7 @@ function Create() {
                                 <div className="mb-4" style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}>Tax information</div>
 
                                 <div className="row">
-                                    <div className="mb-3 form-group">
+                                    <div className="mb-3 form-group" style={{marginLeft: '2rem'}}>
                                         <div className="form-check form-switch" style={{fontSize: '1.2rem'}}>
                                             <input className="form-check-input" name="isVatPayer" type="checkbox" id="isVatPayer" onChange={handleChange}/>
                                             <label className="form-check-label" style={{marginBottom: '.5rem', fontWeight: 500, fontSize: '.8125rem'}} htmlFor="isVatPayer">Is Company VAT Payer?</label>

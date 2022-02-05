@@ -81,7 +81,7 @@ final class InvoiceDbRepository implements InvoiceRepository
                 'users_id' => ':userId',
                 'invoices_companies_id' => ':companyId',
                 'invoices_contractors_id' => ':contractorId',
-                'invoices_companies_bank_accounts_id' => ':bankAccountId',
+                'invoices_bank_accounts_id' => ':bankAccountId',
                 'status' => ':status',
                 'invoice_number' => ':invoiceNumber',
                 'generate_place' => ':generatePlace',
@@ -105,8 +105,8 @@ final class InvoiceDbRepository implements InvoiceRepository
                 'daysForPayment' => $invoice->parameters->daysForPayment,
                 'paymentType' => $invoice->parameters->paymentType,
                 'currencyCode' => $invoice->parameters->currencyCode,
-                'generatedAt' => $invoice->parameters->generatedAt,
-                'soldAt' => $invoice->parameters->soldAt,
+                'generatedAt' => $invoice->parameters->generatedAt->format('Y-m-d'),
+                'soldAt' => $invoice->parameters->soldAt->format('Y-m-d'),
             ])
             ->executeStatement();
 

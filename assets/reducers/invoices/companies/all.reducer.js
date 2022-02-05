@@ -4,6 +4,7 @@ export function all(state = {items: []}, action) {
     switch (action.type) {
         case constants.GET_ALL_REQUEST:
             return {
+                ...state,
                 loading: true
             };
         case constants.GET_ALL_SUCCESS:

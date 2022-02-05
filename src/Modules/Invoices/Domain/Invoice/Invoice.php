@@ -7,6 +7,7 @@ namespace App\Modules\Invoices\Domain\Invoice;
 use App\Common\Domain\Entity;
 use App\Modules\Invoices\Domain\Company\CompanyId;
 use App\Modules\Invoices\Domain\Contractor\ContractorId;
+use App\Modules\Invoices\Domain\Invoice\Event\InvoiceWasCreated;
 use App\Modules\Invoices\Domain\User\UserId;
 
 final class Invoice extends Entity
@@ -38,7 +39,7 @@ final class Invoice extends Entity
             $products,
         );
 
-//        $invoice->publishDomainEvent(); TODO
+        $invoice->publishDomainEvent(new InvoiceWasCreated($invoice->snapshot()));
 
         return $invoice;
     }

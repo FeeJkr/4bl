@@ -28,9 +28,10 @@ class GetAllInvoicesHandler implements QueryHandler
                 'i.sold_at',
                 'i.currency_code',
                 'companies.name as company_name',
+                'i.status',
                 'contractors.name as contractor_name',
-                '(SELECT SUM(net_price) FROM invoices_invoice_products WHERE invoice_id = i.id) as total_net_price',
-                '(SELECT SUM(gross_price) FROM invoices_invoice_products WHERE invoice_id = i.id) as total_gross_price',
+                '(SELECT SUM(net_price) FROM invoices_invoice_products WHERE invoices_invoices_id = i.id) as total_net_price',
+                '(SELECT SUM(gross_price) FROM invoices_invoice_products WHERE invoices_invoices_id = i.id) as total_gross_price',
             )
             ->from('invoices_invoices', 'i')
             ->join('i', 'invoices_companies', 'companies', 'companies.id = i.invoices_companies_id')

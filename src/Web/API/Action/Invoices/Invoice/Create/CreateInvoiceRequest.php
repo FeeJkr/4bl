@@ -53,8 +53,8 @@ final class CreateInvoiceRequest extends Request
         $requestData = $request->toArray();
         $invoiceNumber = $requestData[self::INVOICE_NUMBER] ?? null;
         $generatePlace = $requestData[self::GENERATE_PLACE] ?? null;
-        $alreadyTakenPrice = $requestData[self::ALREADY_TAKEN_PRICE] ?? null;
-        $daysForPayment = $requestData[self::DAYS_FOR_PAYMENT] ?? null;
+        $alreadyTakenPrice = isset($requestData[self::ALREADY_TAKEN_PRICE]) ? (float) $requestData[self::ALREADY_TAKEN_PRICE] : null;
+        $daysForPayment = $requestData[self::DAYS_FOR_PAYMENT] ? (int) $requestData[self::DAYS_FOR_PAYMENT] : null;
         $paymentType = $requestData[self::PAYMENT_TYPE] ?? null;
         $bankAccountId = $requestData[self::BANK_ACCOUNT_ID] ?? null;
         $currencyCode = $requestData[self::CURRENCY_CODE] ?? null;
@@ -67,25 +67,25 @@ final class CreateInvoiceRequest extends Request
         Assert::lazy()
             ->that($invoiceNumber, self::INVOICE_NUMBER)->string()->notEmpty()
             ->that($generatePlace, self::GENERATE_PLACE)->string()->notEmpty()
-            ->that($alreadyTakenPrice, self::ALREADY_TAKEN_PRICE)->float()->notEmpty()
+            ->that($alreadyTakenPrice, self::ALREADY_TAKEN_PRICE)->float()->notNull()
             ->that($daysForPayment, self::DAYS_FOR_PAYMENT)->integer()->notEmpty()
             ->that($paymentType, self::PAYMENT_TYPE)->string()->notEmpty()
             ->that($bankAccountId, self::BANK_ACCOUNT_ID)->nullOr()->uuid()
             ->that($currencyCode, self::CURRENCY_CODE)->string()->notEmpty()
             ->that($companyId, self::COMPANY_ID)->uuid()->notEmpty()
             ->that($contractorId, self::CONTRACTOR_ID)->uuid()->notEmpty()
-            ->that($generatedAt, self::GENERATED_AT)->date('Y-m-d')->notEmpty()
-            ->that($soldAt, self::SOLD_AT)->date('Y-m-d')->notEmpty()
+            ->that($generatedAt, self::GENERATED_AT)->date('d-m-Y')->notEmpty()
+            ->that($soldAt, self::SOLD_AT)->date('d-m-Y')->notEmpty()
             ->that($products, self::PRODUCTS)->isArray()->notEmpty()
             ->verifyNow();
 
         foreach ($products as $product) {
             Assert::lazy()
-                ->that($product[self::PRODUCT_POSITION], self::PRODUCT_POSITION)->integer()->notEmpty()
+                ->that($product[self::PRODUCT_POSITION], self::PRODUCT_POSITION)->integer()
                 ->that($product[self::PRODUCT_NAME], self::PRODUCT_NAME)->string()->notEmpty()
                 ->that($product[self::PRODUCT_UNIT], self::PRODUCT_UNIT)->string()->inArray(self::AVAILABLE_UNIT_OPTIONS)->notEmpty()
                 ->that($product[self::PRODUCT_QUANTITY], self::PRODUCT_QUANTITY)->integer()->notEmpty()
-                ->that($product[self::PRODUCT_NET_PRICE], self::PRODUCT_NET_PRICE)->float()->notEmpty()
+                ->that((float) $product[self::PRODUCT_NET_PRICE], self::PRODUCT_NET_PRICE)->float()->notEmpty()
                 ->that($product[self::PRODUCT_TAX], self::PRODUCT_TAX)->integer()->inArray(self::AVAILABLE_TAX_OPTIONS)
             ->verifyNow();
         }

@@ -1,35 +1,45 @@
 import "flatpickr/dist/themes/airbnb.css";
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {invoicesActions} from "../../../actions/invoices.actions";
 import AsyncSelect from 'react-select/async';
-import {contractorsService} from "../../../services/invoices/contractors/crud.service";
 import Flatpickr from "react-flatpickr";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import Select from "react-select";
+import {contractorsService} from "../../../services/invoices/contractors/crud.service";
+import {companiesActions} from "../../../actions/invoices/companies/actions";
+import {bankAccountsActions} from "../../../actions/invoices/bankAccounts/actions";
 
 function Generate() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const validationErrors = useSelector(state => state.invoices.create.validationErrors);
-    const isLoading = useSelector(state => state.invoices.create.isLoading);
+    const validationErrors = useSelector(state => state.invoices.documents.create.validationErrors);
+    const companies = useSelector(state => state.invoices.companies.all.items);
+    const bankAccounts = useSelector(state => state.invoices.bankAccounts.all.items);
+    const isLoading = useSelector(state => state.invoices.documents.create.isLoading);
     let errors = [];
     const [inputs, setInputs] = useState({
         invoiceNumber: '',
-        sellerId: '',
-        buyerId: '',
-        generatedAt: new Date,
-        soldAt: new Date,
         generatePlace: '',
-        alreadyTakenPrice: 0.00,
+        alreadyTakenPrice: '',
+        daysForPayment: '',
+        paymentType: 'bank_transfer',
+        bankAccountId: null,
         currencyCode: 'PLN',
-        vatPercentage: 23,
+        companyId: null,
+        contractorId: null,
+        generatedAt: null,
+        soldAt: null,
         products: [
-            {name: '', unit: 'test', quantity: 1, priceNetto: 0.00, vatRate: 23, priceGross: 0.00},
+            {position: 0, name: '', unit: 'service', quantity: 1, netPrice: 0.00, tax: 23, grossPrice: 0.00},
         ],
     });
+
+    useEffect(() => {
+        dispatch(companiesActions.getAll());
+    }, []);
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -37,6 +47,10 @@ function Generate() {
     }
 
     function handleSelectChange(value, meta) {
+        if (meta.name === 'companyId') {
+            dispatch(bankAccountsActions.getAll(value.value));
+        }
+
         setInputs(inputs => ({ ...inputs, [meta.name]: value.value}));
     }
 
@@ -52,13 +66,25 @@ function Generate() {
         });
     }
 
-    const companiesOptions = () => new Promise(resolve => {
+    const bankAccountsOptions = bankAccounts.map((bankAccount) => ({value: bankAccount.id, label: bankAccount.name}));
+    const companiesOptions = companies.map((company) => ({value: company.id, label: company.name}));
+    const contractorsOptions = () => new Promise(resolve => {
         resolve(
-            companiesService.getAll().then(data => {
-                return data.map((company) => {return {value: company.id, label: company.name}});
+            contractorsService.getAll().then(data => {
+                return data.map((contractor) => {return {value: contractor.id, label: contractor.name}});
             })
-        );
+        )
     });
+
+    if (companiesOptions.length === 1 && inputs.companyId === null) {
+        const companyId = companiesOptions[0].value;
+        setInputs(inputs => ({...inputs , companyId}));
+        dispatch(bankAccountsActions.getAll(companyId));
+    }
+
+    if (bankAccountsOptions.length === 1 && inputs.bankAccountId === null && inputs.paymentType === 'bank_transfer') {
+        setInputs(inputs => ({...inputs, bankAccountId: bankAccountsOptions[0].value}));
+    }
 
     function setLastDayPreviousMonth(property) {
         const today = new Date;
@@ -72,7 +98,7 @@ function Generate() {
 
     function addNewProduct() {
         const products = inputs.products;
-        products.push({name: '', unit: 'test', quantity: 1, priceNetto: 0.00, vatRate: 23, priceGross: 0.00});
+        products.push({name: '', unit: 'service', quantity: 1, netPrice: 0.00, tax: 23, grossPrice: 0.00});
 
         setInputs(inputs => ({...inputs, products}));
     }
@@ -87,27 +113,27 @@ function Generate() {
             e.target.style.height = `${Math.min(e.target.scrollHeight, 54)}px`
         }
 
-        if (name === 'priceGross') {
-            if (products[index].vatRate === 0) {
-                products[index] = {...products[index], priceNetto: value.toFixed(2)};
+        if (name === 'grossPrice') {
+            if (products[index].tax === 0) {
+                products[index] = {...products[index], netPrice: value.toFixed(2)};
             } else {
-                products[index] = {...products[index], priceNetto: (parseFloat(value) / (1 + (products[index].vatRate / 100))).toFixed(2)};
+                products[index] = {...products[index], netPrice: (parseFloat(value) / (1 + (products[index].tax / 100))).toFixed(2)};
             }
         }
 
-        if (name === 'priceNetto') {
-            if (products[index].vatRate === 0) {
-                products[index] = {...products[index], priceGross: value.toFixed(2)};
+        if (name === 'netPrice') {
+            if (products[index].tax === 0) {
+                products[index] = {...products[index], grossPrice: value.toFixed(2)};
             } else {
-                products[index] = {...products[index], priceGross: (parseFloat(value) + (parseFloat(value) * (products[index].vatRate / 100))).toFixed(2)};
+                products[index] = {...products[index], grossPrice: (parseFloat(value) + (parseFloat(value) * (products[index].tax / 100))).toFixed(2)};
             }
         }
 
-        if (name === 'vatRate') {
+        if (name === 'tax') {
             if (value === 0) {
-                products[index] = {...products[index], priceGross: (products[index].priceNetto).toFixed(2)};
+                products[index] = {...products[index], grossPrice: (products[index].netPrice).toFixed(2)};
             } else {
-                products[index] = {...products[index], priceGross: (parseFloat(products[index].priceNetto) + (parseFloat(products[index].priceNetto) * (value / 100))).toFixed(2)};
+                products[index] = {...products[index], grossPrice: (parseFloat(products[index].netPrice) + (parseFloat(products[index].netPrice) * (value / 100))).toFixed(2)};
             }
         }
 
@@ -199,18 +225,31 @@ function Generate() {
                                             }
                                         </div>
                                         <div className="mb-3 form-group">
-                                            <label htmlFor="buyerId"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Buyer</label>
+                                            <label htmlFor="companyId"
+                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Company</label>
+                                            <Select
+                                                name="companyId"
+                                                options={companiesOptions}
+                                                value={companiesOptions[0]}
+                                                isDisabled={companiesOptions.length === 1}
+                                            />
+                                            {errors['companyId'] &&
+                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['companyId'].message}</span>
+                                            }
+                                        </div>
+                                        <div className="mb-3 form-group">
+                                            <label htmlFor="contractorId"
+                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Contractor</label>
                                             <AsyncSelect
-                                                name="buyerId"
-                                                loadOptions={companiesOptions}
+                                                name="contractorId"
+                                                loadOptions={contractorsOptions}
                                                 defaultOptions
-                                                placeholder={'Choose buyer'}
+                                                placeholder={'Choose contractor'}
                                                 style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                 onChange={handleSelectChange}
                                             />
-                                            {errors['buyerId'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['buyerId'].message}</span>
+                                            {errors['contractorId'] &&
+                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['contractorId'].message}</span>
                                             }
                                         </div>
                                         <div className="mb-3 form-group">
@@ -321,20 +360,39 @@ function Generate() {
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['daysForPayment'].message}</span>
                                             }
                                         </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="paymentType"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Payment Type</label>
-                                            <Select
-                                                options={[
-                                                    {value: 'bankTransfer', label: 'Bank transfer'}
-                                                ]}
-                                                defaultValue={{value: 'bankTransfer', label: 'Bank transfer'}}
-                                                isDisabled={true}
-                                            />
-                                            {errors['paymentType'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['paymentType'].message}</span>
-                                            }
-                                        </div>
+                                        {inputs.companyId &&
+                                            <>
+                                                <div className="mb-3 form-group">
+                                                    <label htmlFor="paymentType"
+                                                           style={{marginBottom: '.5rem', fontWeight: 500}}>Payment Type</label>
+                                                    <Select
+                                                        options={[
+                                                            {value: 'bank_transfer', label: 'Bank transfer'}
+                                                        ]}
+                                                        defaultValue={{value: 'bank_transfer', label: 'Bank transfer'}}
+                                                        isDisabled={true}
+                                                    />
+                                                    {errors['paymentType'] &&
+                                                        <span style={{color: 'red', fontSize: '10px'}}>{errors['paymentType'].message}</span>
+                                                    }
+                                                </div>
+                                                {inputs.paymentType === 'bank_transfer' &&
+                                                    <div className="mb-3 form-group">
+                                                        <label htmlFor="bankAccountId"
+                                                               style={{marginBottom: '.5rem', fontWeight: 500}}>Bank Account</label>
+                                                        <Select
+                                                            options={bankAccountsOptions}
+                                                            value={bankAccountsOptions[0]}
+                                                            isDisabled={bankAccountsOptions.length === 1}
+                                                            name="bankAccountId"
+                                                        />
+                                                        {errors['bankAccountId'] &&
+                                                            <span style={{color: 'red', fontSize: '10px'}}>{errors['bankAccountId'].message}</span>
+                                                        }
+                                                    </div>
+                                                }
+                                            </>
+                                        }
                                         <div className="mb-3 form-group">
                                             <label htmlFor="language"
                                                    style={{marginBottom: '.5rem', fontWeight: 500}}>Language</label>
@@ -439,6 +497,7 @@ function Generate() {
                                                                                         className="form-control"
                                                                                         style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                                                         value={element.unit}
+                                                                                        disabled={true}
                                                                                         onChange={(e) => handleProductsParametersChange(e, key)}
                                                                                     />
                                                                                 </div>
@@ -455,12 +514,12 @@ function Generate() {
                                                                                 </div>
                                                                                 <div className="col-2">
                                                                                     <input
-                                                                                        name="priceNetto"
+                                                                                        name="netPrice"
                                                                                         type="number"
                                                                                         step="0.01"
                                                                                         className="form-control"
                                                                                         style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                                                        value={element.priceNetto}
+                                                                                        value={element.netPrice}
                                                                                         onBlur={(e) => setFixedFloatPrice(e, key)}
                                                                                         onChange={(e) => handleProductsParametersChange(e, key)}
                                                                                     />
@@ -473,7 +532,7 @@ function Generate() {
                                                                                             {value: 23, label: '23%'},
                                                                                         ]}
                                                                                         styles={customStyles}
-                                                                                        name="vatPercentage"
+                                                                                        name="tax"
                                                                                         placeholder="Select VAT percentage"
                                                                                         defaultValue={{value: 23, label: '23%'}}
                                                                                         onChange={handleSelectChange}
@@ -481,12 +540,12 @@ function Generate() {
                                                                                 </div>
                                                                                 <div className="col-2">
                                                                                     <input
-                                                                                        name="priceGross"
+                                                                                        name="grossPrice"
                                                                                         type="number"
                                                                                         step="0.01"
                                                                                         className="form-control"
                                                                                         style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                                                        value={element.priceGross}
+                                                                                        value={element.grossPrice}
                                                                                         onBlur={(e) => setFixedFloatPrice(e, key)}
                                                                                         onChange={(e) => handleProductsParametersChange(e, key)}
                                                                                     />
