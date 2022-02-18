@@ -47,6 +47,14 @@ const sidebar = [
                 icon: 'bi-speedometer',
             },
             {
+                title: 'Budgets',
+                path: '/finances/budgets',
+                icon: 'bi-file-earmark-ruled',
+                children: [
+                    { path: '/finances/budgets/:id' },
+                ],
+            },
+            {
                 title: 'Categories',
                 path: '/finances/categories',
                 icon: 'bi-bookshelf',
@@ -55,7 +63,7 @@ const sidebar = [
                 title: 'Wallets',
                 path: '/finances/wallets',
                 icon: 'bi-wallet',
-            }
+            },
         ]
     }
 ];

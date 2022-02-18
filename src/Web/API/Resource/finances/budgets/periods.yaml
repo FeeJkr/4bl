@@ -1,0 +1,24 @@
+create:
+  path: /
+  controller: App\Web\API\Action\FinancesGraph\Period\Create\CreatePeriodAction
+  methods: POST
+
+delete:
+  path: /{id}/
+  controller: App\Web\API\Action\FinancesGraph\Period\Delete\DeletePeriodAction
+  methods: DELETE
+
+get.all:
+  path: /
+  controller: App\Web\API\Action\FinancesGraph\Period\GetAll\GetAllPeriodsAction
+  methods: GET
+
+get.one:
+  path: /{id}/
+  controller: App\Web\API\Action\FinancesGraph\Period\GetOneById\GetPeriodByIdAction
+  methods: GET
+
+update:
+  path: /{id}/
+  controller: App\Web\API\Action\FinancesGraph\Period\Update\UpdatePeriodAction
+  methods: POST

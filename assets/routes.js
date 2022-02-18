@@ -19,6 +19,9 @@ import CompaniesLayout from "./layouts/invoices/CompaniesLayout";
 import {List as CompanyList} from "./pages/Invoices/Companies/List";
 import {Edit as EditCompany} from "./pages/Invoices/Companies/Edit";
 import {Create as CreateCompany} from "./pages/Invoices/Companies/Create";
+import BudgetPlannerLayout from "./layouts/finances/BudgetPlannerLayout";
+import {List as BudgetsPeriodsList} from "./pages/Finances/Budgets/Periods/List";
+import {Show as BudgetsPeriodsShow} from "./pages/Finances/Budgets/Periods/Show";
 
 export default function Router() {
     return useRoutes([
@@ -73,6 +76,14 @@ export default function Router() {
                     path: 'finances',
                     children: [
                         { path: '', element: '<div>Dashboard finances</div>' },
+                        {
+                            path: 'budgets',
+                            element: <BudgetPlannerLayout/>,
+                            children: [
+                                { path: '', element: <BudgetsPeriodsList/> },
+                                { path: ':id', element: <BudgetsPeriodsShow/> },
+                            ],
+                        },
                         { path: 'categories', element: '<div>Categories finances</div>' },
                         { path: 'wallets', element: '<div>Wallets finances</div>' },
                     ]

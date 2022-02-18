@@ -1,0 +1,4 @@
+get.all:
+  path: /
+  controller: App\Web\API\Action\FinancesGraph\Period\PeriodItem\GetAll\GetAllPeriodItemsAction
+  methods: GET
