@@ -27,3 +27,4 @@ yarn-error.log
 .docker/.env
 bin/.phpunit
 docker-compose.override.yml
+/db/
