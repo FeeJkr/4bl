@@ -33,3 +33,6 @@ services:
 
   invoice-generator-microservice:
     image: feejkr/invoice-generator
+
+  redis:
+    image: "redis:alpine"
