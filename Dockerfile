@@ -1,5 +1,6 @@
 # ---------------------------------------------- Build Time Arguments --------------------------------------------------
 ARG PHP_VERSION="8.1"
+ARG NODE_VERSION="17.8.0"
 ARG NGINX_VERSION="1.20.1"
 ARG COMPOSER_VERSION="2"
 ARG XDEBUG_VERSION="3.1.3"
@@ -14,6 +15,8 @@ FROM composer:${COMPOSER_VERSION} as composer
 #                                                   --- Base ---
 # ---------------  This stage install needed extenstions, plugins and add all needed configurations  -------------------
 # ======================================================================================================================
+
+FROM node:${NODE_VERSION}-alpine AS node
 
 FROM php:${PHP_VERSION}-fpm-alpine AS base
 
@@ -31,7 +34,6 @@ RUN IMAGE_DEPS="tini gettext"; \
     apk add --no-cache ${IMAGE_DEPS} ${RUNTIME_DEPS}
 
 # ---------------------------------------- Install / Enable PHP Extensions ---------------------------------------------
-
 
 RUN apk add --no-cache --virtual .build-deps \
       $PHPIZE_DEPS  \
@@ -79,6 +81,12 @@ RUN apk add --no-cache --virtual .build-deps \
 		apk del --no-network .build-deps; \
 		# check for output like "PHP Warning:  PHP Startup: Unable to load dynamic library 'foo' (tried: ...)
 		err="$(php --version 3>&1 1>&2 2>&3)"; 	[ -z "$err" ]
+
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/share /usr/local/share
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
 # -----------------------------------------------
 
 # ------------------------------------------------- Permissions --------------------------------------------------------

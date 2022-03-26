@@ -5,8 +5,8 @@
     "brick/math": {
         "version": "0.9.2"
     },
-    "clue/stream-filter": {
-        "version": "v1.5.0"
+    "composer/package-versions-deprecated": {
+        "version": "1.11.99.1"
     },
     "doctrine/annotations": {
         "version": "1.0",
@@ -106,20 +106,8 @@
     "guzzlehttp/psr7": {
         "version": "1.7.0"
     },
-    "http-interop/http-factory-guzzle": {
-        "version": "1.0.0"
-    },
-    "jean85/pretty-package-versions": {
-        "version": "2.0.3"
-    },
     "laminas/laminas-code": {
         "version": "4.2.1"
-    },
-    "laminas/laminas-eventmanager": {
-        "version": "3.3.1"
-    },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.2.0"
     },
     "monolog/monolog": {
         "version": "2.1.1"
@@ -127,38 +115,14 @@
     "myclabs/php-enum": {
         "version": "1.7.7"
     },
-    "nelmio/cors-bundle": {
-        "version": "1.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.5",
-            "ref": "6bea22e6c564fba3a1391615cada1437d0bde39c"
-        },
-        "files": [
-            "config/packages/nelmio_cors.yaml"
-        ]
-    },
     "paquettg/php-html-parser": {
         "version": "3.1.1"
     },
     "paquettg/string-encode": {
         "version": "1.0.1"
     },
-    "php-http/client-common": {
-        "version": "2.3.0"
-    },
-    "php-http/discovery": {
-        "version": "1.13.0"
-    },
     "php-http/httplug": {
         "version": "2.2.0"
-    },
-    "php-http/message": {
-        "version": "1.11.0"
-    },
-    "php-http/message-factory": {
-        "version": "v1.0.2"
     },
     "php-http/promise": {
         "version": "1.1.0"
@@ -173,9 +137,6 @@
         "version": "1.0.0"
     },
     "psr/http-client": {
-        "version": "1.0.1"
-    },
-    "psr/http-factory": {
         "version": "1.0.1"
     },
     "psr/http-message": {
@@ -207,27 +168,6 @@
         "files": [
             "config/packages/sensio_framework_extra.yaml"
         ]
-    },
-    "sentry/sdk": {
-        "version": "3.1.0"
-    },
-    "sentry/sentry": {
-        "version": "3.2.0"
-    },
-    "sentry/sentry-symfony": {
-        "version": "3.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "3.0",
-            "ref": "9746f0823302d7980e5273ef7a69ef3f5ac80914"
-        },
-        "files": [
-            "config/packages/sentry.yaml"
-        ]
-    },
-    "symfony/amqp-messenger": {
-        "version": "v5.2.0"
     },
     "symfony/asset": {
         "version": "v5.2.4"
@@ -266,9 +206,6 @@
         "version": "v2.2.0"
     },
     "symfony/doctrine-bridge": {
-        "version": "v5.2.0"
-    },
-    "symfony/doctrine-messenger": {
         "version": "v5.2.0"
     },
     "symfony/dom-crawler": {
@@ -323,12 +260,6 @@
             "src/Kernel.php"
         ]
     },
-    "symfony/http-client": {
-        "version": "v5.2.4"
-    },
-    "symfony/http-client-contracts": {
-        "version": "v2.3.1"
-    },
     "symfony/http-foundation": {
         "version": "v5.2.0"
     },
@@ -380,12 +311,6 @@
             "config/packages/test/monolog.yaml"
         ]
     },
-    "symfony/options-resolver": {
-        "version": "v5.2.4"
-    },
-    "symfony/orm-pack": {
-        "version": "v2.1.0"
-    },
     "symfony/password-hasher": {
         "version": "v5.3.4"
     },
@@ -416,29 +341,11 @@
     "symfony/polyfill-mbstring": {
         "version": "v1.20.0"
     },
-    "symfony/polyfill-php73": {
-        "version": "v1.20.0"
-    },
     "symfony/polyfill-php80": {
         "version": "v1.20.0"
     },
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
-    },
-    "symfony/polyfill-uuid": {
-        "version": "v1.22.1"
-    },
-    "symfony/profiler-pack": {
-        "version": "v1.0.5"
-    },
-    "symfony/proxy-manager-bridge": {
-        "version": "v5.2.9"
-    },
-    "symfony/psr-http-message-bridge": {
-        "version": "v2.1.0"
-    },
-    "symfony/redis-messenger": {
-        "version": "v5.2.0"
     },
     "symfony/routing": {
         "version": "5.3",
@@ -455,9 +362,6 @@
     },
     "symfony/runtime": {
         "version": "v5.3.4"
-    },
-    "symfony/security-core": {
-        "version": "v5.2.5"
     },
     "symfony/service-contracts": {
         "version": "v2.2.0"
