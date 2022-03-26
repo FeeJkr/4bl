@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  invoice-generator-microservice:
+    hostname: invoice-generator-ms
+    ports:
+      - "8090:3000"
+
+  db:
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=default
+      - PGPASSWORD=default_secret

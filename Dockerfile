@@ -1,78 +1,287 @@
-FROM php:8.1-fpm
+# ---------------------------------------------- Build Time Arguments --------------------------------------------------
+ARG PHP_VERSION="8.1"
+ARG NGINX_VERSION="1.20.1"
+ARG COMPOSER_VERSION="2"
+ARG XDEBUG_VERSION="3.1.3"
+ARG COMPOSER_AUTH
+ARG APP_BASE_DIR="."
 
-# SYSTEM PACKAGES
-RUN apt-get update && apt-get install -y \
-    libicu-dev \
-    libjpeg-dev \
-    libpng-dev \
-    librabbitmq-dev \
-    librdkafka-dev \
-    libxslt-dev \
-    libzip-dev \
-    libpq-dev \
-    exim4-daemon-light \
-    git \
-    nginx \
-    procps \
-    supervisor \
-    unzip \
-    nano
+# -------------------------------------------------- Composer Image ----------------------------------------------------
 
-# PHP PACKAGES
-RUN docker-php-ext-configure gd --with-jpeg \
-    && pecl install \
-        redis \
-    && docker-php-ext-install \
-        opcache \
-        pdo \
-        pdo_mysql \
-        pdo_pgsql \
-        mysqli \
-        bcmath \
-        gd \
-        intl \
-        pcntl \
-        zip \
-    && docker-php-ext-enable \
-        redis
+FROM composer:${COMPOSER_VERSION} as composer
 
-# CLEAN UP CONTAINER
-RUN apt purge -y $PHPSIZE_DEPS \
-    && apt autoremove -y --purge \
-    && apt clean all
+# ======================================================================================================================
+#                                                   --- Base ---
+# ---------------  This stage install needed extenstions, plugins and add all needed configurations  -------------------
+# ======================================================================================================================
 
-# COMPOSER
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && ln -s $(composer config --global home) /root/composer
-ENV PATH=$PATH:/root/composer/vendor/bin
+FROM php:${PHP_VERSION}-fpm-alpine AS base
 
-# NODE JS
-RUN curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
-RUN apt-get update \
- && apt-get install -y \
- nodejs
+# Required Args ( inherited from start of file, or passed at build )
+ARG XDEBUG_VERSION
 
-# PHP RUNTIME
-RUN mkdir /app
-RUN chown -R www-data:www-data /app
-RUN chown -R www-data:www-data /var/www
+# Set SHELL flags for RUN commands to allow -e and pipefail
+# Rationale: https://github.com/hadolint/hadolint/wiki/DL4006
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
+# ------------------------------------- Install Packages Needed Inside Base Image --------------------------------------
+
+RUN IMAGE_DEPS="tini gettext"; \
+    RUNTIME_DEPS="fcgi"; \
+    apk add --no-cache ${IMAGE_DEPS} ${RUNTIME_DEPS}
+
+# ---------------------------------------- Install / Enable PHP Extensions ---------------------------------------------
+
+
+RUN apk add --no-cache --virtual .build-deps \
+      $PHPIZE_DEPS  \
+      libzip-dev    \
+      icu-dev       \
+      rabbitmq-c-dev \
+      libpq-dev \
+  && pecl install \
+      amqp \
+      apcu \
+      redis-5.3.7 \
+      xdebug-${XDEBUG_VERSION} \
+ && docker-php-ext-install -j$(nproc) \
+      intl        \
+      opcache     \
+      pdo \
+      pdo_mysql \
+      pdo_pgsql   \
+      mysqli \
+      zip         \
+      bcmath \
+ && docker-php-ext-enable \
+      amqp \
+      apcu \
+      redis \
+ && rm -r /tmp/pear; \
+ # - Detect Runtime Dependencies of the installed extensions. \
+ # - src: https://github.com/docker-library/wordpress/blob/master/latest/php8.0/fpm-alpine/Dockerfile \
+    out="$(php -r 'exit(0);')"; \
+		[ -z "$out" ]; \
+		err="$(php -r 'exit(0);' 3>&1 1>&2 2>&3)"; \
+		[ -z "$err" ]; \
+		\
+		extDir="$(php -r 'echo ini_get("extension_dir");')"; \
+		[ -d "$extDir" ]; \
+		runDeps="$( \
+			scanelf --needed --nobanner --format '%n#p' --recursive "$extDir" \
+				| tr ',' '\n' \
+				| sort -u \
+				| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+		)"; \
+		# Save Runtime Deps in a virtual deps
+		apk add --no-network --virtual .php-extensions-rundeps $runDeps; \
+		# Uninstall Everything we Installed (minus the runtime Deps)
+		apk del --no-network .build-deps; \
+		# check for output like "PHP Warning:  PHP Startup: Unable to load dynamic library 'foo' (tried: ...)
+		err="$(php --version 3>&1 1>&2 2>&3)"; 	[ -z "$err" ]
+# -----------------------------------------------
+
+# ------------------------------------------------- Permissions --------------------------------------------------------
+
+# - Clean bundled config/users & recreate them with UID 1000 for docker compatability in dev container.
+# - Create composer directories (since we run as non-root later)
+RUN deluser --remove-home www-data && adduser -u1000 -D www-data && rm -rf /var/www /usr/local/etc/php-fpm.d/* && \
+    mkdir -p /var/www/.composer /app && chown -R www-data:www-data /app /var/www/.composer
+
+# ------------------------------------------------ PHP Configuration ---------------------------------------------------
+
+# Add Default Config
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+# Add in Base PHP Config
+COPY docker/php/base-*   $PHP_INI_DIR/conf.d
+
+# ---------------------------------------------- PHP FPM Configuration -------------------------------------------------
+
+# PHP-FPM config
+COPY docker/fpm/*.conf  /usr/local/etc/php-fpm.d/
+
+
+# --------------------------------------------------- Scripts ----------------------------------------------------------
+
+COPY docker/*-base          \
+     docker/healthcheck-*   \
+     docker/command-loop    \
+     # to
+     /usr/local/bin/
+
+RUN  chmod +x /usr/local/bin/*-base /usr/local/bin/healthcheck-* /usr/local/bin/command-loop
+
+# ---------------------------------------------------- Composer --------------------------------------------------------
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# ----------------------------------------------------- MISC -----------------------------------------------------------
+
+WORKDIR /app
+USER www-data
+
+# Common PHP Frameworks Env Variables
+ENV APP_ENV prod
+ENV APP_DEBUG 0
+
+# Validate FPM config (must use the non-root user)
+RUN php-fpm -t
+
+# ---------------------------------------------------- HEALTH ----------------------------------------------------------
+
+HEALTHCHECK CMD ["healthcheck-liveness"]
+
+# -------------------------------------------------- ENTRYPOINT --------------------------------------------------------
+
+ENTRYPOINT ["entrypoint-base"]
+CMD ["php-fpm"]
+
+# ======================================================================================================================
+#                                                  --- Vendor ---
+# ---------------  This stage will install composer runtime dependinces and install app dependinces.  ------------------
+# ======================================================================================================================
+
+FROM composer as vendor
+
+ARG PHP_VERSION
+ARG COMPOSER_AUTH
+ARG APP_BASE_DIR
+
+# A Json Object with remote repository token to clone private Repos with composer
+# Reference: https://getcomposer.org/doc/03-cli.md#composer-auth
+ENV COMPOSER_AUTH $COMPOSER_AUTH
+
 WORKDIR /app
 
-# PHP-FPM
-COPY .docker/config/php.ini $PHP_INI_DIR/php.ini
-RUN rm /usr/local/etc/php-fpm.d/* && chown -R www-data:www-data /usr/local/etc/php/conf.d
-COPY .docker/config/fpm.conf /usr/local/etc/php-fpm.d/www.conf
+# Copy Dependencies files
+COPY $APP_BASE_DIR/composer.json composer.json
+COPY $APP_BASE_DIR/composer.lock composer.lock
 
-# NGINX
-RUN rm /etc/nginx/nginx.conf && chown -R www-data:www-data /var/www/html /run /var/lib/nginx /var/log/nginx
-COPY .docker/config/nginx.conf /etc/nginx/nginx.conf
+    # Set PHP Version of the Image
+RUN composer config platform.php ${PHP_VERSION}; \
+    # Install Dependencies
+    composer install -n --no-progress --ignore-platform-reqs --no-dev --prefer-dist --no-scripts --no-autoloader
 
-RUN groupadd local -g 1000 -o
-RUN usermod -aG local www-data
+# ======================================================================================================================
+# ==============================================  PRODUCTION IMAGE  ====================================================
+#                                                   --- PROD ---
+# ======================================================================================================================
+
+FROM base AS app
+
+ARG APP_BASE_DIR
+USER root
+
+# Copy Prod Scripts && delete xdebug
+COPY docker/*-prod /usr/local/bin/
+RUN  chmod +x /usr/local/bin/*-prod
+
+# Copy PHP Production Configuration
+COPY docker/php/prod-*   $PHP_INI_DIR/conf.d/
 
 USER www-data
 
-COPY --chown=www-data:www-data . .
+# ----------------------------------------------- Production Config -----------------------------------------------------
 
+# Copy Vendor
+COPY --chown=www-data:www-data --from=vendor /app/vendor /app/vendor
+
+# Copy App Code
+COPY --chown=www-data:www-data $APP_BASE_DIR/ .
+
+## Run Composer Install again
+## ( this time to run post-install scripts, autoloader, and post-autoload scripts using one command )
+RUN post-build-base && post-build-prod
+
+ENTRYPOINT ["entrypoint-prod"]
+CMD ["php-fpm"]
+
+# ======================================================================================================================
+# ==============================================  DEVELOPMENT IMAGE  ===================================================
+#                                                   --- DEV ---
+# ======================================================================================================================
+
+FROM base as app-dev
+
+
+ENV APP_ENV dev
+ENV APP_DEBUG 1
+
+# Switch root to install stuff
+USER root
+
+# For Composer Installs
+RUN apk --no-cache add git openssh; \
+ docker-php-ext-enable xdebug
+
+# For Xdebuger to work, it needs the docker host ID
+# - in Mac AND Windows, `host.docker.internal` resolve to Docker host IP
+# - in Linux, `172.17.0.1` is the host IP
+ENV XDEBUG_CLIENT_HOST="172.17.0.1"
+
+# ---------------------------------------------------- Scripts ---------------------------------------------------------
+
+# Copy Dev Scripts
+COPY docker/*-dev /usr/local/bin/
+RUN chmod +x /usr/local/bin/*-dev; \
+    mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+COPY docker/php/dev-*   $PHP_INI_DIR/conf.d/
+
+USER www-data
+# ------------------------------------------------- Entry Point --------------------------------------------------------
+
+# Entrypoints
+ENTRYPOINT ["entrypoint-dev"]
+CMD ["php-fpm"]
+
+
+# ======================================================================================================================
+# ======================================================================================================================
+#                                                  --- NGINX ---
+# ======================================================================================================================
+# ======================================================================================================================
+FROM nginx:${NGINX_VERSION}-alpine AS nginx
+
+RUN rm -rf /var/www/* /etc/nginx/conf.d/* && adduser -u 1000 -D -S -G www-data www-data
+COPY docker/nginx/nginx-*   /usr/local/bin/
+COPY docker/nginx/          /etc/nginx/
+RUN chown -R www-data /etc/nginx/ && chmod +x /usr/local/bin/nginx-*
+
+# The PHP-FPM Host
+## Localhost is the sensible default assuming image run on a k8S Pod
+ENV PHP_FPM_HOST "localhost"
+ENV PHP_FPM_PORT "9000"
+ENV NGINX_LOG_FORMAT "json"
+
+# For Documentation
 EXPOSE 8080
-ENTRYPOINT [ "/app/entrypoint.sh" ]
+
+# Switch User
+USER www-data
+
+# Add Healthcheck
+HEALTHCHECK CMD ["nginx-healthcheck"]
+
+# Add Entrypoint
+ENTRYPOINT ["nginx-entrypoint"]
+
+# ======================================================================================================================
+#                                                 --- NGINX PROD ---
+# ======================================================================================================================
+
+FROM nginx AS web
+
+# Copy Public folder + Assets that's going to be served from Nginx
+COPY --chown=www-data:www-data --from=app /app/public /app/public
+
+# ======================================================================================================================
+#                                                 --- NGINX DEV ---
+# ======================================================================================================================
+FROM nginx AS web-dev
+
+ENV NGINX_LOG_FORMAT "combined"
+
+COPY --chown=www-data:www-data docker/nginx/dev/*.conf   /etc/nginx/conf.d/
+COPY --chown=www-data:www-data docker/nginx/dev/certs/   /etc/nginx/certs/
