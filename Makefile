@@ -8,9 +8,6 @@ COMMAND ?= /bin/sh
 
 .PHONY: build deploy start stop logs restart shell up rm help
 
-deploy:			## Start using Prod Image in Prod Mode
-	${COMPOSE_PREFIX_CMD} docker-compose -f docker-compose.prod.yml up --build -d
-
 up:				## Start service
 	@echo "Starting Application \n (note: Web container will wait App container to start before starting)"
 	${COMPOSE_PREFIX_CMD} docker-compose up -d
