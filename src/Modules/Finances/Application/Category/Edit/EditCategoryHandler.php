@@ -17,14 +17,14 @@ final class EditCategoryHandler implements CommandHandler
     public function __invoke(EditCategoryCommand $command): void
     {
         $category = $this->repository->getById(
-            CategoryId::fromString($command->getId()),
+            CategoryId::fromString($command->id),
             $this->userContext->getUserId()
         );
 
         $category->update(
-            $command->getName(),
-            CategoryType::from($command->getType()),
-            $command->getIcon(),
+            $command->name,
+            CategoryType::from($command->type),
+            $command->icon,
         );
 
         $this->repository->save($category);

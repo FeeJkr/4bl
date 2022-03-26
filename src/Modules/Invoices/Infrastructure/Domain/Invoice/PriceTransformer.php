@@ -1,14 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\Invoices\Infrastructure\Domain\Invoice;
 
-use App\Modules\Invoices\Domain\Invoice\PriceTransformer as PriceTransformerInterface;
-use GuzzleHttp\Client;
 use PHPHtmlParser\Dom;
 use Throwable;
 
-final class PriceTransformer implements PriceTransformerInterface
+final class PriceTransformer
 {
     private const API_URL = 'https://slownie.pl/%s';
     private const API_DATA_SELECTOR = '#dataWord';
@@ -18,7 +17,7 @@ final class PriceTransformer implements PriceTransformerInterface
         try {
             $url = sprintf(self::API_URL, number_format($price, 2, ',', ''));
 
-            return (new Dom)
+            return (new Dom())
                 ->loadFromUrl($url)
                 ->find(self::API_DATA_SELECTOR)[0]
                 ->innerText;

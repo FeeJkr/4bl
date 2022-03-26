@@ -40,8 +40,8 @@ final class Wallet
             $this->id->toString(),
             $this->userId->toString(),
             $this->name,
-            $this->startBalance->getValue(),
-            $this->startBalance->getCurrency()->getValue(),
+            $this->startBalance->value,
+            $this->startBalance->currency->value,
         );
     }
 }

@@ -16,10 +16,6 @@ services:
     App\Web\MVC\SPAController:
         tags: [ 'controller.service_arguments' ]
 
-    App\Web\API\Action\:
-        resource: '../src/Web/API/Action/*/*/*/*Action*'
-        tags: [ 'controller.service_arguments' ]
-
     # Middlewares
     App\Web\API\Middleware\ErrorHandlerMiddleware:
         tags: [ 'kernel.event_subscriber' ]

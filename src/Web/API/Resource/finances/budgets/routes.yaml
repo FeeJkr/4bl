@@ -1,0 +1,14 @@
+periods:
+  resource: periods.yaml
+  name_prefix: periods.
+  prefix: /periods
+
+periods.items:
+  resource: periods.items.yaml
+  name_prefix: periods.items.
+  prefix: /periods/{periodId}/items
+
+periods.categories:
+  resource: periods.categories.yaml
+  name_prefix: periods.categories.
+  prefix: /periods/{periodId}/categories

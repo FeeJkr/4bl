@@ -7,9 +7,11 @@ import {Toast} from "react-bootstrap";
 import {filesystemService} from "../../../services/filesystem.service";
 
 function List() {
-    const invoices = useSelector(state => state.invoices.all.items);
+    const invoices = useSelector(state => state.invoices.documents.all.items);
     const dispatch = useDispatch();
     const [showToast, setShowToast] = useState(false);
+
+    console.log(invoices);
 
     useEffect(() => {
         dispatch(invoicesActions.getAll());
@@ -55,9 +57,10 @@ function List() {
                                         <th>Number</th>
                                         <th>Generated Date</th>
                                         <th>Sold Date</th>
-                                        <th>Seller</th>
-                                        <th>Buyer</th>
+                                        <th>Company</th>
+                                        <th>Contractor</th>
                                         <th>Total Net Price</th>
+                                        <th>Total Gross Price</th>
                                     </tr>
                                     </thead>
                                     <tbody id="table-companies-body">
@@ -68,9 +71,10 @@ function List() {
                                                 <td>{invoice.invoiceNumber}</td>
                                                 <td>{invoice.generatedAt}</td>
                                                 <td>{invoice.soldAt}</td>
-                                                <td>{invoice.sellerName}</td>
-                                                <td>{invoice.buyerName}</td>
+                                                <td>{invoice.companyName}</td>
+                                                <td>{invoice.contractorName}</td>
                                                 <td>{invoice.totalNetPrice} {invoice.currencyCode}</td>
+                                                <td>{invoice.totalGrossPrice} {invoice.currencyCode}</td>
                                                 <td className="gap-3 action-buttons" style={{gridGap: '1 rem', position: 'absolute', right: 0, width: 40 * 3 + 'px'}}>
                                                     <a onClick={() => handleDownload(invoice.id, invoice.invoiceNumber)}
                                                        style={{fontSize: '18 px', cursor: 'pointer'}}>

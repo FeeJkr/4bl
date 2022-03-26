@@ -7,16 +7,15 @@ namespace App\Modules\Invoices\Domain\Invoice;
 use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
-class InvoiceParameters
+final class InvoiceParameters
 {
     public function __construct(
         private string $invoiceNumber,
         private string $generatePlace,
         private float $alreadyTakenPrice,
-        private string $currencyCode,
-        private int $vatPercentage,
-        private DateTimeImmutable $generateDate,
-        private DateTimeImmutable $sellDate,
+        private PaymentParameters $paymentParameters,
+        private DateTimeImmutable $generatedAt,
+        private DateTimeImmutable $soldAt,
     ){}
 
     #[Pure]
@@ -26,10 +25,12 @@ class InvoiceParameters
             $this->invoiceNumber,
             $this->generatePlace,
             $this->alreadyTakenPrice,
-            $this->currencyCode,
-            $this->vatPercentage,
-            $this->generateDate,
-            $this->sellDate,
+            $this->paymentParameters->daysForPayment,
+            $this->paymentParameters->paymentType->value,
+            $this->paymentParameters->bankAccountId?->toString(),
+            $this->paymentParameters->currencyCode,
+            $this->generatedAt,
+            $this->soldAt,
         );
     }
 }

@@ -21,14 +21,14 @@ final class RegisterUserHandler implements CommandHandler
     {
         try {
             $user = $this->service->register(
-                $command->getEmail(),
-                $command->getUsername(),
-                $command->getPassword(),
-                $command->getFirstName(),
-                $command->getLastName(),
+                $command->email,
+                $command->username,
+                $command->password,
+                $command->firstName,
+                $command->lastName,
             );
 
-            $this->repository->store($user, $command->getPassword());
+            $this->repository->store($user, $command->password);
         } catch (DomainException $exception) {
             throw ApplicationException::fromDomainException($exception);
         }

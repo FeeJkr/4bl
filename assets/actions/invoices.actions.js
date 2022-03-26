@@ -1,4 +1,5 @@
 import {invoicesConstants} from "../constants/invoices.constants";
+import {documentsConstants} from "../constants/invoices/documents/constants";
 import {invoicesService} from "../services/invoices.service";
 import {history} from "../helpers/history";
 
@@ -23,9 +24,9 @@ function getAll() {
             );
     };
 
-    function request() { return { type: invoicesConstants.GET_ALL_REQUEST } }
-    function success(invoices) { return { type: invoicesConstants.GET_ALL_SUCCESS, invoices } }
-    function failure(errors) { return { type: invoicesConstants.GET_ALL_FAILURE, errors } }
+    function request() { return { type: documentsConstants.GET_ALL_REQUEST } }
+    function success(invoices) { return { type: documentsConstants.GET_ALL_SUCCESS, items: invoices } }
+    function failure(errors) { return { type: documentsConstants.GET_ALL_FAILURE, errors } }
 }
 
 function generateInvoice(formData, navigate) {

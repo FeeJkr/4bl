@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Web\API\Action\Invoices\Company\Delete;
@@ -7,25 +8,20 @@ use App\Web\API\Action\Request;
 use Assert\Assert;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
-class DeleteCompanyRequest extends Request
+final class DeleteCompanyRequest extends Request
 {
-    private function __construct(private string $companyId){}
+    private const ID = 'id';
+
+    public function __construct(public readonly string $id){}
 
     public static function fromRequest(ServerRequest $request): self
     {
-        $companyId = $request->get('id');
+        $id = $request->get(self::ID);
 
         Assert::lazy()
-            ->that($companyId, 'companyId')->notEmpty()->uuid()
+            ->that($id, self::ID)->uuid()->notEmpty()
             ->verifyNow();
 
-        return new self(
-            $companyId,
-        );
-    }
-
-    public function getCompanyId(): string
-    {
-        return $this->companyId;
+        return new self($id);
     }
 }

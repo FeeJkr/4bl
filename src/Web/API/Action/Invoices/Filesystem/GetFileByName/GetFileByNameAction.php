@@ -8,13 +8,13 @@ use App\Common\Application\Query\QueryBus;
 use App\Modules\Invoices\Application\Filesystem\GetFileByName\GetFileByNameQuery;
 use App\Web\API\Action\AbstractAction;
 
-class GetFileByNameAction extends AbstractAction
+final class GetFileByNameAction extends AbstractAction
 {
     public function __construct(private QueryBus $bus){}
 
     public function __invoke(GetFileByNameRequest $request): GetFileByNameResponse
     {
-        $file = $this->bus->handle(new GetFileByNameQuery($request->getFilename()));
+        $file = $this->bus->handle(new GetFileByNameQuery($request->filename));
 
         return GetFileByNameResponse::respond($file);
     }

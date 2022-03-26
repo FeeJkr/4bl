@@ -6,15 +6,20 @@ namespace App\Modules\Finances\Application\Category;
 
 final class CategoryDTOCollection
 {
-    public function __construct(private array $elements = []){}
+    private array $categories;
+
+    public function __construct(CategoryDTO ...$categories)
+    {
+        $this->categories = $categories;
+    }
 
     public function add(CategoryDTO $category): void
     {
-        $this->elements[] = $category;
+        $this->categories[] = $category;
     }
 
     public function toArray(): array
     {
-        return $this->elements;
+        return $this->categories;
     }
 }

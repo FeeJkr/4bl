@@ -18,14 +18,12 @@ final class SignInUserAction extends AbstractAction
 
     public function __invoke(SignInUserRequest $request): NoContentResponse
     {
-        $command = new SignInUserCommand($request->getEmail(), $request->getPassword());
-
-        /** @var HandledStamp $stamp */
-        $stamp = $this->commandBus->dispatch($command)->last(HandledStamp::class);
         /** @var SignInResult $signInResult */
-        $signInResult = $stamp->getResult();
+        $signInResult = $this->commandBus->dispatch(
+            new SignInUserCommand($request->getEmail(), $request->getPassword())
+        );
 
-        $this->requestContext->setUserIdentity($signInResult->getUser()->getId());
+        $this->requestContext->setUserIdentity($signInResult->user->id);
 
         return NoContentResponse::respond();
     }

@@ -16,10 +16,10 @@ final class EditCategoryAction extends AbstractAction
     public function __invoke(EditCategoryRequest $request): NoContentResponse
     {
         $command = new EditCategoryCommand(
-            $request->getId(),
-            $request->getName(),
-            $request->getType(),
-            $request->getIcon()
+            $request->id,
+            $request->name,
+            $request->type,
+            $request->icon
         );
 
         $this->bus->dispatch($command);

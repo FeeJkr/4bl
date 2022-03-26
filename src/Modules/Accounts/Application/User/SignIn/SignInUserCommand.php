@@ -8,15 +8,5 @@ use App\Common\Application\Command\Command;
 
 final class SignInUserCommand implements Command
 {
-    public function __construct(private string $email, private string $password) {}
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
+    public function __construct(public readonly string $email, public readonly string $password) {}
 }

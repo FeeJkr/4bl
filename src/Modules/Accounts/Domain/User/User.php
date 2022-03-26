@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Accounts\Domain\User;
 
 use App\Common\Domain\Entity;
+use App\Modules\Accounts\Domain\User\Event\UserWasRegistered;
 use JetBrains\PhpStorm\Pure;
 
 final class User extends Entity
@@ -17,6 +18,7 @@ final class User extends Entity
         private string $firstName,
         private string $lastName,
         private Status $status,
+        private ?ConfirmationToken $confirmationToken
     ){}
 
     public static function register(
@@ -26,15 +28,37 @@ final class User extends Entity
         string $firstName,
         string $lastName,
     ): self {
-        return new self(
+        $confirmationToken = ConfirmationToken::generate();
+        $user = new self(
             UserId::generate(),
             $email,
             $username,
             $password,
             $firstName,
             $lastName,
-            Status::EMAIL_VERIFICATION(),
+            Status::EMAIL_VERIFICATION,
+            $confirmationToken
         );
+
+        $user->publishDomainEvent(
+            new UserWasRegistered($email, $username, $firstName, $lastName, $confirmationToken->token)
+        );
+
+        return $user;
+    }
+
+    /**
+     * @throws UserException
+     */
+    public function confirmEmail(): void
+    {
+        if ($this->status === Status::EMAIL_VERIFICATION) {
+            $this->status = Status::ACTIVE;
+
+            return;
+        }
+
+        throw UserException::unprocessableCondition();
     }
 
     #[Pure]
@@ -47,7 +71,8 @@ final class User extends Entity
             $this->password,
             $this->firstName,
             $this->lastName,
-            $this->status->getValue(),
+            $this->status->value,
+            $this->confirmationToken?->token,
         );
     }
 }

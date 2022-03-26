@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Common\Infrastructure\Messenger\Middleware;
 
 use Doctrine\DBAL\Connection;
@@ -11,7 +13,7 @@ use Symfony\Component\Messenger\Middleware\StackInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Throwable;
 
-class DatabaseTransactionMiddleware implements MiddlewareInterface
+final class DatabaseTransactionMiddleware implements MiddlewareInterface
 {
     public function __construct(private Connection $connection){}
 

@@ -20,15 +20,17 @@ function generateInvoice(formData) {
 
     return axios.post(invoicesDictionary.CREATE_URL, {
         invoiceNumber: formData.invoiceNumber,
-        sellerId: formData.sellerId,
-        buyerId: formData.buyerId,
         generatePlace: formData.generatePlace,
         alreadyTakenPrice: formData.alreadyTakenPrice,
-        generateDate: _parseDate(formData.generatedAt),
-        sellDate: _parseDate(formData.soldAt),
+        daysForPayment: formData.daysForPayment,
+        paymentType: formData.paymentType,
+        bankAccountId: formData.bankAccountId,
         currencyCode: formData.currencyCode,
+        companyId: formData.companyId,
+        contractorId: formData.contractorId,
+        generatedAt: _parseDate(formData.generatedAt),
+        soldAt: _parseDate(formData.soldAt),
         products: products.filter((element) => element.name !== ''),
-        vatPercentage: formData.vatPercentage,
     }).catch(error => Promise.reject(error.response.data));
 }
 

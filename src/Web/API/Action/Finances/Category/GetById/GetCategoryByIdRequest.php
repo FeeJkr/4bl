@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class GetCategoryByIdRequest extends Request
 {
-    public function __construct(private string $id){}
+    public function __construct(public readonly string $id){}
 
     public static function fromRequest(ServerRequest $request): Request
     {
@@ -21,10 +21,5 @@ final class GetCategoryByIdRequest extends Request
             ->verifyNow();
 
         return new self($id);
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
     }
 }

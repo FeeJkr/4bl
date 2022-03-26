@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class GetAllCategoriesRequest extends Request
 {
-    public function __construct(private ?string $type){}
+    public function __construct(public readonly ?string $type){}
 
     public static function fromRequest(ServerRequest $request): Request
     {
@@ -21,10 +21,5 @@ final class GetAllCategoriesRequest extends Request
             ->verifyNow();
 
         return new self($type);
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
     }
 }

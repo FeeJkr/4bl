@@ -6,50 +6,17 @@ namespace App\Modules\Invoices\Domain\Invoice;
 
 use DateTimeImmutable;
 
-class InvoiceParametersSnapshot
+final class InvoiceParametersSnapshot
 {
     public function __construct(
-        private string $invoiceNumber,
-        private string $generatePlace,
-        private float $alreadyTakenPrice,
-        private string $currencyCode,
-        private int $vatPercentage,
-        private DateTimeImmutable $generateDate,
-        private DateTimeImmutable $sellDate
+        public readonly string $invoiceNumber,
+        public readonly string $generatePlace,
+        public readonly float $alreadyTakenPrice,
+        public readonly int $daysForPayment,
+        public readonly string $paymentType,
+        public readonly ?string $bankAccountId,
+        public readonly string $currencyCode,
+        public readonly DateTimeImmutable $generatedAt,
+        public readonly DateTimeImmutable $soldAt
     ){}
-
-    public function getInvoiceNumber(): string
-    {
-        return $this->invoiceNumber;
-    }
-
-    public function getGeneratePlace(): string
-    {
-        return $this->generatePlace;
-    }
-
-    public function getAlreadyTakenPrice(): float
-    {
-        return $this->alreadyTakenPrice;
-    }
-
-    public function getCurrencyCode(): string
-    {
-        return $this->currencyCode;
-    }
-
-    public function getVatPercentage(): int
-    {
-        return $this->vatPercentage;
-    }
-
-    public function getGenerateDate(): DateTimeImmutable
-    {
-        return $this->generateDate;
-    }
-
-    public function getSellDate(): DateTimeImmutable
-    {
-        return $this->sellDate;
-    }
 }

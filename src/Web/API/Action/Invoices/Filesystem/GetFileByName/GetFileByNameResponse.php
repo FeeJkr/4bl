@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Web\API\Action\Invoices\Filesystem\GetFileByName;
 
 use App\Web\API\Action\FileResponse;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\Response;
 
 final class GetFileByNameResponse extends FileResponse
 {

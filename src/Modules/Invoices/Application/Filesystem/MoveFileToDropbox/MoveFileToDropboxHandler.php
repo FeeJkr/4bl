@@ -7,14 +7,14 @@ namespace App\Modules\Invoices\Application\Filesystem\MoveFileToDropbox;
 use App\Common\Application\Command\CommandHandler;
 use App\Modules\Invoices\Domain\Filesystem\Dropbox;
 
-class MoveFileToDropboxHandler implements CommandHandler
+final class MoveFileToDropboxHandler implements CommandHandler
 {
-    public function __construct(private Dropbox $dropbox,){}
+    public function __construct(private Dropbox $dropbox){}
 
     public function __invoke(MoveFileToDropboxCommand $command): void
     {
-        $this->dropbox->upload($command->getSourceFilepath(), $command->getTargetFilepath());
+        $this->dropbox->upload($command->sourceFilepath, $command->targetFilepath);
 
-        unlink($command->getSourceFilepath());
+        unlink($command->sourceFilepath);
     }
 }

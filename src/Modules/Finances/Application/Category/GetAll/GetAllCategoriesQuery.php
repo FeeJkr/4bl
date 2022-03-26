@@ -8,10 +8,5 @@ use App\Common\Application\Query\Query;
 
 final class GetAllCategoriesQuery implements Query
 {
-    public function __construct(private ?string $type){}
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
+    public function __construct(public readonly ?string $type){}
 }

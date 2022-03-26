@@ -16,10 +16,10 @@ final class EditWalletRequest extends Request
     private const CURRENCY = 'currency';
 
     public function __construct(
-        private string $id,
-        private string $name,
-        private int $startBalance,
-        private string $currency,
+        public readonly string $id,
+        public readonly string $name,
+        public readonly int $startBalance,
+        public readonly string $currency,
     ){}
 
     public static function fromRequest(ServerRequest $request): self
@@ -43,25 +43,5 @@ final class EditWalletRequest extends Request
             $startBalance,
             $currency
         );
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getStartBalance(): int
-    {
-        return $this->startBalance;
-    }
-
-    public function getCurrency(): string
-    {
-        return $this->currency;
     }
 }

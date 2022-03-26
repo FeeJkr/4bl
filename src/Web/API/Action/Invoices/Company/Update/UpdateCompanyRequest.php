@@ -8,91 +8,75 @@ use App\Web\API\Action\Request;
 use Assert\Assert;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
-class UpdateCompanyRequest extends Request
+final class UpdateCompanyRequest extends Request
 {
-	public function __construct(
-		private string $companyId,
-		private string $name,
-		private string $identificationNumber,
-		private ?string $email,
-		private ?string $phoneNumber,
-		private string $street,
-		private string $zipCode,
-		private string $city,
-	){}
+    private const ID = 'id';
+    private const NAME = 'name';
+    private const IDENTIFICATION_NUMBER = 'identificationNumber';
+    private const EMAIL = 'email';
+    private const PHONE_NUMBER = 'phoneNumber';
+    private const IS_VAT_PAYER = 'isVatPayer';
+    private const VAT_REJECTION_REASON = 'vatRejectionReason';
+    private const ADDRESS = 'address';
+    private const STREET = 'street';
+    private const CITY = 'city';
+    private const ZIP_CODE = 'zipCode';
 
-	public static function fromRequest(ServerRequest $request): self
-	{
-		$requestData = $request->toArray();
-		$id = $request->get('id');
-		$name = $requestData['name'] ?? null;
-		$identificationNumber = $requestData['identificationNumber'] ?? null;
-		$email = $requestData['email'] ?? null;
-		$phoneNumber = $requestData['phoneNumber'] ?? null;
-		$street = $requestData['street'] ?? null;
-		$zipCode = $requestData['zipCode'] ?? null;
-		$city = $requestData['city'] ?? null;
+    public function __construct(
+        public readonly string $id,
+        public readonly string $name,
+        public readonly string $identificationNumber,
+        public readonly ?string $email,
+        public readonly ?string $phoneNumber,
+        public readonly bool $isVatPayer,
+        public readonly ?int $vatRejectionReason,
+        public readonly string $street,
+        public readonly string $city,
+        public readonly string $zipCode,
+    ){}
 
-		Assert::lazy()
-			->that($id, 'id')->notEmpty()->uuid()
-			->that($name, 'name')->notEmpty()
-			->that($identificationNumber, 'identificationNumber')->notEmpty()
-			->that($email, 'email')->nullOr()->email()
-			->that($phoneNumber, 'phoneNumber')->nullOr()->startsWith('+')
-			->that($street, 'street')->notEmpty()
-			->that($zipCode, 'zipCode')->notEmpty()
-			->that($city, 'city')->notEmpty()
-			->verifyNow();
+    public static function fromRequest(ServerRequest $request): Request
+    {
+        $requestData = $request->toArray();
+        $id = $request->get(self::ID);
+        $name = $requestData[self::NAME] ?? null;
+        $identificationNumber = $requestData[self::IDENTIFICATION_NUMBER] ?? null;
+        $email = $requestData[self::EMAIL] ?? null;
+        $phoneNumber = $requestData[self::PHONE_NUMBER] ?? null;
+        $isVatPayer = $requestData[self::IS_VAT_PAYER] ?? null;
+        $vatRejectionReason = $requestData[self::VAT_REJECTION_REASON] ?? null;
+        $street = $requestData[self::ADDRESS][self::STREET] ?? null;
+        $city = $requestData[self::ADDRESS][self::CITY] ?? null;
+        $zipCode = $requestData[self::ADDRESS][self::ZIP_CODE] ?? null;
 
-		return new self(
-			$id,
-			$name,
-			$identificationNumber,
-			$email,
-			$phoneNumber,
-			$street,
-			$zipCode,
-			$city
-		);
-	}
+        $assert = Assert::lazy()
+            ->that($id, self::ID)->uuid()->notEmpty()
+            ->that($name, self::NAME)->string()->notEmpty()
+            ->that($identificationNumber, self::IDENTIFICATION_NUMBER)->string()->notEmpty()
+            ->that($email, self::EMAIL)->nullOr()->email()
+            ->that($phoneNumber, self::PHONE_NUMBER)->nullOr()->string()
+            ->that($isVatPayer, self::IS_VAT_PAYER)->boolean()
+            ->that($street, self::STREET)->string()->notEmpty()
+            ->that($city, self::CITY)->string()->notEmpty()
+            ->that($zipCode, self::ZIP_CODE)->string()->notEmpty();
 
-	public function getCompanyId(): string
-	{
-		return $this->companyId;
-	}
+        $isVatPayer === false
+            ? $assert->that($vatRejectionReason, self::VAT_REJECTION_REASON)->integer()->notEmpty()
+            : $assert->that($vatRejectionReason, self::VAT_REJECTION_REASON)->null();
 
-	public function getName(): string
-	{
-		return $this->name;
-	}
+        $assert->verifyNow();
 
-	public function getIdentificationNumber(): string
-	{
-		return $this->identificationNumber;
-	}
-
-	public function getEmail(): ?string
-	{
-		return $this->email;
-	}
-
-	public function getPhoneNumber(): ?string
-	{
-		return $this->phoneNumber;
-	}
-
-	public function getStreet(): string
-	{
-		return $this->street;
-	}
-
-	public function getZipCode(): string
-	{
-		return $this->zipCode;
-	}
-
-	public function getCity(): string
-	{
-		return $this->city;
-	}
+        return new self(
+            $id,
+            $name,
+            $identificationNumber,
+            $email,
+            $phoneNumber,
+            $isVatPayer,
+            $vatRejectionReason,
+            $street,
+            $city,
+            $zipCode,
+        );
+    }
 }

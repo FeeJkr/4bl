@@ -18,6 +18,6 @@ class MessengerQueryBus implements QueryBus
         return $this->queryBus
             ->dispatch($query)
             ->last(HandledStamp::class)
-            ->getResult();
+            ?->getResult();
     }
 }

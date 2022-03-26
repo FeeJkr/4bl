@@ -6,15 +6,20 @@ namespace App\Modules\Finances\Application\Wallet;
 
 final class WalletDTOCollection
 {
-    public function __construct(private array $elements = []){}
+    private array $wallets;
+
+    public function __construct(WalletDTO ...$wallets)
+    {
+        $this->wallets = $wallets;
+    }
 
     public function add(WalletDTO $wallet): void
     {
-        $this->elements[] = $wallet;
+        $this->wallets[] = $wallet;
     }
 
     public function toArray(): array
     {
-        return $this->elements;
+        return $this->wallets;
     }
 }

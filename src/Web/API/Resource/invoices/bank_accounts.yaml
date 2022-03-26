@@ -1,0 +1,24 @@
+create:
+  path: /
+  controller: App\Web\API\Action\Invoices\BankAccount\Create\CreateBankAccountAction
+  methods: POST
+
+delete:
+  path: /{id}/
+  controller: App\Web\API\Action\Invoices\BankAccount\Delete\DeleteBankAccountAction
+  methods: DELETE
+
+get.all:
+  path: /
+  controller: App\Web\API\Action\Invoices\BankAccount\GetAll\GetAllBankAccountsAction
+  methods: GET
+
+get.one:
+  path: /{id}/
+  controller: App\Web\API\Action\Invoices\BankAccount\GetOneById\GetOneBankAccountByIdAction
+  methods: GET
+
+update:
+  path: /{id}/
+  controller: App\Web\API\Action\Invoices\BankAccount\Update\UpdateBankAccountAction
+  methods: POST

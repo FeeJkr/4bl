@@ -1,0 +1,29 @@
+bank_accounts:
+  resource: bank_accounts.yaml
+  name_prefix: bank_accounts.
+  prefix: /{companyId}/bank-accounts
+
+create:
+  path: /
+  controller: App\Web\API\Action\Invoices\Company\Create\CreateCompanyAction
+  methods: POST
+
+delete:
+  path: /{id}/
+  controller: App\Web\API\Action\Invoices\Company\Delete\DeleteCompanyAction
+  methods: DELETE
+
+get.all:
+  path: /
+  controller: App\Web\API\Action\Invoices\Company\GetAll\GetAllCompaniesAction
+  methods: GET
+
+get.one:
+  path: /{id}/
+  controller: App\Web\API\Action\Invoices\Company\GetOneById\GetOneCompanyByIdAction
+  methods: GET
+
+update:
+  path: /{id}/
+  controller: App\Web\API\Action\Invoices\Company\Update\UpdateCompanyAction
+  methods: POST

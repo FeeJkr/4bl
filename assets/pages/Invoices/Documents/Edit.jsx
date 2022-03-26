@@ -3,14 +3,11 @@ import {Link, useParams} from 'react-router-dom';
 import {invoicesActions} from "../../../actions/invoices.actions";
 import {useDispatch, useSelector} from "react-redux";
 import {Toast} from "react-bootstrap";
-import AsyncSelect from "react-select/async/dist/react-select.esm";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {companiesService} from "../../../services/companies.service";
 import './Invoices.css';
 import 'boxicons/css/boxicons.min.css';
-import {companiesActions} from "../../../actions/companies.actions";
 
 function Edit() {
     const {id} = useParams();
@@ -37,6 +34,12 @@ function Edit() {
 
     const handleSelectChange = (value, meta) => {
         invoice[meta.name] = value.id;
+
+        dispatch(invoicesActions.change(invoice));
+    }
+
+    const handleVatPercentageChange = (value, meta) => {
+        invoice[meta.name] = value.value;
 
         dispatch(invoicesActions.change(invoice));
     }
@@ -342,6 +345,8 @@ function Edit() {
                                                     ]}
                                                     placeholder="Select language"
                                                     defaultValue={{value: invoice.vatPercentage, label: invoice.vatPercentage + '%'}}
+                                                    onChange={handleVatPercentageChange}
+                                                    name="vatPercentage"
                                                 />
                                                 {errors['vatPercentage'] &&
                                                 <span style={{color: 'red', fontSize: '10px'}}>{errors['vatPercentage'].message}</span>

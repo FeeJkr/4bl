@@ -1,0 +1,7 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        envelope:
+            sender: 'support@mardeus.dev'
+        headers:
+            from: 'Sergii Siryi <support@mardeus.dev>'

@@ -11,11 +11,11 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 final class RegisterUserRequest extends Request
 {
     public function __construct(
-        private string $email,
-        private string $username,
-        private string $password,
-        private string $firstName,
-        private string $lastName
+        public readonly string $email,
+        public readonly string $username,
+        public readonly string $password,
+        public readonly string $firstName,
+        public readonly string $lastName
     ){}
 
     public static function fromRequest(ServerRequest $request): self
@@ -43,30 +43,5 @@ final class RegisterUserRequest extends Request
             $firstName,
             $lastName
         );
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
     }
 }

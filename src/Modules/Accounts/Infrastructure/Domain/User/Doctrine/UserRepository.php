@@ -5,28 +5,14 @@ declare(strict_types=1);
 namespace App\Modules\Accounts\Infrastructure\Domain\User\Doctrine;
 
 use App\Modules\Accounts\Domain\User\Status;
-use App\Modules\Accounts\Domain\User\Token;
 use App\Modules\Accounts\Domain\User\User;
-use App\Modules\Accounts\Domain\User\UserId;
 use App\Modules\Accounts\Domain\User\UserRepository as UserRepositoryInterface;
-use App\Modules\Accounts\Infrastructure\Domain\User\KeycloakIntegration;
-use App\Modules\Accounts\Infrastructure\Domain\User\KeycloakUser;
-use DateTime;
-use DateTimeImmutable;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
-use Doctrine\Persistence\ManagerRegistry;
-use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use Throwable;
 
 final class UserRepository implements UserRepositoryInterface
 {
-    private const DATETIME_FORMAT = 'Y-m-d H:i:s';
-
     public function __construct(private Connection $connection){}
 
     /**
@@ -52,15 +38,30 @@ final class UserRepository implements UserRepositoryInterface
                     'status' => ':status'
                 ])
                 ->setParameters([
-                    'id' => $snapshot->getId(),
-                    'email' => $snapshot->getEmail(),
-                    'username' => $snapshot->getUsername(),
-                    'password' => $snapshot->getPassword(),
-                    'firstName' => $snapshot->getFirstName(),
-                    'lastName' => $snapshot->getLastName(),
-                    'status' => $snapshot->getStatus(),
+                    'id' => $snapshot->id,
+                    'email' => $snapshot->email,
+                    'username' => $snapshot->username,
+                    'password' => $snapshot->password,
+                    'firstName' => $snapshot->firstName,
+                    'lastName' => $snapshot->lastName,
+                    'status' => $snapshot->status,
                 ])
-                ->execute();
+                ->executeStatement();
+
+            $this->connection
+                ->createQueryBuilder()
+                ->insert('accounts_users_confirmation')
+                ->values([
+                    'user_id' => ':userId',
+                    'email' => ':email',
+                    'confirmation_token' => ':confirmationToken',
+                ])
+                ->setParameters([
+                    'userId' => $snapshot->id,
+                    'email' => $snapshot->email,
+                    'confirmationToken' => $snapshot->confirmationToken,
+                ])
+                ->executeStatement();
 
             $this->connection->commit();
         } catch (Throwable $exception) {
@@ -70,73 +71,67 @@ final class UserRepository implements UserRepositoryInterface
         }
     }
 
+    /**
+     * @throws Throwable
+     */
+    public function save(User $user): void
+    {
+        try {
+            $this->connection->beginTransaction();
+
+            $snapshot = $user->getSnapshot();
+
+            $this->connection
+                ->createQueryBuilder()
+                ->update('accounts_users')
+                ->set('status', ':status')
+                ->setParameters([
+                    'status' => $snapshot->status,
+                ])
+                ->executeStatement();
+
+            $this->connection->commit();
+        } catch (Throwable $exception) {
+            $this->connection->rollBack();
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
     public function fetchByEmail(string $email): ?User
     {
         $row = $this
             ->connection
             ->createQueryBuilder()
-            ->select([
-                'id',
-                'email',
-                'username',
-                'password',
-                'first_name',
-                'last_name',
-                'status'
-            ])
-            ->from('accounts_users')
-            ->where('email = :email')
-            ->andWhere('status = :status')
+            ->select(
+                'au.id',
+                'au.email',
+                'au.username',
+                'au.password',
+                'au.first_name',
+                'au.last_name',
+                'au.status',
+                'auc.confirmation_token'
+            )
+            ->from('accounts_users', 'au')
+            ->leftJoin('au', 'accounts_users_confirmation', 'auc', 'auc.user_id = au.id')
+            ->where('au.email = :email')
+            ->andWhere('au.status = :status')
             ->setParameters([
                 'email' => $email,
-                'status' => Status::ACTIVE()->getValue(),
+                'status' => Status::ACTIVE->value,
             ])
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         if ($row === false) {
             return null;
         }
 
-        return new User(
-            UserId::fromString($row['id']),
-            $row['email'],
-            $row['username'],
-            $row['password'],
-            $row['first_name'],
-            $row['last_name'],
-            new Status($row['status']),
-        );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws Exception
-     */
-    public function fetchByAccessToken(string $accessToken): ?User
-    {
-        $row = $this->connection
-            ->createQueryBuilder()
-            ->select(['id', 'email', 'username', 'password', 'first_name', 'last_name', 'status'])
-            ->from('accounts_users')
-            ->where('id = :id')
-            ->setParameter('id', $accessToken)
-            ->execute()
-            ->fetchAssociative();
-
-        if ($row === false) {
-            return null;
-        }
-
-        return new User(
-            UserId::fromString($row['id']),
-            $row['email'],
-            $row['username'],
-            $row['password'],
-            $row['first_name'],
-            $row['last_name'],
-            new Status($row['status']),
-        );
+        return UserFactory::fromRow($row);
     }
 
     /**
@@ -154,42 +149,46 @@ final class UserRepository implements UserRepositoryInterface
                 'email' => $email,
                 'username' => $username,
             ])
-            ->execute()
+            ->executeQuery()
             ->rowCount();
 
         return $databaseRows > 0;
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
-    public function save(User $user): void
+    public function fetchByConfirmToken(string $confirmToken): ?User
     {
-        try {
-            $this->connection->beginTransaction();
+        $row = $this
+            ->connection
+            ->createQueryBuilder()
+            ->select(
+                'au.id',
+                'au.email',
+                'au.username',
+                'au.password',
+                'au.first_name',
+                'au.last_name',
+                'au.status',
+                'auc.confirmation_token'
+            )
+            ->from('accounts_users', 'au')
+            ->leftJoin('au', 'accounts_users_confirmation', 'auc', 'auc.user_id = au.id')
+            ->where('auc.confirmation_token = :confirmationToken')
+            ->andWhere('au.status = :status')
+            ->andWhere('auc.email = au.email')
+            ->setParameters([
+                'confirmationToken' => $confirmToken,
+                'status' => Status::EMAIL_VERIFICATION->value,
+            ])
+            ->executeQuery()
+            ->fetchAssociative();
 
-            $snapshot = $user->getSnapshot();
-
-            $this->connection
-                ->createQueryBuilder()
-                ->update('accounts_users')
-                ->set('access_token', ':accessToken')
-                ->set('refresh_token', ':refreshToken')
-                ->set('refresh_token_expired_at', ':refreshTokenExpiredAt')
-                ->set('updated_at', ':updatedAt')
-                ->setParameters([
-                    'accessToken' => $snapshot->getAccessToken(),
-                    'refreshToken' => $snapshot->getRefreshToken(),
-                    'refreshTokenExpiredAt' => $snapshot->getRefreshTokenExpiresAt()?->format(self::DATETIME_FORMAT),
-                    'updatedAt' => (new DateTime())->format(self::DATETIME_FORMAT),
-                ])
-                ->execute();
-
-            $this->connection->commit();
-        } catch (Throwable $exception) {
-            $this->connection->rollBack();
-
-            throw $exception;
+        if ($row === false) {
+            return null;
         }
+
+        return UserFactory::fromRow($row);
     }
 }

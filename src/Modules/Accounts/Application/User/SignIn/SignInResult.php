@@ -8,10 +8,5 @@ use App\Modules\Accounts\Application\User\UserDTO;
 
 final class SignInResult
 {
-    public function __construct(private UserDTO $user){}
-
-    public function getUser(): UserDTO
-    {
-        return $this->user;
-    }
+    public function __construct(public readonly UserDTO $user){}
 }

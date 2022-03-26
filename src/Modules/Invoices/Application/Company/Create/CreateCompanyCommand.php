@@ -6,50 +6,17 @@ namespace App\Modules\Invoices\Application\Company\Create;
 
 use App\Common\Application\Command\Command;
 
-class CreateCompanyCommand implements Command
+final class CreateCompanyCommand implements Command
 {
     public function __construct(
-        private string $street,
-        private string $zipCode,
-        private string $city,
-        private string $name,
-        private string $identificationNumber,
-        private ?string $email,
-        private ?string $phoneNumber,
+        public readonly string $name,
+        public readonly string $identificationNumber,
+        public readonly ?string $email,
+        public readonly ?string $phoneNumber,
+        public readonly bool $isVatPayer,
+        public readonly ?int $vatRejectionReason,
+        public readonly string $street,
+        public readonly string $city,
+        public readonly string $zipCode,
     ){}
-
-    public function getStreet(): string
-    {
-        return $this->street;
-    }
-
-    public function getZipCode(): string
-    {
-        return $this->zipCode;
-    }
-
-    public function getCity(): string
-    {
-        return $this->city;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getIdentificationNumber(): string
-    {
-        return $this->identificationNumber;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
 }

@@ -8,8 +8,9 @@ use App\Modules\Invoices\Domain\User\UserId;
 
 interface InvoiceRepository
 {
-    public function store(Invoice $invoice): void;
-    public function save(Invoice $invoice): void;
     public function fetchOneById(InvoiceId $invoiceId, UserId $userId): Invoice;
-    public function delete(Invoice $invoice): void;
+
+    public function store(InvoiceSnapshot $invoice): void;
+    public function save(InvoiceSnapshot $invoice): void;
+    public function delete(InvoiceId $id, UserId $userId): void;
 }

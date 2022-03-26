@@ -7,47 +7,14 @@ namespace App\Modules\Invoices\Domain\Invoice;
 final class InvoiceProductSnapshot
 {
     public function __construct(
-        private string $id,
-        private int $position,
-        private string $name,
-        private float $netPrice,
-        private float $taxPrice,
-        private float $grossPrice,
-        private int $vatPercentage,
+        public readonly string $id,
+        public readonly int $position,
+        public readonly string $name,
+        public readonly string $unit,
+        public readonly int $quantity,
+        public readonly float $netPrice,
+        public readonly float $taxPrice,
+        public readonly float $grossPrice,
+        public readonly int $tax,
     ){}
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getPosition(): int
-    {
-        return $this->position;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getNetPrice(): float
-    {
-        return $this->netPrice;
-    }
-
-    public function getTaxPrice(): float
-    {
-        return $this->taxPrice;
-    }
-
-    public function getGrossPrice(): float
-    {
-        return $this->grossPrice;
-    }
-
-    public function getVatPercentage(): int
-    {
-        return $this->vatPercentage;
-    }
 }

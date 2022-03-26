@@ -17,11 +17,11 @@ final class RegisterUserAction extends AbstractAction
     {
         $this->bus->dispatch(
             new RegisterUserCommand(
-                $request->getEmail(),
-                $request->getUsername(),
-                $request->getPassword(),
-                $request->getFirstName(),
-                $request->getLastName(),
+                $request->email,
+                $request->username,
+                $request->password,
+                $request->firstName,
+                $request->lastName,
             )
         );
 

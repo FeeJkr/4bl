@@ -42,7 +42,7 @@ final class UserService
     {
         $user = $this->repository->fetchByEmail($email) ?? throw UserException::notFoundByEmail($email);
 
-        if (!$this->passwordManager->isValid($password, $user->getSnapshot()->getPassword())) {
+        if (!$this->passwordManager->isValid($password, $user->getSnapshot()->password)) {
             throw UserException::withInvalidCredentials();
         }
 
@@ -52,8 +52,12 @@ final class UserService
     /**
      * @throws UserException
      */
-    public function signOut(string $accessToken): void
+    public function confirmEmail(string $confirmToken): User
     {
-        $this->repository->fetchByAccessToken($accessToken) ?? throw UserException::notFoundByAccessToken();
+        $user = $this->repository->fetchByConfirmToken($confirmToken) ?? throw UserException::notFoundByConfirmToken();
+
+        $user->confirmEmail();
+
+        return $user;
     }
 }

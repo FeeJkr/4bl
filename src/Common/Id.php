@@ -12,8 +12,12 @@ abstract class Id
     private function __construct(private string $id){}
 
     #[Pure]
-    public static function fromString(string $id): static
+    public static function fromString(?string $id): ?static
     {
+        if ($id === null) {
+            return null;
+        }
+
         return new static($id);
     }
 

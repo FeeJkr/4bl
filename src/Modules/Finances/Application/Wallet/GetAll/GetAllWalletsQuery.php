@@ -8,5 +8,4 @@ use App\Common\Application\Query\Query;
 
 final class GetAllWalletsQuery implements Query
 {
-
 }

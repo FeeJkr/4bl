@@ -9,71 +9,41 @@ use DateTimeImmutable;
 final class InvoiceDTO
 {
     public function __construct(
-        private string $id,
-        private string $userId,
-        private string $sellerId,
-        private string $buyerId,
-        private string $invoiceNumber,
-        private string $generatePlace,
-        private float $alreadyTakenPrice,
-        private string $currencyCode,
-        private DateTimeImmutable $generatedAt,
-        private DateTimeImmutable $soldAt,
-        private InvoiceProductDTOCollection $products,
+        public readonly string $id,
+        public readonly string $userId,
+        public readonly string $companyId,
+        public readonly string $contractorId,
+        public readonly string $invoiceNumber,
+        public readonly string $generatePlace,
+        public readonly float $alreadyTakenPrice,
+        public readonly int $daysForPayment,
+        public readonly string $paymentType,
+        public readonly ?string $bankAccountId,
+        public readonly string $currencyCode,
+        public readonly DateTimeImmutable $generatedAt,
+        public readonly DateTimeImmutable $soldAt,
+        public readonly InvoiceProductsCollection $products,
     ){}
 
-    public function getId(): string
+    public static function fromStorage(array $storage): self
     {
-        return $this->id;
-    }
-
-    public function getUserId(): string
-    {
-        return $this->userId;
-    }
-
-    public function getSellerId(): string
-    {
-        return $this->sellerId;
-    }
-
-    public function getBuyerId(): string
-    {
-        return $this->buyerId;
-    }
-
-    public function getInvoiceNumber(): string
-    {
-        return $this->invoiceNumber;
-    }
-
-    public function getGeneratePlace(): string
-    {
-        return $this->generatePlace;
-    }
-
-    public function getAlreadyTakenPrice(): float
-    {
-        return $this->alreadyTakenPrice;
-    }
-
-    public function getCurrencyCode(): string
-    {
-        return $this->currencyCode;
-    }
-
-    public function getGeneratedAt(): DateTimeImmutable
-    {
-        return $this->generatedAt;
-    }
-
-    public function getSoldAt(): DateTimeImmutable
-    {
-        return $this->soldAt;
-    }
-
-    public function getProducts(): InvoiceProductDTOCollection
-    {
-        return $this->products;
+        return new self(
+            $storage['id'],
+            $storage['users_id'],
+            $storage['invoices_companies_id'],
+            $storage['invoices_contractors_id'],
+            $storage['invoice_number'],
+            $storage['generate_place'],
+            (float) $storage['already_taken_price'],
+            (int) $storage['days_for_payment'],
+            $storage['payment_type'],
+            $storage['invoices_companies_bank_accounts_id'],
+            $storage['currency_code'],
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['generated_at']),
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['sold_at']),
+            new InvoiceProductsCollection(
+                ...array_map(static fn (array $row) => InvoiceProductDTO::fromStorage($row), $storage['products'])
+            )
+        );
     }
 }

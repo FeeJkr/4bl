@@ -9,6 +9,15 @@ const sidebar = [
         icon: 'bi-receipt',
         children: [
             {
+                title: 'Companies',
+                path: '/invoices/companies',
+                icon: 'bi-house-door',
+                children: [
+                    { path: '/invoices/companies/new' },
+                    { path: '/invoices/companies/edit/:id' },
+                ],
+            },
+            {
                 title: 'Documents',
                 path: '/invoices/documents',
                 icon: 'bi-file-earmark-binary',
@@ -18,12 +27,12 @@ const sidebar = [
                 ]
             },
             {
-                title: 'Companies',
-                path: '/invoices/companies',
+                title: 'Contractors',
+                path: '/invoices/contractors',
                 icon: 'bi-building',
                 children: [
-                    { path: '/invoices/companies/new' },
-                    { path: '/invoices/companies/edit/:id' },
+                    { path: '/invoices/contractors/new' },
+                    { path: '/invoices/contractors/edit/:id' },
                 ],
             }
         ]
@@ -38,6 +47,14 @@ const sidebar = [
                 icon: 'bi-speedometer',
             },
             {
+                title: 'Budgets',
+                path: '/finances/budgets',
+                icon: 'bi-file-earmark-ruled',
+                children: [
+                    { path: '/finances/budgets/:id' },
+                ],
+            },
+            {
                 title: 'Categories',
                 path: '/finances/categories',
                 icon: 'bi-bookshelf',
@@ -46,7 +63,7 @@ const sidebar = [
                 title: 'Wallets',
                 path: '/finances/wallets',
                 icon: 'bi-wallet',
-            }
+            },
         ]
     }
 ];

@@ -7,35 +7,10 @@ namespace App\Modules\Finances\Domain\Category;
 final class CategorySnapshot
 {
     public function __construct(
-        private string $id,
-        private string $userId,
-        private string $name,
-        private string $type,
-        private string $icon,
+        public readonly string $id,
+        public readonly string $userId,
+        public readonly string $name,
+        public readonly string $type,
+        public readonly string $icon,
     ){}
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getUserId(): string
-    {
-        return $this->userId;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function getIcon(): string
-    {
-        return $this->icon;
-    }
 }

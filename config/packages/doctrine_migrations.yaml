@@ -3,4 +3,5 @@ doctrine_migrations:
         'App\Modules\Accounts\Infrastructure\Persistence\Migrations': '%kernel.project_dir%/src/Modules/Accounts/Infrastructure/Persistence/Migrations'
         'App\Modules\Invoices\Infrastructure\Persistence\Migrations': '%kernel.project_dir%/src/Modules/Invoices/Infrastructure/Persistence/Migrations'
         'App\Modules\Finances\Infrastructure\Persistence\Migrations': '%kernel.project_dir%/src/Modules/Finances/Infrastructure/Persistence/Migrations'
+        'App\Modules\FinancesGraph\Infrastructure\Persistence\Migrations': '%kernel.project_dir%/src/Modules/FinancesGraph/Infrastructure/Persistence/Migrations'
     enable_profiler: '%kernel.debug%'

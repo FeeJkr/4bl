@@ -10,17 +10,21 @@ use App\Modules\Finances\Domain\Category\CategoryRepository;
 use App\Modules\Finances\Domain\Category\CategoryType;
 use App\Modules\Finances\Domain\User\UserId;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 
 final class CategoryDbRepository implements CategoryRepository
 {
     public function __construct(private Connection $connection){}
 
+    /**
+     * @throws Exception
+     */
     public function store(Category $category): void
     {
         $snapshot = $category->getSnapshot();
-        $queryBuilder = $this->connection->createQueryBuilder();
 
-        $queryBuilder
+        $this->connection
+            ->createQueryBuilder()
             ->insert('categories')
             ->values([
                 'id' => ':id',
@@ -30,14 +34,13 @@ final class CategoryDbRepository implements CategoryRepository
                 'icon' => ':icon',
             ])
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'userId' => $snapshot->getUserId(),
-                'name' => $snapshot->getName(),
-                'type' => $snapshot->getType(),
-                'icon' => $snapshot->getIcon(),
-            ]);
-
-        $this->connection->executeQuery($queryBuilder->getSQL(), $queryBuilder->getParameters());
+                'id' => $snapshot->id,
+                'userId' => $snapshot->userId,
+                'name' => $snapshot->name,
+                'type' => $snapshot->type,
+                'icon' => $snapshot->icon,
+            ])
+            ->executeStatement();
     }
 
     public function nextIdentity(): CategoryId
@@ -45,18 +48,21 @@ final class CategoryDbRepository implements CategoryRepository
         return CategoryId::generate();
     }
 
+    /**
+     * @throws Exception
+     */
     public function getById(CategoryId $id, UserId $userId): Category
     {
-        $query = $this->connection
+        $row = $this->connection
             ->createQueryBuilder()
-            ->select(['id', 'user_id', 'name', 'type', 'icon'])
+            ->select('id', 'user_id', 'name', 'type', 'icon')
             ->from('categories')
             ->where('id = :id')
             ->andWhere('user_id = :userId')
             ->setParameter('id', $id->toString())
-            ->setParameter('userId', $userId->toString());
-
-        $row = $this->connection->executeQuery($query->getSQL(), $query->getParameters())->fetchAssociative();
+            ->setParameter('userId', $userId->toString())
+            ->executeQuery()
+            ->fetchAssociative();
 
         return new Category(
             CategoryId::fromString($row['id']),
@@ -67,23 +73,29 @@ final class CategoryDbRepository implements CategoryRepository
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function delete(Category $category): void
     {
-        $query = $this->connection
+        $this->connection
             ->createQueryBuilder()
             ->delete('categories')
             ->where('id = :id')
             ->andWhere('user_id = :userId')
-            ->setParameter('id', $category->getSnapshot()->getId())
-            ->setParameter('userId', $category->getSnapshot()->getUserId());
-
-        $this->connection->executeQuery($query->getSQL(), $query->getParameters());
+            ->setParameter('id', $category->getSnapshot()->id)
+            ->setParameter('userId', $category->getSnapshot()->userId)
+            ->executeStatement();
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(Category $category): void
     {
         $snapshot = $category->getSnapshot();
-        $query = $this->connection
+
+        $this->connection
             ->createQueryBuilder()
             ->update('categories')
             ->set('name', ':name')
@@ -92,13 +104,12 @@ final class CategoryDbRepository implements CategoryRepository
             ->where('id = :id')
             ->andWhere('user_id = :userId')
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'userId' => $snapshot->getUserId(),
-                'name' => $snapshot->getName(),
-                'type' => $snapshot->getType(),
-                'icon' => $snapshot->getIcon(),
-            ]);
-
-        $this->connection->executeQuery($query->getSQL(), $query->getParameters());
+                'id' => $snapshot->id,
+                'userId' => $snapshot->userId,
+                'name' => $snapshot->name,
+                'type' => $snapshot->type,
+                'icon' => $snapshot->icon,
+            ])
+            ->executeStatement();
     }
 }

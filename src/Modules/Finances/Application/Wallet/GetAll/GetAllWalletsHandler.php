@@ -9,6 +9,7 @@ use App\Modules\Finances\Application\Wallet\WalletDTO;
 use App\Modules\Finances\Application\Wallet\WalletDTOCollection;
 use App\Modules\Finances\Domain\User\UserContext;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 
 final class GetAllWalletsHandler implements QueryHandler
 {
@@ -17,24 +18,27 @@ final class GetAllWalletsHandler implements QueryHandler
         private UserContext $userContext,
     ){}
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(GetAllWalletsQuery $query): WalletDTOCollection
     {
         $rows = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'id',
                 'user_id',
                 'name',
                 'start_balance',
                 'currency',
-            ])
+            )
             ->from('wallets')
             ->where('user_id = :userId')
             ->setParameter('userId', $this->userContext->getUserId()->toString())
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
 
-        $collection = new WalletDTOCollection;
+        $collection = new WalletDTOCollection();
 
         foreach ($rows as $row) {
             $collection->add(WalletDTO::createFromRow($row));

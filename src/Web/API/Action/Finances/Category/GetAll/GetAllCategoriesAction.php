@@ -16,7 +16,7 @@ final class GetAllCategoriesAction extends AbstractAction
     public function __invoke(GetAllCategoriesRequest $request): GetAllCategoriesResponse
     {
         /** @var CategoryDTOCollection $categories */
-        $categories = $this->bus->handle(new GetAllCategoriesQuery($request->getType()));
+        $categories = $this->bus->handle(new GetAllCategoriesQuery($request->type));
 
         return GetAllCategoriesResponse::respond($categories);
     }

@@ -19,7 +19,7 @@ final class DeleteWalletHandler implements CommandHandler
     public function __invoke(DeleteWalletCommand $command): void
     {
         $this->repository->delete(
-            WalletId::fromString($command->getId()),
+            WalletId::fromString($command->id),
             $this->userContext->getUserId(),
         );
     }

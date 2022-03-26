@@ -9,9 +9,8 @@ use App\Common\Infrastructure\Request\HttpRequestContext;
 use App\Modules\Accounts\Application\User\GetById\GetUserByIdQuery;
 use App\Modules\Accounts\Application\User\UserDTO;
 use App\Web\API\Action\AbstractAction;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
-class GetMyUserDataAction extends AbstractAction
+final class GetMyUserDataAction extends AbstractAction
 {
     public function __construct(private QueryBus $bus, private HttpRequestContext $requestContext){}
 

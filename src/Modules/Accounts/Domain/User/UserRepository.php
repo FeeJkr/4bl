@@ -10,5 +10,5 @@ interface UserRepository
     public function save(User $user): void;
     public function fetchByEmail(string $email): ?User;
     public function existsByEmailOrUsername(string $email, string $username): bool;
-    public function fetchByAccessToken(string $accessToken): ?User;
+    public function fetchByConfirmToken(string $confirmToken): ?User;
 }

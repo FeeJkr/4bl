@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
 use App\Common\Application\Command\CommandHandler;
 use App\Common\Application\Event\EventHandler;
 use App\Common\Application\Query\QueryHandler;
+use App\Web\API\Action\AbstractAction;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use function dirname;
 
 class Kernel extends BaseKernel
 {
@@ -20,7 +24,7 @@ class Kernel extends BaseKernel
         $container->import('../config/{packages}/*.yaml');
         $container->import('../config/{packages}/'.$this->environment.'/*.yaml');
 
-        if (is_file(\dirname(__DIR__).'/config/services.yaml')) {
+        if (is_file(dirname(__DIR__).'/config/services.yaml')) {
             $container->import('../config/services.yaml');
             $container->import('../config/{services}_'.$this->environment.'.yaml');
         } else {
@@ -37,7 +41,7 @@ class Kernel extends BaseKernel
         $routes->import('../config/{routes}/'.$this->environment.'/*.yaml');
         $routes->import('../config/{routes}/*.yaml');
 
-        if (is_file(\dirname(__DIR__).'/config/routes.yaml')) {
+        if (is_file(dirname(__DIR__).'/config/routes.yaml')) {
             $routes->import('../config/routes.yaml');
         } else {
             $routes->import('../config/{routes}.php');
@@ -59,5 +63,9 @@ class Kernel extends BaseKernel
         $container
             ->registerForAutoconfiguration(EventHandler::class)
             ->addTag('messenger.message_handler', ['bus' => 'event.bus']);
+
+        $container
+            ->registerForAutoconfiguration(AbstractAction::class)
+            ->addTag('controller.service_arguments');
     }
 }

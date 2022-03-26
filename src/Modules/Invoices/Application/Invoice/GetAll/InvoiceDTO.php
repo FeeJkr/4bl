@@ -9,53 +9,31 @@ use DateTimeImmutable;
 final class InvoiceDTO
 {
     public function __construct(
-        private string $id,
-        private string $invoiceNumber,
-        private DateTimeImmutable $generatedAt,
-        private DateTimeImmutable $soldAt,
-        private string $sellerName,
-        private string $buyerName,
-        private float $totalNetPrice,
-        private string $currencyCode,
+        public readonly string $id,
+        public readonly string $invoiceNumber,
+        public readonly DateTimeImmutable $generatedAt,
+        public readonly DateTimeImmutable $soldAt,
+        public readonly string $status,
+        public readonly string $companyName,
+        public readonly string $contractorName,
+        public readonly float $totalNetPrice,
+        public readonly float $totalGrossPrice,
+        public readonly string $currencyCode,
     ){}
 
-    public function getId(): string
+    public static function fromStorage(array $storage): self
     {
-        return $this->id;
-    }
-
-    public function getInvoiceNumber(): string
-    {
-        return $this->invoiceNumber;
-    }
-
-    public function getGeneratedAt(): DateTimeImmutable
-    {
-        return $this->generatedAt;
-    }
-
-    public function getSoldAt(): DateTimeImmutable
-    {
-        return $this->soldAt;
-    }
-
-    public function getSellerName(): string
-    {
-        return $this->sellerName;
-    }
-
-    public function getBuyerName(): string
-    {
-        return $this->buyerName;
-    }
-
-    public function getTotalNetPrice(): float
-    {
-        return $this->totalNetPrice;
-    }
-
-    public function getCurrencyCode(): string
-    {
-        return $this->currencyCode;
+        return new self(
+            $storage['id'],
+            $storage['invoice_number'],
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['generated_at']),
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['sold_at']),
+            $storage['status'],
+            $storage['company_name'],
+            $storage['contractor_name'],
+            (float) $storage['total_net_price'],
+            (float) $storage['total_gross_price'],
+            $storage['currency_code'],
+        );
     }
 }

@@ -6,12 +6,7 @@ namespace App\Modules\Invoices\Application\Filesystem\GetFileByName;
 
 use App\Common\Application\Query\Query;
 
-class GetFileByNameQuery implements Query
+final class GetFileByNameQuery implements Query
 {
-    public function __construct(private string $filename){}
-
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
+    public function __construct(public readonly string $filename){}
 }

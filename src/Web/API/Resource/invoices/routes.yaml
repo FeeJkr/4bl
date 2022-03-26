@@ -1,0 +1,19 @@
+companies:
+  resource: companies.yaml
+  name_prefix: companies.
+  prefix: /companies
+
+contractors:
+  resource: contractors.yaml
+  name_prefix: contractors.
+  prefix: /contractors
+
+filesystem:
+  resource: filesystem.yaml
+  name_prefix: filesystem.
+  prefix: /filesystem
+
+invoices:
+  resource: invoices.yaml
+  name_prefix: invoices.
+  prefix: /invoices

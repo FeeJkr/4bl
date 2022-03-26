@@ -1,0 +1,5 @@
+budgets:
+  resource: budgets/routes.yaml
+  name_prefix: budgets.
+  prefix: /budgets
+

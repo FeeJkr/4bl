@@ -8,10 +8,5 @@ use App\Common\Application\Command\Command;
 
 final class SignOutUserCommand implements Command
 {
-    public function __construct(private string $token) {}
-
-    public function getToken(): string
-    {
-        return $this->token;
-    }
+    public function __construct(public readonly string $token) {}
 }

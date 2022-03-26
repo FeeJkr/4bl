@@ -1,8 +1,12 @@
 accounts:
   resource: accounts.yaml
 
-finances:
-  resource: finances.yaml
-
 invoices:
-  resource: invoices.yaml
+  resource: invoices/routes.yaml
+  name_prefix: api.v1.invoices.
+  prefix: /api/v1/invoices
+
+finances:
+  resource: finances/routes.yaml
+  name_prefix: api.v1.finances.
+  prefix: /api/v1/finances

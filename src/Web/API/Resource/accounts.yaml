@@ -22,3 +22,8 @@ api.v1.accounts.refresh-token:
   path: /api/v1/accounts/refresh-token
   controller: App\Web\API\Action\Accounts\User\RefreshToken\RefreshTokenAction
   methods: POST
+
+api.v1.accounts.confirm-email:
+  path: /api/v1/accounts/confirm-email/{token}
+  controller: App\Web\API\Action\Accounts\User\ConfirmEmail\ConfirmEmailAction
+  methods: GET

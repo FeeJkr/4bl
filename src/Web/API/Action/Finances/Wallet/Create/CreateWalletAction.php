@@ -16,9 +16,9 @@ final class CreateWalletAction extends AbstractAction
     public function __invoke(CreateWalletRequest $request): NoContentResponse
     {
         $command = new CreateWalletCommand(
-            $request->getName(),
-            $request->getStartBalance(),
-            $request->getCurrency(),
+            $request->name,
+            $request->startBalance,
+            $request->currency,
         );
 
         $this->bus->dispatch($command);

@@ -11,11 +11,15 @@ use App\Modules\Finances\Domain\Wallet\Wallet;
 use App\Modules\Finances\Domain\Wallet\WalletId;
 use App\Modules\Finances\Domain\Wallet\WalletRepository;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 
 final class WalletDbRepository implements WalletRepository
 {
     public function __construct(private Connection $connection){}
 
+    /**
+     * @throws Exception
+     */
     public function store(Wallet $wallet): void
     {
         $snapshot = $wallet->getSnapshot();
@@ -31,15 +35,18 @@ final class WalletDbRepository implements WalletRepository
                 'currency' => ':currency',
             ])
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'userId' => $snapshot->getUserId(),
-                'name' => $snapshot->getName(),
-                'startBalance' => $snapshot->getStartBalance(),
-                'currency' => $snapshot->getCurrency(),
+                'id' => $snapshot->id,
+                'userId' => $snapshot->userId,
+                'name' => $snapshot->name,
+                'startBalance' => $snapshot->startBalance,
+                'currency' => $snapshot->currency,
             ])
-            ->execute();
+            ->executeStatement();
     }
 
+    /**
+     * @throws Exception
+     */
     public function delete(WalletId $id, UserId $userId): void
     {
         $this->connection
@@ -51,25 +58,28 @@ final class WalletDbRepository implements WalletRepository
                 'id' => $id->toString(),
                 'userId' => $userId->toString(),
             ])
-            ->execute();
+            ->executeStatement();
     }
 
+    /**
+     * @throws Exception
+     */
     public function getById(WalletId $id, UserId $userId): Wallet
     {
         $row = $this->connection
             ->createQueryBuilder()
-            ->select([
+            ->select(
                 'id',
                 'user_id',
                 'name',
                 'start_balance',
                 'currency',
-            ])
+            )
             ->from('wallets')
             ->where('id = :id')
             ->andWhere('user_id = :userId')
             ->setParameters([])
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         return new Wallet(
@@ -78,11 +88,14 @@ final class WalletDbRepository implements WalletRepository
             $row['name'],
             new Money(
                 (int) $row['start_balance'],
-                new Currency($row['currency']),
+                Currency::from($row['currency']),
             )
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(Wallet $wallet): void
     {
         $snapshot = $wallet->getSnapshot();
@@ -96,12 +109,12 @@ final class WalletDbRepository implements WalletRepository
             ->where('id = :id')
             ->andWhere('user_id = :userId')
             ->setParameters([
-                'id' => $snapshot->getId(),
-                'user_id' => $snapshot->getUserId(),
-                'name' => $snapshot->getName(),
-                'startBalance' => $snapshot->getStartBalance(),
-                'currency' => $snapshot->getCurrency(),
+                'id' => $snapshot->id,
+                'user_id' => $snapshot->userId,
+                'name' => $snapshot->name,
+                'startBalance' => $snapshot->startBalance,
+                'currency' => $snapshot->currency,
             ])
-            ->execute();
+            ->executeStatement();
     }
 }

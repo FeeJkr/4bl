@@ -15,7 +15,7 @@ final class DeleteCategoryAction extends AbstractAction
 
     public function __invoke(DeleteCategoryRequest $request): NoContentResponse
     {
-        $this->bus->dispatch(new DeleteCategoryCommand($request->getId()));
+        $this->bus->dispatch(new DeleteCategoryCommand($request->id));
 
         return NoContentResponse::respond();
     }

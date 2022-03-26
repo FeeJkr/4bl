@@ -8,11 +8,15 @@ use App\Common\Application\Query\QueryHandler;
 use App\Modules\Finances\Application\Category\CategoryDTO;
 use App\Modules\Finances\Application\Category\CategoryDTOCollection;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 
 final class GetAllCategoriesHandler implements QueryHandler
 {
     public function __construct(private Connection $connection){}
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(GetAllCategoriesQuery $query): CategoryDTOCollection
     {
         $queryBuilder = $this->connection
@@ -20,16 +24,16 @@ final class GetAllCategoriesHandler implements QueryHandler
             ->select(['id', 'name', 'type', 'icon'])
             ->from('categories');
 
-        if ($query->getType() !== null) {
+        if ($query->type !== null) {
             $queryBuilder
                 ->where('type = :type')
-                ->setParameter('type', $query->getType());
+                ->setParameter('type', $query->type);
         }
 
         $rows = $this->connection
             ->executeQuery($queryBuilder->getSQL(), $queryBuilder->getParameters())
             ->fetchAllAssociative();
-        $collection = new CategoryDTOCollection;
+        $collection = new CategoryDTOCollection();
 
         foreach ($rows as $row) {
             $collection->add(CategoryDTO::createFromRow($row));

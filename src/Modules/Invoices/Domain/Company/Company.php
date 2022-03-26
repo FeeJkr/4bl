@@ -4,91 +4,89 @@ declare(strict_types=1);
 
 namespace App\Modules\Invoices\Domain\Company;
 
+use App\Modules\Invoices\Domain\Address\Address;
+use App\Modules\Invoices\Domain\Address\AddressId;
 use App\Modules\Invoices\Domain\User\UserId;
-use DateTimeImmutable;
 use JetBrains\PhpStorm\Pure;
 
-class Company
+final class Company
 {
     public function __construct(
         private CompanyId $id,
         private UserId $userId,
-        private CompanyAddress $address,
-        private ?CompanyPaymentInformation $paymentInformation,
+        private Address $address,
         private string $name,
         private string $identificationNumber,
+        private bool $isVatPayer,
+        private ?VatRejectionReason $vatRejectionReason,
         private ?string $email,
         private ?string $phoneNumber,
     ){}
 
     public static function create(
         UserId $userId,
-        CompanyAddress $address,
         string $name,
         string $identificationNumber,
+        bool $isVatPayer,
+        ?VatRejectionReason $vatRejectionReason,
         ?string $email,
         ?string $phoneNumber,
+        string $street,
+        string $city,
+        string $zipCode,
     ): self {
         return new self(
             CompanyId::generate(),
             $userId,
-            $address,
-            null,
+            new Address(
+                AddressId::generate(),
+                $userId,
+                $name,
+                $street,
+                $city,
+                $zipCode,
+            ),
             $name,
             $identificationNumber,
+            $isVatPayer,
+            $vatRejectionReason,
             $email,
             $phoneNumber,
         );
     }
 
     public function update(
-        string $street,
-        string $zipCode,
-        string $city,
         string $name,
         string $identificationNumber,
+        bool $isVatPayer,
+        ?VatRejectionReason $vatRejectionReason,
         ?string $email,
         ?string $phoneNumber,
+        string $street,
+        string $city,
+        string $zipCode,
     ): void {
-        $this->address->update($street, $zipCode, $city);
+        $this->address->update($name, $street, $city, $zipCode);
 
         $this->name = $name;
         $this->identificationNumber = $identificationNumber;
+        $this->isVatPayer = $isVatPayer;
+        $this->vatRejectionReason = $vatRejectionReason;
         $this->email = $email;
         $this->phoneNumber = $phoneNumber;
     }
 
-    public function updatePaymentInformation(
-        string $paymentType,
-        int $paymentLastDate,
-        string $bank,
-        string $accountNumber
-    ): void {
-    	$this->paymentInformation = $this->paymentInformation === null
-            ? CompanyPaymentInformation::create($paymentType, $paymentLastDate, $bank, $accountNumber)
-            : $this->paymentInformation->update($paymentType, $paymentLastDate, $bank, $accountNumber);
-    }
-
-    public function getAddress(): CompanyAddress
-    {
-        return $this->address;
-    }
-
-    public function getPaymentInformation(): ?CompanyPaymentInformation
-    {
-        return $this->paymentInformation;
-    }
-
     #[Pure]
-    public function getSnapshot(): CompanySnapshot
+    public function snapshot(): CompanySnapshot
     {
         return new CompanySnapshot(
             $this->id->toString(),
             $this->userId->toString(),
-            $this->address->getSnapshot()->getId(),
-            $this->paymentInformation?->getSnapshot()->getId(),
+            $this->address->snapshot(),
             $this->name,
             $this->identificationNumber,
+            $this->isVatPayer,
+            $this->vatRejectionReason?->value,
             $this->email,
             $this->phoneNumber,
         );

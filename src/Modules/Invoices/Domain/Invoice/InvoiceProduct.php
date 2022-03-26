@@ -1,27 +1,28 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\Invoices\Domain\Invoice;
 
-use DateTimeImmutable;
-use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
-class InvoiceProduct
+final class InvoiceProduct
 {
     public function __construct(
         private InvoiceProductId $id,
         private int $position,
         private string $name,
+        private Unit $unit,
+        private int $quantity,
         private float $netPrice,
-        private int $vatPercentage,
+        private Tax $tax,
     ){}
 
     public function getTaxPrice(): float
     {
-        return $this->vatPercentage === 0
+        return $this->tax->value === 0
             ? 0
-            : ($this->netPrice * $this->vatPercentage) / 100;
+            : ($this->netPrice * $this->tax->value) / 100;
     }
 
     #[Pure]
@@ -37,10 +38,12 @@ class InvoiceProduct
             $this->id->toString(),
             $this->position,
             $this->name,
+            $this->unit->value,
+            $this->quantity,
             $this->netPrice,
             $this->getTaxPrice(),
             $this->getGrossPrice(),
-            $this->vatPercentage,
+            $this->tax->value,
         );
     }
 }

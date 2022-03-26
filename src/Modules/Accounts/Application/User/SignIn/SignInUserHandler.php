@@ -20,15 +20,15 @@ final class SignInUserHandler implements CommandHandler
     public function __invoke(SignInUserCommand $command): SignInResult
     {
         try {
-            $user = $this->service->signIn($command->getEmail(), $command->getPassword());
+            $user = $this->service->signIn($command->email, $command->password);
             $snapshot = $user->getSnapshot();
 
             $userDTO = new UserDTO(
-                $snapshot->getId(),
-                $snapshot->getEmail(),
-                $snapshot->getUsername(),
-                $snapshot->getFirstName(),
-                $snapshot->getLastName(),
+                $snapshot->id,
+                $snapshot->email,
+                $snapshot->username,
+                $snapshot->firstName,
+                $snapshot->lastName,
             );
 
             return new SignInResult($userDTO);
