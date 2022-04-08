@@ -1,0 +1,4 @@
+.form-input:focus {
+    box-shadow: rgb(18 38 63 / 3%) 0 0.75rem 1.5rem;
+    border-color: rgb(42, 48, 66);
+}

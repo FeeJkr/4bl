@@ -2,51 +2,36 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {companiesActions} from "../../../actions/invoices/companies/actions";
-import Select from "react-select";
 import {vatRejectionOptions} from "./vatRejectionOptions";
+import Input from "../../../components/Fields/Form/Input";
+import Switch from "../../../components/Fields/Form/Switch";
+import Select from "../../../components/Fields/Form/Select";
+import {fields, placeholders, labels, handleChanges as helperHandleChanges} from "../../../helpers/forms/invoices/companies";
 
 function Create() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const validationErrors = useSelector(state => state.invoices.companies.create.validationErrors);
-    let errors = [];
     const [inputs, setInputs] = useState({
-        name: null,
-        identificationNumber: null,
-        email: null,
-        phoneNumber: null,
-        isVatPayer: false,
-        vatRejectionReason: null,
-        address: {
-            street: null,
-            city: null,
-            zipCode: null,
+        [fields.name]: null,
+        [fields.identificationNumber]: null,
+        [fields.email]: null,
+        [fields.phoneNumber]: null,
+        [fields.isVatPayer]: false,
+        [fields.vatRejectionReason]: null,
+        [fields.address]: {
+            [fields.street]: null,
+            [fields.city]: null,
+            [fields.zipCode]: null,
         },
     });
-    const navigate = useNavigate();
 
     function handleChange(e) {
-        const { name, value } = e.target;
-
-        if (name === 'isVatPayer') {
-            const isVatPayer = inputs.isVatPayer;
-
-            if (isVatPayer === false) {
-                setInputs(inputs => ({...inputs, isVatPayer: !inputs.isVatPayer, vatRejectionReason: null}))
-            } else {
-                setInputs(inputs => ({...inputs, isVatPayer: !inputs.isVatPayer}))
-            }
-        } else if (['street', 'city', 'zipCode'].includes(name)) {
-            let address = inputs.address;
-            address[name] = value === '' ? null : value;
-
-            setInputs(inputs => ({ ...inputs, address}));
-        } else {
-            setInputs(inputs => ({ ...inputs, [name]: value === '' ? null : value }));
-        }
+        helperHandleChanges(e, inputs);
+        setInputs(inputs);
     }
 
     function handleSelectChange(value, meta) {
-        setInputs(inputs => ({ ...inputs, [meta.name]: value.value}));
+        setInputs(inputs => ({ ...inputs, [fields[meta.name]]: value.value}));
     }
 
     function handleSubmit(e) {
@@ -54,6 +39,9 @@ function Create() {
 
         dispatch(companiesActions.createCompany(inputs, navigate));
     }
+
+    const validationErrors = useSelector(state => state.invoices.companies.create.validationErrors);
+    let errors = [];
 
     if(validationErrors) {
         validationErrors.forEach(function (element) {
@@ -63,8 +51,7 @@ function Create() {
 
     return (
         <div className="container-fluid">
-            <div
-                style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                 <h4 style={{fontSize: '18px', fontWeight: 600, textTransform: 'uppercase', color: '#495057'}}>Create new</h4>
                 <div>
                     <nav>
@@ -86,134 +73,95 @@ function Create() {
                 <div className="col-12">
                     <div className="card">
                         <div className="card-body">
-                            <div className="mb-4" style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}>Basic
-                                Information
+                            <div className="mb-4" style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}>
+                                Basic Information
                             </div>
                             <form id="create-contractor-form" onSubmit={handleSubmit}>
                                 <div className="row">
                                     <div className="col-sm-6">
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="name" style={{marginBottom: '.5rem', fontWeight: 500}}>Company
-                                                name</label>
-                                            <input id="name" name="name" placeholder="Enter company name..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['name'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['name'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="identificationNumber"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Identification
-                                                Number</label>
-                                            <input id="identificationNumber" name="identificationNumber"
-                                                   placeholder="Enter identification number..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['identificationNumber'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['identificationNumber'].message}</span>
-                                            }
-                                        </div>
-
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="email" style={{marginBottom: '.5rem', fontWeight: 500}}>Email</label>
-                                            <input id="email" name="email"
-                                                   placeholder="Enter email..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['email'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['email'].message}</span>
-                                            }
-                                        </div>
-
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="phoneNumber" style={{marginBottom: '.5rem', fontWeight: 500}}>Phone number</label>
-                                            <input id="phoneNumber" name="phoneNumber"
-                                                   placeholder="Enter phone number..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['phoneNumber'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['phoneNumber'].message}</span>
-                                            }
-                                        </div>
+                                        <Input
+                                            type="text"
+                                            name={fields.name}
+                                            label={labels[fields.name]}
+                                            placeholder={placeholders[fields.name]}
+                                            onChange={handleChange}
+                                            error={errors[fields.name]}
+                                        />
+                                        <Input
+                                            type="text"
+                                            name={fields.identificationNumber}
+                                            label={labels[fields.identificationNumber]}
+                                            placeholder={placeholders[fields.identificationNumber]}
+                                            onChange={handleChange}
+                                            error={errors[fields.identificationNumber]}
+                                        />
+                                        <Input
+                                            type="email"
+                                            name={fields.email}
+                                            label={labels[fields.email]}
+                                            placeholder={placeholders[fields.email]}
+                                            onChange={handleChange}
+                                            error={errors[fields.email]}
+                                        />
+                                        <Input
+                                            type="text"
+                                            name={fields.phoneNumber}
+                                            label={labels[fields.phoneNumber]}
+                                            placeholder={placeholders[fields.phoneNumber]}
+                                            onChange={handleChange}
+                                            error={errors[fields.phoneNumber]}
+                                        />
                                     </div>
 
                                     <div className="col-sm-6">
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="street"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Street</label>
-                                            <input id="street" name="street"
-                                                   placeholder="Enter company location street..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['street'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['street'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="city"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>City</label>
-                                            <input id="city" name="city" placeholder="Enter company location city..."
-                                                   type="text" className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['city'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['city'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="zipCode"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Zip code</label>
-                                            <input id="zipCode" name="zipCode"
-                                                   placeholder="Enter company location zip code..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['zipCode'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['zipCode'].message}</span>
-                                            }
-                                        </div>
+                                        <Input
+                                            type="text"
+                                            name={fields.street}
+                                            label={labels[fields.street]}
+                                            placeholder={placeholders[fields.street]}
+                                            onChange={handleChange}
+                                            error={errors[fields.street]}
+                                        />
+                                        <Input
+                                            type="text"
+                                            name={fields.city}
+                                            label={labels[fields.city]}
+                                            placeholder={placeholders[fields.city]}
+                                            onChange={handleChange}
+                                            error={errors[fields.city]}
+                                        />
+                                        <Input
+                                            type="text"
+                                            name={fields.zipCode}
+                                            label={labels[fields.zipCode]}
+                                            placeholder={placeholders[fields.zipCode]}
+                                            onChange={handleChange}
+                                            error={errors[fields.zipCode]}
+                                        />
                                     </div>
                                 </div>
 
                                 <hr/>
 
-                                <div className="mb-4" style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}>Tax information</div>
+                                <div className="mb-4" style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}>
+                                    Tax information
+                                </div>
 
                                 <div className="row">
-                                    <div className="mb-3 form-group" style={{marginLeft: '2rem'}}>
-                                        <div className="form-check form-switch" style={{fontSize: '1.2rem'}}>
-                                            <input className="form-check-input" name="isVatPayer" type="checkbox" id="isVatPayer" onChange={handleChange}/>
-                                            <label className="form-check-label" style={{marginBottom: '.5rem', fontWeight: 500, fontSize: '.8125rem'}} htmlFor="isVatPayer">Is Company VAT Payer?</label>
-                                        </div>
-                                    </div>
+                                    <Switch
+                                        name={fields.isVatPayer}
+                                        label={labels[fields.isVatPayer]}
+                                        onChange={handleChange}
+                                    />
 
                                     {!inputs.isVatPayer &&
-                                        <>
-                                            <div className="mb-3 form-group">
-                                                <label htmlFor="vatRejectionReason" style={{marginBottom: '.5rem', fontWeight: 500}}>VAT Rejection Reason</label>
-                                                <Select
-                                                    name="vatRejectionReason"
-                                                    options={vatRejectionOptions}
-                                                    onChange={handleSelectChange}
-                                                />
-                                                {errors['vatRejectionReason'] &&
-                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['language'].message}</span>
-                                                }
-                                            </div>
-                                        </>
+                                        <Select
+                                            name={fields.vatRejectionReason}
+                                            label={labels[fields.vatRejectionReason]}
+                                            options={vatRejectionOptions}
+                                            onChange={handleSelectChange}
+                                            error={errors[fields.vatRejectionReason]}
+                                        />
                                     }
                                 </div>
 

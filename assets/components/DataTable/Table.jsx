@@ -1,5 +1,4 @@
 import React from "react";
-import {Link} from "react-router-dom";
 
 export default function Table({headers, rows, actionButtons}) {
     return (
@@ -11,14 +10,14 @@ export default function Table({headers, rows, actionButtons}) {
             </thead>
             <tbody id="table-companies-body">
             {rows.map((row, key) => (
-                <tr key={invoice.id} className={'documents-tr'} style={{position: 'relative'}}>
+                <tr key={row.id} className={'documents-tr'} style={{position: 'relative'}}>
                     <th scope="row">{++key}</th>
-                    <td>{invoice.value}</td>
-                    <td>{invoice.generatedAt}</td>
-                    <td>{invoice.soldAt}</td>
-                    <td>{invoice.sellerName}</td>
-                    <td>{invoice.buyerName}</td>
-                    <td>{invoice.totalNetPrice} {invoice.currencyCode}</td>
+                    <td>{row.value}</td>
+                    <td>{row.generatedAt}</td>
+                    <td>{row.soldAt}</td>
+                    <td>{row.sellerName}</td>
+                    <td>{row.buyerName}</td>
+                    <td>{row.totalNetPrice} {row.currencyCode}</td>
                     <td className="gap-3 action-buttons" style={{gridGap: '1 rem', position: 'absolute', right: 0, width: 40 * 3 + 'px'}}>
                         {actionButtons.map(() => (<ActionButton/>))}
                     </td>
