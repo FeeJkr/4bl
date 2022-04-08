@@ -1,0 +1,67 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      context: .
+      target: app-dev
+      args:
+        COMPOSER_AUTH: "{}"
+        APP_BASE_DIR: ${APP_BASE_DIR-.}
+    restart: unless-stopped
+    environment:
+      # For Xdebuger to work, it needs the docker host ID
+      # - in Mac AND Windows, `host.docker.internal` resolve to Docker host IP
+      # - in Linux, `172.17.0.1` is the host IP
+      XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST-172.17.0.1}
+    volumes:
+      - ${APP_BASE_DIR-.}:/app
+
+  web:
+    build:
+      context: .
+      target: web-dev
+      args:
+        APP_BASE_DIR: ${APP_BASE_DIR-.}
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # The Hostname for the FPM (needs to match the hostname for the `app`)
+      PHP_FPM_HOST: app
+    volumes:
+      - ${APP_BASE_DIR-.}/public:/app/public
+    depends_on:
+      app:
+        condition: service_healthy
+
+  db:
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=default
+      - PGPASSWORD=default_secret
+
+  invoice-generator-microservice:
+    image: feejkr/invoice-generator
+    hostname: invoice-generator-ms
+    ports:
+      - "8090:3000"
+
+  redis:
+    image: "redis:alpine"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - "1080:1080"

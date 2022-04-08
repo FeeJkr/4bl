@@ -46,6 +46,3 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
-
-  maildev:
-    image: maildev/maildev
