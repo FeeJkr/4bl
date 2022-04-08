@@ -4,14 +4,17 @@ framework:
         # failure_transport: failed
 
         transports:
-            # https://symfony.com/doc/current/messenger.html#transport-configuration
-            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
-            # failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
+            async_accounts_mails:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: mails
+                    queues:
+                        accounts_mails: ~
+            sync: 'sync://'
 
         routing:
-            # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            'App\Modules\Accounts\Infrastructure\Domain\Mail\SendConfirmationEmail\SendRegisterConfirmationEmailCommand': async_accounts_mails
 
         default_bus: command.bus
         buses:

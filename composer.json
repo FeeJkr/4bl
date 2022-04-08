@@ -20,6 +20,7 @@
         "paquettg/php-html-parser": "^3.1",
         "ramsey/uuid": "^4.1",
         "sensio/framework-extra-bundle": "^6.2",
+        "symfony/amqp-messenger": "^6.0",
         "symfony/asset": "^6.0",
         "symfony/cache": "^6.0",
         "symfony/console": "^6.0",

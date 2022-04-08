@@ -15,3 +15,12 @@ services:
       - POSTGRES_USER=default
       - POSTGRES_PASSWORD=default
       - PGPASSWORD=default_secret
+
+  rabbitmq:
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  maildev:
+    ports:
+      - "1080:1080"
