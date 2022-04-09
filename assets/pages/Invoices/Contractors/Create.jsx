@@ -2,6 +2,10 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {contractorsActions} from "../../../actions/invoices/contractors/actions";
+import {fields, labels, placeholders, handleChanges as helperHandleChanges} from "../../../helpers/forms/invoices/contractors";
+import Input from "../../../components/Fields/Form/Input";
+import {Form as Address} from "../Addresses/Form";
+import SubmitButton from "../../../components/Fields/Form/SubmitButton";
 
 function Create() {
     const dispatch = useDispatch();
@@ -19,16 +23,8 @@ function Create() {
     const navigate = useNavigate();
 
     function handleChange(e) {
-        const { name, value } = e.target;
-
-        if (['street', 'city', 'zipCode'].includes(name)) {
-            let address = inputs.address;
-            address[name] = value === '' ? null : value;
-
-            setInputs(inputs => ({ ...inputs, address}));
-        } else {
-            setInputs(inputs => ({ ...inputs, [name]: value === '' ? null : value }));
-        }
+        helperHandleChanges(e, inputs);
+        setInputs(inputs);
     }
 
     function handleSubmit(e) {
@@ -74,82 +70,31 @@ function Create() {
                             <form id="create-contractor-form" onSubmit={handleSubmit}>
                                 <div className="row">
                                     <div className="col-sm-6">
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="name" style={{marginBottom: '.5rem', fontWeight: 500}}>Company
-                                                name</label>
-                                            <input id="name" name="name" placeholder="Enter contractor name..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['name'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['name'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="identificationNumber"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Identification
-                                                Number</label>
-                                            <input id="identificationNumber" name="identificationNumber"
-                                                   placeholder="Enter identification number..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['identificationNumber'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['identificationNumber'].message}</span>
-                                            }
-                                        </div>
+                                        <Input
+                                            type="text"
+                                            name={fields.name}
+                                            label={labels[fields.name]}
+                                            placeholder={placeholders[fields.name]}
+                                            onChange={handleChange}
+                                            error={errors[fields.name]}
+                                        />
+
+                                        <Input
+                                            type="text"
+                                            name={fields.identificationNumber}
+                                            label={labels[fields.identificationNumber]}
+                                            placeholder={placeholders[fields.identificationNumber]}
+                                            onChange={handleChange}
+                                            error={errors[fields.identificationNumber]}
+                                        />
                                     </div>
 
                                     <div className="col-sm-6">
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="street"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Street</label>
-                                            <input id="street" name="street"
-                                                   placeholder="Enter company location street..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['street'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['street'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="city"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>City</label>
-                                            <input id="city" name="city" placeholder="Enter company location city..."
-                                                   type="text" className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['city'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['city'].message}</span>
-                                            }
-                                        </div>
-                                        <div className="mb-3 form-group">
-                                            <label htmlFor="zipCode"
-                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Zip code</label>
-                                            <input id="zipCode" name="zipCode"
-                                                   placeholder="Enter company location zip code..." type="text"
-                                                   className="form-control"
-                                                   style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                   onChange={handleChange}
-                                            />
-                                            {errors['zipCode'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['zipCode'].message}</span>
-                                            }
-                                        </div>
+                                        <Address onChange={handleChange} errors={errors} object={inputs.address}/>
                                     </div>
                                 </div>
 
-                                <div className="justify-content-end row">
-                                    <div className="col-lg-12">
-                                        <input type="submit" className="btn btn-primary" style={{fontSize: '13px'}}
-                                                id="create-company-button" value="Save Changes"/>
-                                    </div>
-                                </div>
+                                <SubmitButton/>
                             </form>
                         </div>
                     </div>

@@ -1,3 +1,5 @@
+import {handleChanges as changeAddress, fields as addressFields, labels as addressLabels, placeholders as addressPlaceholders} from "./addresses";
+
 const fields = {
     name: 'name',
     identificationNumber: 'identificationNumber',
@@ -5,10 +7,7 @@ const fields = {
     phoneNumber: 'phoneNumber',
     isVatPayer: 'isVatPayer',
     vatRejectionReason: 'vatRejectionReason',
-    address: 'address',
-    street: 'street',
-    city: 'city',
-    zipCode: 'zipCode',
+    ...addressFields,
 };
 
 const placeholders = {
@@ -16,9 +15,7 @@ const placeholders = {
     [fields.identificationNumber]: 'Enter identification number...',
     [fields.email]: 'Enter email address...',
     [fields.phoneNumber]: 'Enter phone number...',
-    [fields.street]: 'Enter company location street...',
-    [fields.city]: 'Enter company location city...',
-    [fields.zipCode]: 'Enter company location zip code...',
+    ...addressPlaceholders,
 };
 
 const labels = {
@@ -28,9 +25,7 @@ const labels = {
     [fields.phoneNumber]: 'Phone number',
     [fields.isVatPayer]: 'Is Company VAT Payer?',
     [fields.vatRejectionReason]: 'VAT Rejection Reason',
-    [fields.street]: 'Street',
-    [fields.city]: 'City',
-    [fields.zipCode]: 'Zip code',
+    ...addressLabels,
 };
 
 const handleChanges = (event, company) => {
@@ -47,7 +42,7 @@ const handleChanges = (event, company) => {
     }
 
     if ([fields.street, fields.city, fields.zipCode].includes(name)) {
-        company.address[fields[name]] = value === '' ? null : value;
+        changeAddress(event, company.address);
 
         return;
     }

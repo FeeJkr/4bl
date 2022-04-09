@@ -2,28 +2,24 @@ import React, {useEffect} from 'react';
 import {Link, useParams} from 'react-router-dom';
 import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {useDispatch, useSelector} from "react-redux";
-import {Toast} from "react-bootstrap";
+import {fields, labels, placeholders, handleChanges as helperHandleChanges} from "../../../helpers/forms/invoices/contractors";
+import Input from "../../../components/Fields/Form/Input";
+import {Form as Address} from "../Addresses/Form";
+import SubmitButton from "../../../components/Fields/Form/SubmitButton";
+import SuccessAlert from "../../../components/Fields/Form/SuccessAlert";
 
 function Edit() {
+    const {id} = useParams();
     const dispatch = useDispatch();
     const contractor = useSelector(state => state.invoices.contractors.one.item);
-    const validationErrors = useSelector(state => state.invoices.contractors.update.validationErrors);
     const isUpdated = useSelector(state => state.invoices.contractors.update.isUpdated);
-    const {id} = useParams();
-    let errors = [];
 
     useEffect(() => {
         dispatch(contractorsActions.getOneById(id));
     }, []);
 
     function handleChange(e) {
-        const { name, value } = e.target;
-
-        if (['street', 'city', 'zipCode'].includes(name)) {
-            contractor.address[name] = value === '' ? null : value;
-        } else {
-            contractor[name] = value === '' ? null : value;
-        }
+        helperHandleChanges(e, contractor);
     }
 
     function handleSubmit(e) {
@@ -32,9 +28,8 @@ function Edit() {
         dispatch(contractorsActions.updateContractor(id, contractor));
     }
 
-    function closeToast() {
-        dispatch(contractorsActions.clearAlerts());
-    }
+    const validationErrors = useSelector(state => state.invoices.contractors.update.validationErrors);
+    let errors = [];
 
     if(validationErrors) {
         validationErrors.forEach(function (element) {
@@ -70,117 +65,49 @@ function Edit() {
                     <div className="col-12">
                         <div className="card">
                             <div className="card-body">
-                                <div className="mb-4"
-                                     style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}
-                                >
+                                <div className="mb-4" style={{fontSize: '15px', margin: '0 0 7px', fontWeight: 600}}>
                                     Basic Information
                                 </div>
                                 <form onSubmit={handleSubmit}>
                                     <div className="row">
                                         <div className="col-sm-6">
-                                            <div className="mb-3 form-group">
-                                                <label htmlFor="name" style={{marginBottom: '.5rem', fontWeight: 500}}>Company name</label>
-                                                <input id="name" name="name" placeholder="Enter company name..." type="text"
-                                                       className="form-control"
-                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                       defaultValue={contractor.name}
-                                                       onChange={handleChange}
-                                                />
-                                                {errors['name'] &&
-                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['name'].message}</span>
-                                                }
-                                            </div>
-                                            <div className="mb-3 form-group">
-                                                <label htmlFor="identificationNumber"
-                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Identification Number</label>
-                                                <input id="identificationNumber" name="identificationNumber"
-                                                       placeholder="Enter identification number..." type="text"
-                                                       className="form-control"
-                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                       defaultValue={contractor.identificationNumber}
-                                                       onChange={handleChange}
-                                                />
-                                                {errors['identificationNumber'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['identificationNumber'].message}</span>
-                                                }
-                                            </div>
+                                            <Input
+                                                type="text"
+                                                name={fields.name}
+                                                label={labels[fields.name]}
+                                                placeholder={placeholders[fields.name]}
+                                                onChange={handleChange}
+                                                error={errors[fields.name]}
+                                                defaultValue={contractor.name}
+                                            />
+
+                                            <Input
+                                                type="text"
+                                                name={fields.identificationNumber}
+                                                label={labels[fields.identificationNumber]}
+                                                placeholder={placeholders[fields.identificationNumber]}
+                                                onChange={handleChange}
+                                                error={errors[fields.identificationNumber]}
+                                                defaultValue={contractor.identificationNumber}
+                                            />
                                         </div>
                                         <div className="col-sm-6">
-                                            <div className="mb-3 form-group">
-                                                <label htmlFor="street"
-                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Street</label>
-                                                <input id="street" name="street"
-                                                       placeholder="Enter company location street..." type="text"
-                                                       className="form-control"
-                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                       defaultValue={contractor.address.street}
-                                                       onChange={handleChange}
-                                                />
-                                                {errors['street'] &&
-                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['street'].message}</span>
-                                                }
-                                            </div>
-                                            <div className="mb-3 form-group">
-                                                <label htmlFor="city"
-                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>City</label>
-                                                <input id="city" name="city" placeholder="Enter company location city..."
-                                                       type="text" className="form-control"
-                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                       defaultValue={contractor.address.city}
-                                                       onChange={handleChange}
-                                                />
-                                                {errors['city'] &&
-                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['city'].message}</span>
-                                                }
-                                            </div>
-                                            <div className="mb-3 form-group">
-                                                <label htmlFor="zipCode"
-                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Zip code</label>
-                                                <input id="zipCode" name="zipCode"
-                                                       placeholder="Enter company location zip code..." type="text"
-                                                       className="form-control"
-                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                       defaultValue={contractor.address.zipCode}
-                                                       onChange={handleChange}
-                                                />
-                                                {errors['zipCode'] &&
-                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['zipCode'].message}</span>
-                                                }
-                                            </div>
+                                            <Address onChange={handleChange} errors={errors} object={contractor.address}/>
                                         </div>
                                     </div>
 
-                                    <div className="justify-content-end row">
-                                        <div className="col-lg-12">
-                                            <input type="submit"
-                                                   className="btn btn-primary"
-                                                   style={{fontSize: '13px'}}
-                                                   value='Save Changes'
-                                            />
-                                        </div>
-                                    </div>
+                                    <SubmitButton/>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div style={{position: 'absolute', bottom: 80, right: 20}}>
-                    <Toast style={{backgroundColor: '#00ca72'}}
-                           onClose={closeToast}
-                           show={!!isUpdated}
-                           delay={3000}
-                           autohide
-                    >
-                        <Toast.Header closeButton={false} style={{backgroundColor: '#00ca72', borderBottom: 0}}>
-                            <strong className="me-auto" style={{color: '#fff'}}>Success!</strong>
-                        </Toast.Header>
-                        <Toast.Body style={{color: '#fff'}}>
-                            Contractor's information was successfully updated.
-                        </Toast.Body>
-                    </Toast>
-                </div>
-
+                <SuccessAlert
+                    onClose={() => dispatch(contractorsActions.clearAlerts())}
+                    show={!!isUpdated}
+                    text="Contractor's information was successfully updated."
+                />
             </div>
         :
             <div>Loading</div>

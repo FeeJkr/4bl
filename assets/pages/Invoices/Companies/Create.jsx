@@ -7,6 +7,7 @@ import Input from "../../../components/Fields/Form/Input";
 import Switch from "../../../components/Fields/Form/Switch";
 import Select from "../../../components/Fields/Form/Select";
 import {fields, placeholders, labels, handleChanges as helperHandleChanges} from "../../../helpers/forms/invoices/companies";
+import {Form as Address} from "../Addresses/Form";
 
 function Create() {
     const navigate = useNavigate();
@@ -114,30 +115,7 @@ function Create() {
                                     </div>
 
                                     <div className="col-sm-6">
-                                        <Input
-                                            type="text"
-                                            name={fields.street}
-                                            label={labels[fields.street]}
-                                            placeholder={placeholders[fields.street]}
-                                            onChange={handleChange}
-                                            error={errors[fields.street]}
-                                        />
-                                        <Input
-                                            type="text"
-                                            name={fields.city}
-                                            label={labels[fields.city]}
-                                            placeholder={placeholders[fields.city]}
-                                            onChange={handleChange}
-                                            error={errors[fields.city]}
-                                        />
-                                        <Input
-                                            type="text"
-                                            name={fields.zipCode}
-                                            label={labels[fields.zipCode]}
-                                            placeholder={placeholders[fields.zipCode]}
-                                            onChange={handleChange}
-                                            error={errors[fields.zipCode]}
-                                        />
+                                        <Address object={inputs.address} errors={errors} onChange={handleChange}/>
                                     </div>
                                 </div>
 

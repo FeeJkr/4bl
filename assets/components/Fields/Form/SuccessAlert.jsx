@@ -1,13 +1,7 @@
 import React from "react";
 import {Toast} from "react-bootstrap";
 
-export default function SuccessAlert(props) {
-    const {
-        show,
-        onClose,
-        text,
-    } = props;
-
+export default function SuccessAlert({show, onClose, text}) {
     return (
         <div style={{position: 'absolute', bottom: 80, right: 20}}>
             <Toast style={{backgroundColor: '#00ca72'}}

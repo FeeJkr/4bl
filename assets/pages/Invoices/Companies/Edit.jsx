@@ -9,6 +9,7 @@ import Select from "../../../components/Fields/Form/Select";
 import SuccessAlert from "../../../components/Fields/Form/SuccessAlert";
 import SubmitButton from "../../../components/Fields/Form/SubmitButton";
 import {fields, placeholders, labels, handleChanges as helperHandleChanges} from "../../../helpers/forms/invoices/companies";
+import {Form as Address} from "../Addresses/Form";
 
 function Edit() {
     const {id} = useParams();
@@ -116,33 +117,7 @@ function Edit() {
                                     </div>
 
                                     <div className="col-sm-6">
-                                        <Input
-                                            type="text"
-                                            name={fields.street}
-                                            label={labels[fields.street]}
-                                            placeholder={placeholders[fields.street]}
-                                            onChange={handleChange}
-                                            error={errors[fields.street]}
-                                            defaultValue={company.address.street}
-                                        />
-                                        <Input
-                                            type="text"
-                                            name={fields.city}
-                                            label={labels[fields.city]}
-                                            placeholder={placeholders[fields.city]}
-                                            onChange={handleChange}
-                                            error={errors[fields.city]}
-                                            defaultValue={company.address.city}
-                                        />
-                                        <Input
-                                            type="text"
-                                            name={fields.zipCode}
-                                            label={labels[fields.zipCode]}
-                                            placeholder={placeholders[fields.zipCode]}
-                                            onChange={handleChange}
-                                            error={errors[fields.zipCode]}
-                                            defaultValue={company.address.zipCode}
-                                        />
+                                        <Address object={company.address} errors={errors} onChange={handleChange}/>
                                     </div>
                                 </div>
 
