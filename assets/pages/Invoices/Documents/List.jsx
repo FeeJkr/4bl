@@ -98,6 +98,13 @@ function List() {
                                         );
                                     })}
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colSpan={6}/>
+                                            <td>{invoices.map((invoice) => invoice.totalNetPrice).reduce((partialSum, a) => partialSum + a, 0)} PLN</td>
+                                            <td>{invoices.map((invoice) => invoice.totalGrossPrice).reduce((partialSum, a) => partialSum + a, 0)} PLN</td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>

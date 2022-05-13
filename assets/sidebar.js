@@ -9,15 +9,6 @@ const sidebar = [
         icon: 'bi-receipt',
         children: [
             {
-                title: 'Companies',
-                path: '/invoices/companies',
-                icon: 'bi-house-door',
-                children: [
-                    { path: '/invoices/companies/new' },
-                    { path: '/invoices/companies/edit/:id' },
-                ],
-            },
-            {
                 title: 'Documents',
                 path: '/invoices/documents',
                 icon: 'bi-file-earmark-binary',
@@ -25,6 +16,15 @@ const sidebar = [
                     { path: '/invoices/documents/new' },
                     { path: '/invoices/documents/edit/:id' },
                 ]
+            },
+            {
+                title: 'Companies',
+                path: '/invoices/companies',
+                icon: 'bi-house-door',
+                children: [
+                    { path: '/invoices/companies/new' },
+                    { path: '/invoices/companies/edit/:id' },
+                ],
             },
             {
                 title: 'Contractors',
