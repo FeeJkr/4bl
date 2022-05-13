@@ -88,8 +88,8 @@ function List() {
                                                 <td>{invoice.soldAt}</td>
                                                 <td>{invoice.companyName}</td>
                                                 <td>{invoice.contractorName}</td>
-                                                <td>{invoice.totalNetPrice} {invoice.currencyCode}</td>
-                                                <td>{invoice.totalGrossPrice} {invoice.currencyCode}</td>
+                                                <td>{invoice.totalNetPrice.toFixed(2)} {invoice.currencyCode}</td>
+                                                <td>{invoice.totalGrossPrice.toFixed(2)} {invoice.currencyCode}</td>
                                                 <td className="gap-3 action-buttons" style={{gridGap: '1 rem', position: 'absolute', right: 0, width: 40 * 3 + 'px'}}>
                                                     <a onClick={() => handleDownload(invoice.id, invoice.invoiceNumber)}
                                                        style={{fontSize: '18 px', cursor: 'pointer'}}>
@@ -116,8 +116,8 @@ function List() {
                                     <tfoot>
                                         <tr>
                                             <td colSpan={6}/>
-                                            <td>{invoices.map((invoice) => invoice.totalNetPrice).reduce((partialSum, a) => partialSum + a, 0)} PLN</td>
-                                            <td>{invoices.map((invoice) => invoice.totalGrossPrice).reduce((partialSum, a) => partialSum + a, 0)} PLN</td>
+                                            <td>{invoices.map((invoice) => invoice.totalNetPrice).reduce((partialSum, a) => partialSum + a, 0).toFixed(2)} PLN</td>
+                                            <td>{invoices.map((invoice) => invoice.totalGrossPrice).reduce((partialSum, a) => partialSum + a, 0).toFixed(2)} PLN</td>
                                         </tr>
                                     </tfoot>
                                 </table>
