@@ -8,4 +8,7 @@ use App\Common\Application\Query\Query;
 
 final class GetAllInvoicesQuery implements Query
 {
+    public function __construct(
+        public readonly array $generatedAtFilter = [],
+    ){}
 }

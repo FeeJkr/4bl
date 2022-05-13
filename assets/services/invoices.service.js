@@ -9,8 +9,14 @@ export const invoicesService = {
     updateInvoice,
 };
 
-function getAll() {
-    return axios.get(invoicesDictionary.GET_ALL_URL).then((response) => response.data);
+function getAll(filterDates) {
+    let url = invoicesDictionary.GET_ALL_URL;
+
+    if (filterDates.length === 2) {
+        url += '?filter[generatedAt][0]=' + _parseDate(filterDates[0]) + '&filter[generatedAt][1]=' + _parseDate(filterDates[1]);
+    }
+
+    return axios.get(url).then((response) => response.data);
 }
 
 function generateInvoice(formData) {

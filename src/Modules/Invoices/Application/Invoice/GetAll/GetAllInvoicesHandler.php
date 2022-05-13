@@ -19,7 +19,7 @@ class GetAllInvoicesHandler implements QueryHandler
      */
     public function __invoke(GetAllInvoicesQuery $query): InvoicesCollection
     {
-        $rows = $this->connection
+        $qb = $this->connection
             ->createQueryBuilder()
             ->select(
                 'i.id',
@@ -37,9 +37,19 @@ class GetAllInvoicesHandler implements QueryHandler
             ->join('i', 'invoices_companies', 'companies', 'companies.id = i.invoices_companies_id')
             ->join('i', 'invoices_contractors', 'contractors', 'contractors.id = i.invoices_contractors_id')
             ->where('i.users_id = :userId')
-            ->setParameter('userId', $this->userContext->getUserId()->toString())
-            ->executeQuery()
-            ->fetchAllAssociative();
+            ->setParameter('userId', $this->userContext->getUserId()->toString());
+
+        // TODO: SECURITY FIXES
+        if (!empty($query->generatedAtFilter)) {
+            $fromDate = DateTimeImmutable::createFromFormat('d-m-Y', $query->generatedAtFilter[0]);
+            $toDate = DateTimeImmutable::createFromFormat('d-m-Y', $query->generatedAtFilter[1]);
+
+            $qb->andWhere('i.generated_at BETWEEN :fromDate AND :toDate')
+                ->setParameter('fromDate', $fromDate->format('Y-m-d 00:00:00'))
+                ->setParameter('toDate', $toDate->format('Y-m-d 23:59:59'));
+        }
+
+        $rows = $qb->executeQuery()->fetchAllAssociative();
 
         return new InvoicesCollection(
             ...array_map(static fn (array $row) => InvoiceDTO::fromStorage($row), $rows)

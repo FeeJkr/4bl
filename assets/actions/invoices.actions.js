@@ -13,11 +13,11 @@ export const invoicesActions = {
     clearAlerts,
 };
 
-function getAll() {
+function getAll(filterDates) {
     return dispatch => {
         dispatch(request());
 
-        invoicesService.getAll()
+        invoicesService.getAll(filterDates)
             .then(
                 invoices => dispatch(success(invoices)),
                 errors => dispatch(failure(errors))
