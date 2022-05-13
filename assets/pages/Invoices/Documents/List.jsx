@@ -6,15 +6,17 @@ import {Link} from "react-router-dom";
 import {Toast} from "react-bootstrap";
 import {filesystemService} from "../../../services/filesystem.service";
 import Flatpickr from "react-flatpickr";
+import monthSelectPlugin from "flatpickr/dist/plugins/monthSelect";
+import "flatpickr/dist/plugins/monthSelect/style.css";
 
 function List() {
     const invoices = useSelector(state => state.invoices.documents.all.items);
     const dispatch = useDispatch();
     const [showToast, setShowToast] = useState(false);
-    const [dateFilter, setDateFilter] = useState([]);
+    const [dateFilter, setDateFilter] = useState(null);
 
     useEffect(() => {
-        dispatch(invoicesActions.getAll([]));
+        dispatch(invoicesActions.getAll());
     }, []);
 
     useEffect(() => {
@@ -49,9 +51,9 @@ function List() {
                                     <div className="mr-4">
                                         <Flatpickr
                                             placeholder="Range"
-                                            options={{dateFormat: 'd-m-Y', mode: 'range'}}
+                                            options={{dateFormat: 'd-m-Y', mode: 'single', plugins: [new monthSelectPlugin({})]}}
                                             className="filter-date-range-input"
-                                            onClose={date => setDateFilter(date)}
+                                            onClose={date => setDateFilter(date[0])}
                                         />
                                     </div>
 

@@ -6,6 +6,7 @@ namespace App\Web\API\Action\Invoices\Invoice\GetAll;
 
 use App\Web\API\Action\Request;
 use Assert\Assert;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class GetAllInvoiceByIdRequest extends Request
@@ -14,18 +15,15 @@ final class GetAllInvoiceByIdRequest extends Request
 
     private const GENERATED_AT_KEY = 'generatedAt';
 
-    public function __construct(public readonly array $generatedAtFilter = []){}
+    public function __construct(public readonly ?DateTimeImmutable $generatedAtFilter){}
 
     public static function fromRequest(ServerRequest $request): Request
     {
         $filter = $request->get(self::FILTER);
+        $generatedAtFilter = isset($filter[self::GENERATED_AT_KEY])
+            ? DateTimeImmutable::createFromFormat('d-m-Y', $filter[self::GENERATED_AT_KEY])
+            : null;
 
-        if (isset($filter[self::GENERATED_AT_KEY])) {
-            return new self(
-                $filter[self::GENERATED_AT_KEY]
-            );
-        }
-
-        return new self();
+        return new self($generatedAtFilter);
     }
 }

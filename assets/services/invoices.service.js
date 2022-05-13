@@ -9,11 +9,11 @@ export const invoicesService = {
     updateInvoice,
 };
 
-function getAll(filterDates) {
+function getAll(filterDate) {
     let url = invoicesDictionary.GET_ALL_URL;
 
-    if (filterDates.length === 2) {
-        url += '?filter[generatedAt][0]=' + _parseDate(filterDates[0]) + '&filter[generatedAt][1]=' + _parseDate(filterDates[1]);
+    if (filterDate) {
+        url += '?filter[generatedAt]=' + _parseDate(filterDate);
     }
 
     return axios.get(url).then((response) => response.data);

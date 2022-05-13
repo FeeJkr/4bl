@@ -39,14 +39,10 @@ class GetAllInvoicesHandler implements QueryHandler
             ->where('i.users_id = :userId')
             ->setParameter('userId', $this->userContext->getUserId()->toString());
 
-        // TODO: SECURITY FIXES
-        if (!empty($query->generatedAtFilter)) {
-            $fromDate = DateTimeImmutable::createFromFormat('d-m-Y', $query->generatedAtFilter[0]);
-            $toDate = DateTimeImmutable::createFromFormat('d-m-Y', $query->generatedAtFilter[1]);
-
+        if ($query->generatedAtFilter) {
             $qb->andWhere('i.generated_at BETWEEN :fromDate AND :toDate')
-                ->setParameter('fromDate', $fromDate->format('Y-m-d 00:00:00'))
-                ->setParameter('toDate', $toDate->format('Y-m-d 23:59:59'));
+                ->setParameter('fromDate', $query->generatedAtFilter->format('Y-m-01 00:00:00'))
+                ->setParameter('toDate', $query->generatedAtFilter->format('Y-m-t 23:59:59'));
         }
 
         $rows = $qb->executeQuery()->fetchAllAssociative();
