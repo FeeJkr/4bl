@@ -14,7 +14,11 @@ final class SendRegisterConfirmationEmailHandler implements CommandHandler
 {
     private const SUBJECT = 'Confirm event registration';
 
-    public function __construct(private MailerInterface $mailer, private RouterInterface $router){}
+    public function __construct(
+        private readonly string $appHost,
+        private readonly MailerInterface $mailer,
+        private readonly RouterInterface $router
+    ){}
 
     public function __invoke(SendRegisterConfirmationEmailCommand $command): void
     {
@@ -25,15 +29,17 @@ final class SendRegisterConfirmationEmailHandler implements CommandHandler
             ->context([
                 'fullName' => sprintf('%s %s', $command ->firstName, $command->lastName),
                 'username' => $command->username,
-                'confirmationUrl' => $this->router->generate(
-                    'api.v1.accounts.confirm-email',
-                    [
-                        'token' => $command->confirmationToken
-                    ],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                ),
+                'confirmationUrl' => $this->generateConfirmEmailLink($command->confirmationToken),
             ]);
 
         $this->mailer->send($email);
+    }
+
+    private function generateConfirmEmailLink(string $token): string
+    {
+        return sprintf('%s/%s',
+            rtrim($this->appHost, '/'),
+            ltrim($this->router->generate('api.v1.accounts.confirm-email', ['token' => $token]), '/')
+        );
     }
 }
