@@ -35,9 +35,6 @@ services:
       app:
         condition: service_healthy
 
-  db:
-    image: "postgres:latest"
-
   invoice-generator-microservice:
     image: feejkr/invoice-generator
 
