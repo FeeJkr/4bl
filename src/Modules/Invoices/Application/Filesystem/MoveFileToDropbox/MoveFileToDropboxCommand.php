@@ -8,5 +8,8 @@ use App\Common\Application\Command\Command;
 
 final class MoveFileToDropboxCommand implements Command
 {
-    public function __construct(public readonly string $sourceFilepath, public readonly string $targetFilepath){}
+    public function __construct(
+        public readonly string $sourceFilepath,
+        public readonly string $filename,
+    ){}
 }

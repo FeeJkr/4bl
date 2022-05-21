@@ -1,6 +1,10 @@
 parameters:
   microservices.html2pdf.host: '%env(resolve:MICROSERVICE_HTML2PDF_HOST)%'
   integrations.dropbox.auth_token: '%env(resolve:DROPBOX_AUTH_TOKEN)%'
+  integrations.s3.endpoint: '%env(resolve:S3_ENDPOINT)%'
+  integrations.s3.key: '%env(resolve:S3_KEY)%'
+  integrations.s3.secret: '%env(resolve:S3_SECRET)%'
+  integrations.s3.bucket: '%env(resolve:S3_BUCKET)%'
 
 services:
   _defaults:
@@ -16,7 +20,17 @@ services:
     arguments:
       $host: '%microservices.html2pdf.host%'
 
-  App\Modules\Invoices\Domain\Filesystem\Dropbox:
+  App\Modules\Invoices\Domain\Filesystem\Filesystem: '@s3'
+
+  dropbox:
     class: App\Modules\Invoices\Infrastructure\Domain\Filesystem\DropboxApiIntegration
     arguments:
       $dropboxAuthorizationToken: '%integrations.dropbox.auth_token%'
+
+  s3:
+    class: App\Modules\Invoices\Infrastructure\Domain\Filesystem\S3Integration
+    arguments:
+      $s3Endpoint: '%integrations.s3.endpoint%'
+      $key: '%integrations.s3.key%'
+      $secret: '%integrations.s3.secret%'
+      $bucket: '%integrations.s3.bucket%'
