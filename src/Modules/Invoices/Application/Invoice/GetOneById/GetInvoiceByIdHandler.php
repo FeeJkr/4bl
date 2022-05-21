@@ -27,19 +27,20 @@ final class GetInvoiceByIdHandler implements QueryHandler
                 'users_id',
                 'invoices_companies_id',
                 'invoices_contractors_id',
+                'invoices_bank_accounts_id',
+                'status',
                 'invoice_number',
                 'generate_place',
                 'already_taken_price',
                 'days_for_payment',
                 'payment_type',
-                'invoices_companies_bank_accounts_id',
                 'currency_code',
                 'generated_at',
                 'sold_at',
             )
             ->from('invoices_invoices')
             ->where('id = :id')
-            ->andWhere('user_id = :userId')
+            ->andWhere('users_id = :userId')
             ->setParameters([
                 'id' => $query->id,
                 'userId' => $this->userContext->getUserId()->toString(),

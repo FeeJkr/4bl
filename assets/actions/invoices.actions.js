@@ -1,7 +1,5 @@
-import {invoicesConstants} from "../constants/invoices.constants";
-import {documentsConstants} from "../constants/invoices/documents/constants";
+import {documentsConstants as constants} from "../constants/invoices/documents/constants";
 import {invoicesService} from "../services/invoices.service";
-import {history} from "../helpers/history";
 
 export const invoicesActions = {
     getAll,
@@ -24,9 +22,9 @@ function getAll(filterDate = null) {
             );
     };
 
-    function request() { return { type: documentsConstants.GET_ALL_REQUEST } }
-    function success(invoices) { return { type: documentsConstants.GET_ALL_SUCCESS, items: invoices } }
-    function failure(errors) { return { type: documentsConstants.GET_ALL_FAILURE, errors } }
+    function request() { return { type: constants.GET_ALL_REQUEST } }
+    function success(invoices) { return { type: constants.GET_ALL_SUCCESS, items: invoices } }
+    function failure(errors) { return { type: constants.GET_ALL_FAILURE, errors } }
 }
 
 function generateInvoice(formData, navigate) {
@@ -43,14 +41,14 @@ function generateInvoice(formData, navigate) {
             );
     };
 
-    function request(formData) { return { type: invoicesConstants.CREATE_REQUEST, request: formData } }
-    function success() { return { type: invoicesConstants.CREATE_SUCCESS } }
+    function request(formData) { return { type: constants.CREATE_REQUEST, request: formData } }
+    function success() { return { type: constants.CREATE_SUCCESS } }
     function failure(errors, company) {
         if (errors.type === 'DomainError') {
-            return { type: invoicesConstants.CREATE_FAILURE, errors, company }
+            return { type: constants.CREATE_FAILURE, errors, company }
         }
 
-        return { type: invoicesConstants.CREATE_VALIDATION_FAILURE, errors: errors.errors, company, }
+        return { type: constants.CREATE_VALIDATION_FAILURE, errors: errors.errors, company, }
     }
 }
 
@@ -67,10 +65,10 @@ function deleteInvoice(id) {
                 errors => dispatch(failure(errors))
             );
 
-        function request(id) { return {type: invoicesConstants.DELETE_REQUEST, id} }
-        function success() { return {type: invoicesConstants.DELETE_SUCCESS} }
-        function failure(errors) { return {type:invoicesConstants.DELETE_FAILURE, errors} }
-        function updateInvoicesList(id) { return {type: invoicesConstants.UPDATE_AFTER_SUCCESS_DELETE, id } }
+        function request(id) { return {type: constants.DELETE_REQUEST, id} }
+        function success() { return {type: constants.DELETE_SUCCESS} }
+        function failure(errors) { return {type:constants.DELETE_FAILURE, errors} }
+        function updateInvoicesList(id) { return {type: constants.UPDATE_AFTER_SUCCESS_DELETE, id } }
     }
 }
 
@@ -85,16 +83,16 @@ function getOne(id) {
             );
     };
 
-    function request() { return { type: invoicesConstants.GET_ONE_REQUEST } }
-    function success(invoice) { return { type: invoicesConstants.GET_ONE_SUCCESS, invoice } }
-    function failure(errors) { return { type: invoicesConstants.GET_ONE_FAILURE, errors } }
+    function request() { return { type: constants.GET_ONE_REQUEST } }
+    function success(invoice) { return { type: constants.GET_ONE_SUCCESS, item: invoice } }
+    function failure(errors) { return { type: constants.GET_ONE_FAILURE, errors } }
 }
 
 function change(invoice) {
     return dispatch => {
         dispatch(change(invoice))
 
-        function change(invoice) { return { type: invoicesConstants.GET_ONE_CHANGED, invoice} }
+        function change(invoice) { return { type: constants.GET_ONE_CHANGED, item: invoice} }
     }
 }
 
@@ -111,17 +109,17 @@ function updateInvoice(invoice) {
             );
     };
 
-    function request() { return { type: invoicesConstants.UPDATE_REQUEST, isLoading: true } }
-    function success() { return { type: invoicesConstants.UPDATE_SUCCESS, isUpdated: true } }
+    function request() { return { type: constants.UPDATE_REQUEST, isLoading: true } }
+    function success() { return { type: constants.UPDATE_SUCCESS, isUpdated: true } }
     function failure(errors, invoice) {
         if (errors.type === 'DomainError') {
-            return { type: invoicesConstants.UPDATE_FAILURE, errors, invoice }
+            return { type: constants.UPDATE_FAILURE, errors, invoice }
         }
 
-        return { type: invoicesConstants.UPDATE_VALIDATION_FAILURE, errors: errors.errors, invoice }
+        return { type: constants.UPDATE_VALIDATION_FAILURE, errors: errors.errors, item: invoice }
     }
 }
 
 function clearAlerts() {
-    return dispatch => {dispatch({type: invoicesConstants.CLEAR_ALERTS})};
+    return dispatch => {dispatch({type: constants.CLEAR_ALERTS})};
 }

@@ -2,21 +2,23 @@ import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
 import {invoicesActions} from "../../../actions/invoices.actions";
 import {useDispatch, useSelector} from "react-redux";
-import {Toast} from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import './Invoices.css';
 import 'boxicons/css/boxicons.min.css';
+import {companiesActions} from "../../../actions/invoices/companies/actions";
+import AsyncSelect from "react-select/async";
+import {contractorsService} from "../../../services/invoices/contractors/crud.service";
 
 function Edit() {
     const {id} = useParams();
     const dispatch = useDispatch();
-    const invoice = useSelector(state => state.invoices.one.invoice);
-    const isLoading = useSelector(state => state.invoices.update.isLoading);
-    const isUpdated = useSelector(state => state.invoices.update.isUpdated);
-    const validationErrors = useSelector(state => state.invoices.update.validationErrors);
-    const companiesOptions = useSelector(state => state.companies.items);
+    const invoice = useSelector(state => state.invoices.documents.one.item);
+    const isLoading = useSelector(state => state.invoices.documents.update.isLoading);
+    const isUpdated = useSelector(state => state.invoices.documents.update.isUpdated);
+    const validationErrors = useSelector(state => state.invoices.documents.update.validationErrors);
+    const companies = useSelector(state => state.invoices.companies.all.items);
     const [seller, setSeller] = useState(null);
     const [buyer, setBuyer] = useState(null);
     let errors = [];
@@ -137,24 +139,39 @@ function Edit() {
         }
     }, [invoice, companiesOptions]);
 
+    const companiesOptions = companies.map((company) => ({value: company.id, label: company.name}));
+    const contractorsOptions = () => new Promise(resolve => {
+        resolve(
+            contractorsService.getAll().then(data => {
+                return data.map((contractor) => {return {value: contractor.id, label: contractor.name}});
+            })
+        )
+    });
+
+    const bankAccounts = useSelector(state => state.invoices.bankAccounts.all.items);
+    const bankAccountsOptions = bankAccounts.map((bankAccount) => ({value: bankAccount.id, label: bankAccount.name}));
+
+    const customStyles = {
+        control: (provided) => ({...provided, fontSize: '.8125rem', fontWeight: 400, lineHeight: 1.5, minHeight: '36px', height: 'calc(1.5em + .5rem + 2px)'}),
+        option: (provided) => ({...provided, fontSize: '.8125rem', fontWeight: 400, lineHeight: 1.5, minHeight: '36px', height: 'calc(1.5em + .5rem + 2px)'})
+    };
+
     return (invoice
         ?
             <div className="container-fluid">
                 <div
                     style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <h4 style={{fontSize: '18px', fontWeight: 600, textTransform: 'uppercase', color: '#495057'}}>
-                        Edit Invoice Nr. {invoice.invoiceNumber}
-                    </h4>
+                    <h4 style={{fontSize: '18px', fontWeight: 600, textTransform: 'uppercase', color: '#495057'}}>Edit {invoice.invoiceNumber}</h4>
                     <div>
                         <nav>
                             <ol className="breadcrumb m-0">
                                 <li className="breadcrumb-item">
-                                    <Link to="/invoices/documents"
-                                       style={{textDecoration: 'none', color: '#495057'}}>Invoices</Link>
+                                    <Link to={'/invoices/documents'}
+                                          style={{textDecoration: 'none', color: '#495057'}}>Documents</Link>
                                 </li>
                                 <li className="active breadcrumb-item">
                                     <Link to={'/invoices/documents/edit/' + invoice.id}
-                                       style={{textDecoration: 'none', color: '#74788d'}}>Edit Invoice</Link>
+                                          style={{textDecoration: 'none', color: '#74788d'}}>Edit Invoice <b>{invoice.invoiceNumber}</b></Link>
                                 </li>
                             </ol>
                         </nav>
@@ -178,50 +195,39 @@ function Edit() {
                                                 <input name="invoiceNumber" placeholder="Enter invoice number..." type="text"
                                                        className="form-control"
                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                       defaultValue={invoice.invoiceNumber}
                                                        onChange={handleChange}
+                                                       value={invoice.invoiceNumber}
                                                 />
                                                 {errors['invoiceNumber'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['invoiceNumber'].message}</span>
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['invoiceNumber'].message}</span>
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
-                                                <label htmlFor="sellerId"
-                                                       style={{marginBottom: '.5rem', fontWeight: 500}}
-                                                >
-                                                    Seller
-                                                </label>
+                                                <label htmlFor="companyId"
+                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Company</label>
                                                 <Select
-                                                    name="sellerId"
+                                                    name="companyId"
                                                     options={companiesOptions}
-                                                    defaultOptions
-                                                    value={seller}
-                                                    getOptionLabel={option => option.name}
-                                                    getOptionValue={option => option.id}
-                                                    placeholder={'Choose seller'}
-                                                    style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                    onChange={handleSelectChange}
+                                                    value={companiesOptions[0]}
+                                                    isDisabled={companiesOptions.length === 1}
                                                 />
-                                                {errors['sellerId'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['sellerId'].message}</span>
+                                                {errors['companyId'] &&
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['companyId'].message}</span>
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
-                                                <label htmlFor="buyerId"
-                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Buyer</label>
-                                                <Select
-                                                    name="buyerId"
-                                                    options={companiesOptions}
+                                                <label htmlFor="contractorId"
+                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Contractor</label>
+                                                <AsyncSelect
+                                                    name="contractorId"
+                                                    loadOptions={contractorsOptions}
                                                     defaultOptions
-                                                    value={buyer}
-                                                    getOptionLabel={option => option.name}
-                                                    getOptionValue={option => option.id}
-                                                    placeholder={'Choose buyer'}
+                                                    placeholder={'Choose contractor'}
                                                     style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                     onChange={handleSelectChange}
                                                 />
-                                                {errors['buyerId'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['buyerId'].message}</span>
+                                                {errors['contractorId'] &&
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['contractorId'].message}</span>
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
@@ -233,7 +239,7 @@ function Edit() {
                                                         placeholder="Choose generate invoice date"
                                                         value={invoice.generatedAt}
                                                         options={{dateFormat: 'd-m-Y'}}
-                                                        onChange={handleGeneratedAtChange}
+                                                        onChange={date => (console.log(date))}
                                                         className="form-control"
                                                         style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, backgroundColor: '#fff'}}
                                                     />
@@ -244,9 +250,16 @@ function Edit() {
                                                     >
                                                         Last Day Previous Month
                                                     </button>
+                                                    <button className="btn btn-outline-secondary"
+                                                            type="button"
+                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, zIndex: 0}}
+                                                            onClick={() => setLastDayCurrentMonth('generatedAt')}
+                                                    >
+                                                        Last Day Current Month
+                                                    </button>
                                                 </div>
                                                 {errors['generatedAt'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['generatedAt'].message}</span>
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['generatedAt'].message}</span>
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
@@ -258,7 +271,7 @@ function Edit() {
                                                         placeholder="Choose sell invoice date"
                                                         value={invoice.soldAt}
                                                         options={{dateFormat: 'd-m-Y'}}
-                                                        onChange={handleSoldAtChange}
+                                                        onChange={date => (console.log('testing'))}
                                                         className="form-control"
                                                         style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, backgroundColor: '#fff'}}
                                                     />
@@ -269,9 +282,16 @@ function Edit() {
                                                     >
                                                         Last Day Previous Month
                                                     </button>
+                                                    <button className="btn btn-outline-secondary"
+                                                            type="button"
+                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, zIndex: 0}}
+                                                            onClick={() => setLastDayCurrentMonth('soldAt')}
+                                                    >
+                                                        Last Day Current Month
+                                                    </button>
                                                 </div>
                                                 {errors['soldAt'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['soldAt'].message}</span>
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['soldAt'].message}</span>
                                                 }
                                             </div>
                                         </div>
@@ -283,29 +303,74 @@ function Edit() {
                                                 <input name="generatePlace"
                                                        placeholder="Enter invoice generate place (eg. Warsaw)" type="text"
                                                        className="form-control"
-                                                       defaultValue={invoice.generatePlace}
                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                        onChange={handleChange}
                                                 />
                                                 {errors['generatePlace'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['generatePlace'].message}</span>
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['generatePlace'].message}</span>
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
                                                 <label htmlFor="alreadyTakenPrice"
                                                        style={{marginBottom: '.5rem', fontWeight: 500}}>Already Taken Price</label>
                                                 <input name="alreadyTakenPrice" placeholder="Enter already taken price..."
-                                                       type="number"
-                                                       className="form-control"
-                                                       defaultValue={invoice.alreadyTakenPrice}
+                                                       type="number" className="form-control"
                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
                                                        onChange={handleChange}
                                                        step='0.01'
+                                                       value={invoice.alreadyTakenPrice}
                                                 />
                                                 {errors['alreadyTakenPrice'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['alreadyTakenPrice'].message}</span>
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['alreadyTakenPrice'].message}</span>
                                                 }
                                             </div>
+                                            <div className="mb-3 form-group">
+                                                <label htmlFor="daysForPayment"
+                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>Days For Payment</label>
+                                                <input name="daysForPayment" placeholder="Enter days for payment"
+                                                       type="number" className="form-control"
+                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                       onChange={handleChange}
+                                                       step='1'
+                                                       value={invoice.daysForPayment}
+                                                />
+                                                {errors['daysForPayment'] &&
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['daysForPayment'].message}</span>
+                                                }
+                                            </div>
+                                            {invoice.companyId &&
+                                                <>
+                                                    <div className="mb-3 form-group">
+                                                        <label htmlFor="paymentType"
+                                                               style={{marginBottom: '.5rem', fontWeight: 500}}>Payment Type</label>
+                                                        <Select
+                                                            options={[
+                                                                {value: 'bank_transfer', label: 'Bank transfer'}
+                                                            ]}
+                                                            defaultValue={{value: 'bank_transfer', label: 'Bank transfer'}}
+                                                            isDisabled={true}
+                                                        />
+                                                        {errors['paymentType'] &&
+                                                            <span style={{color: 'red', fontSize: '10px'}}>{errors['paymentType'].message}</span>
+                                                        }
+                                                    </div>
+                                                    {invoice.paymentType === 'bank_transfer' &&
+                                                        <div className="mb-3 form-group">
+                                                            <label htmlFor="bankAccountId"
+                                                                   style={{marginBottom: '.5rem', fontWeight: 500}}>Bank Account</label>
+                                                            <Select
+                                                                options={bankAccountsOptions}
+                                                                value={bankAccountsOptions[0]}
+                                                                isDisabled={bankAccountsOptions.length === 1}
+                                                                name="bankAccountId"
+                                                            />
+                                                            {errors['bankAccountId'] &&
+                                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['bankAccountId'].message}</span>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </>
+                                            }
                                             <div className="mb-3 form-group">
                                                 <label htmlFor="language"
                                                        style={{marginBottom: '.5rem', fontWeight: 500}}>Language</label>
@@ -313,43 +378,25 @@ function Edit() {
                                                     options={[
                                                         {value: 'pl', label: 'Poland'}
                                                     ]}
-                                                    placeholder="Select language"
                                                     defaultValue={{value: 'pl', label: 'Poland'}}
+                                                    isDisabled={true}
                                                 />
                                                 {errors['language'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['language'].message}</span>
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['language'].message}</span>
                                                 }
                                             </div>
                                             <div className="mb-3 form-group">
                                                 <label htmlFor="currencyCode"
                                                        style={{marginBottom: '.5rem', fontWeight: 500}}>Currency Code</label>
-                                                <input name="currencyCode"
-                                                       placeholder="Enter currency code..." type="text"
-                                                       className="form-control"
-                                                       style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                       onChange={handleChange}
-                                                       value={invoice.currencyCode}
-                                                       readOnly
-                                                />
-                                                {errors['currencyCode'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['currencyCode'].message}</span>
-                                                }
-                                            </div>
-                                            <div className="mb-3 form-group">
-                                                <label htmlFor="vatPercentage"
-                                                       style={{marginBottom: '.5rem', fontWeight: 500}}>VAT Percentage</label>
                                                 <Select
                                                     options={[
-                                                        {value: 0, label: '0%'},
-                                                        {value: 23, label: '23%'},
+                                                        {value: 'pln', label: 'PLN'}
                                                     ]}
-                                                    placeholder="Select language"
-                                                    defaultValue={{value: invoice.vatPercentage, label: invoice.vatPercentage + '%'}}
-                                                    onChange={handleVatPercentageChange}
-                                                    name="vatPercentage"
+                                                    defaultValue={{value: 'pln', label: 'PLN'}}
+                                                    isDisabled={true}
                                                 />
-                                                {errors['vatPercentage'] &&
-                                                <span style={{color: 'red', fontSize: '10px'}}>{errors['vatPercentage'].message}</span>
+                                                {errors['currencyCode'] &&
+                                                    <span style={{color: 'red', fontSize: '10px'}}>{errors['currencyCode'].message}</span>
                                                 }
                                             </div>
                                         </div>
@@ -359,11 +406,20 @@ function Edit() {
                                         Add Products
                                     </label>
                                     {errors['products'] &&
-                                    <span style={{color: 'red', fontSize: '10px'}}>Minimum one added product is required.</span>
+                                        <span style={{color: 'red', fontSize: '10px'}}>Minimum one added product is required.</span>
                                     }
 
                                     <div className="inner form-group mb-0 row">
                                         <div className="inner">
+                                            <div className="row">
+                                                <div className="col-4" style={{textAlign: 'center'}}>Product name</div>
+                                                <div className="col-1" style={{textAlign: 'center'}}>Unit</div>
+                                                <div className="col-1" style={{textAlign: 'center'}}>Quantity</div>
+                                                <div className="col-2" style={{textAlign: 'center'}}>Price netto</div>
+                                                <div className="col-1" style={{textAlign: 'center'}}>Rate</div>
+                                                <div className="col-2" style={{textAlign: 'center'}}>Price gross</div>
+                                            </div>
+
                                             <DragDropContext
                                                 onDragEnd={onProductsDragEnd}
                                             >
@@ -379,13 +435,12 @@ function Edit() {
                                                                                 {...provided.dragHandleProps}
                                                                                 ref={provided.innerRef}
                                                                             >
-                                                                                <div className="row align-items-center" style={{padding: '3px', marginBottom: '2px'}}>
-                                                                                    <div className="col-9">
-                                                                                        <div style={{display: 'inline-block', width: '3%'}}>
-                                                                                            <i className="bi bi-grip-vertical col-1"
+                                                                                <div className="row gx-1 align-items-center" style={{padding: '4px', marginBottom: '2px', fontSize: '8px'}}>
+                                                                                    <div className="col-4" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                                                                        <div>
+                                                                                            <i className="bi bi-grip-vertical"
                                                                                                style={{
                                                                                                    minWidth: '1.5rem',
-                                                                                                   display: 'inline-block',
                                                                                                    paddingBottom: '.125em',
                                                                                                    fontSize: '1.25rem',
                                                                                                    lineHeight: '1.40625rem',
@@ -394,38 +449,92 @@ function Edit() {
                                                                                                }}
                                                                                             />
                                                                                         </div>
-                                                                                        <div style={{display: 'inline-block', width: '97%'}}>
-                                                                                            <input
-                                                                                                name="name"
-                                                                                                type="text"
-                                                                                                className="form-control"
-                                                                                                placeholder="Invoice product name"
-                                                                                                style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                                                                value={element.name}
-                                                                                                onChange={(e) => handleProductsParametersChange(e, key)}
-                                                                                            />
+
+                                                                                        <div style={{height: '100%', width: '100%'}}>
+                                                                                        <textarea
+                                                                                            rows="1"
+                                                                                            name="name"
+                                                                                            className="form-control"
+                                                                                            placeholder="Invoice product name"
+                                                                                            style={{
+                                                                                                padding: '.47rem .75rem',
+                                                                                                fontSize: '.8125rem',
+                                                                                                fontWeight: 400,
+                                                                                                lineHeight: 1.5,
+                                                                                                resize: 'none',
+                                                                                            }}
+                                                                                            value={element.name}
+                                                                                            onChange={(e) => handleProductsParametersChange(e, key)}
+                                                                                        />
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div className="col-2">
+                                                                                    <div className="col-1">
                                                                                         <input
-                                                                                            name="price"
-                                                                                            type="number"
-                                                                                            step="0.01"
+                                                                                            name="unit"
+                                                                                            type="text"
                                                                                             className="form-control"
-                                                                                            placeholder="Invoice product price"
                                                                                             style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
-                                                                                            value={element.price}
+                                                                                            value={element.unit}
+                                                                                            disabled={true}
                                                                                             onChange={(e) => handleProductsParametersChange(e, key)}
                                                                                         />
                                                                                     </div>
-
+                                                                                    <div className="col-1">
+                                                                                        <input
+                                                                                            name="quantity"
+                                                                                            type="number"
+                                                                                            step="1"
+                                                                                            className="form-control"
+                                                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                                                            value={element.quantity}
+                                                                                            onChange={(e) => handleProductsParametersChange(e, key)}
+                                                                                        />
+                                                                                    </div>
+                                                                                    <div className="col-2">
+                                                                                        <input
+                                                                                            name="netPrice"
+                                                                                            type="number"
+                                                                                            step="0.01"
+                                                                                            className="form-control"
+                                                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                                                            value={element.netPrice}
+                                                                                            onBlur={(e) => setFixedFloatPrice(e, key)}
+                                                                                            onChange={(e) => handleProductsParametersChange(e, key)}
+                                                                                        />
+                                                                                    </div>
+                                                                                    <div className="col-1">
+                                                                                        <Select
+                                                                                            options={[
+                                                                                                {value: -1, label: 'n/a'},
+                                                                                                {value: 0, label: '0%'},
+                                                                                                {value: 23, label: '23%'},
+                                                                                            ]}
+                                                                                            styles={customStyles}
+                                                                                            name="tax"
+                                                                                            placeholder="Select VAT percentage"
+                                                                                            defaultValue={{value: 23, label: '23%'}}
+                                                                                            onChange={handleSelectChange}
+                                                                                        />
+                                                                                    </div>
+                                                                                    <div className="col-2">
+                                                                                        <input
+                                                                                            name="grossPrice"
+                                                                                            type="number"
+                                                                                            step="0.01"
+                                                                                            className="form-control"
+                                                                                            style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                                                            value={element.grossPrice}
+                                                                                            onBlur={(e) => setFixedFloatPrice(e, key)}
+                                                                                            onChange={(e) => handleProductsParametersChange(e, key)}
+                                                                                        />
+                                                                                    </div>
                                                                                     <div className="col-1">
                                                                                         <button type="button"
                                                                                                 className="btn btn-danger"
-                                                                                                style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, width: '100%', color: '#fff'}}
+                                                                                                style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5, width: '100%'}}
                                                                                                 onClick={() => deleteProduct(key)}
                                                                                         >
-                                                                                            Remove
+                                                                                            X
                                                                                         </button>
                                                                                     </div>
                                                                                 </div>
@@ -444,10 +553,10 @@ function Edit() {
                                                     <button
                                                         type="button"
                                                         className="inner btn btn-success"
-                                                        style={{padding: '.47rem .75rem', fontSize: '.8125rem', display: 'block', fontWeight: 400, lineHeight: 1.5}}
+                                                        style={{fontSize: '1rem', display: 'block', fontWeight: 2000, lineHeight: 1.5, padding: '.1rem .5rem'}}
                                                         onClick={addNewProduct}
                                                     >
-                                                        Add Product
+                                                        +
                                                     </button>
                                                 </div>
                                             </div>
@@ -472,23 +581,6 @@ function Edit() {
                         </div>
                     </div>
                 </div>
-
-                <div style={{position: 'absolute', bottom: 80, right: 20}}>
-                    <Toast style={{backgroundColor: '#00ca72'}}
-                           show={!!isUpdated}
-                           onClose={closeToast}
-                           delay={3000}
-                           autohide
-                    >
-                        <Toast.Header closeButton={false} style={{backgroundColor: '#00ca72', borderBottom: 0}}>
-                            <strong className="me-auto" style={{color: '#fff'}}>Success!</strong>
-                        </Toast.Header>
-                        <Toast.Body style={{color: '#fff'}}>
-                            Invoice information was successfully updated and invoice was regenerated.
-                        </Toast.Body>
-                    </Toast>
-                </div>
-
             </div>
         :
             <div>Loading</div>
