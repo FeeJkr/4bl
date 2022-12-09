@@ -16,9 +16,9 @@ use Doctrine\DBAL\Exception;
 
 final class BankAccountDbRepository implements BankAccountRepository
 {
-    private const DATABASE_TABLE = 'invoices_bank_accounts';
+    private const DATABASE_TABLE = 'invoices.bank_accounts';
 
-    public function __construct(private Connection $connection){}
+    public function __construct(private readonly Connection $connection){}
 
     public function nextIdentity(): BankAccountId
     {
@@ -52,7 +52,7 @@ final class BankAccountDbRepository implements BankAccountRepository
             ->values([
                 'id' => ':id',
                 'users_id' => ':userId',
-                'invoices_companies_id' => ':companyId',
+                'companies_id' => ':companyId',
                 'name' => ':name',
                 'bank_name' => ':bankName',
                 'bank_account_number' => ':bankAccountNumber',

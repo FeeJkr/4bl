@@ -25,11 +25,11 @@ final class GetInvoiceByIdHandler implements QueryHandler
             ->select(
                 'id',
                 'users_id',
-                'invoices_companies_id',
-                'invoices_contractors_id',
-                'invoices_bank_accounts_id',
+                'companies_id',
+                'contractors_id',
+                'bank_accounts_id',
                 'status',
-                'invoice_number',
+                'number',
                 'generate_place',
                 'already_taken_price',
                 'days_for_payment',
@@ -38,7 +38,7 @@ final class GetInvoiceByIdHandler implements QueryHandler
                 'generated_at',
                 'sold_at',
             )
-            ->from('invoices_invoices')
+            ->from('invoices.invoices')
             ->where('id = :id')
             ->andWhere('users_id = :userId')
             ->setParameters([
@@ -63,8 +63,8 @@ final class GetInvoiceByIdHandler implements QueryHandler
                 'gross_price',
                 'tax_percentage',
             )
-            ->from('invoices_invoice_products')
-            ->where('invoices_invoices_id = :invoiceId')
+            ->from('invoices.invoice_products')
+            ->where('invoices_id = :invoiceId')
             ->setParameter('invoiceId', $query->id)
             ->fetchAllAssociative();
 

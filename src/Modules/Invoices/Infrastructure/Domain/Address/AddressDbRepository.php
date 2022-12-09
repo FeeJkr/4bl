@@ -17,10 +17,10 @@ use JetBrains\PhpStorm\Pure;
 
 final class AddressDbRepository implements AddressRepository
 {
-    private const DATABASE_TABLE = 'invoices_addresses';
+    private const DATABASE_TABLE = 'invoices.addresses';
     private const DATABASE_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(private Connection $connection){}
+    public function __construct(private readonly Connection $connection){}
 
     public function nextIdentity(): AddressId
     {
@@ -127,26 +127,6 @@ final class AddressDbRepository implements AddressRepository
                 'userId' => $userId->toString(),
             ])
             ->executeStatement();
-    }
-
-    public function addAddressJoin(
-        QueryBuilder $queryBuilder,
-        string $alias,
-        string $foreignKey,
-        array $select,
-        string $parentKey = 'id',
-    ): QueryBuilder {
-        $localAlias = 'ia';
-        $select = array_map(static fn (string $row) => sprintf('%s.%s', $localAlias, $row), $select);
-
-        return $queryBuilder
-            ->addSelect(...$select)
-            ->join(
-                $alias,
-                'invoices_addresses',
-                $localAlias,
-                sprintf('%s.%s = %s.%s', $localAlias, $parentKey, $alias, $foreignKey),
-            );
     }
 
     #[Pure]

@@ -10,7 +10,7 @@ use App\Modules\Invoices\Domain\User\UserId;
 
 final class UserContext implements UserContextInterface
 {
-    public function __construct(private HttpRequestContext $httpRequestContext){}
+    public function __construct(private readonly HttpRequestContext $httpRequestContext){}
 
     public function getUserId(): UserId
     {

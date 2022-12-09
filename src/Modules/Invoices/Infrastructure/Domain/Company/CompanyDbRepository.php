@@ -17,9 +17,12 @@ use Doctrine\DBAL\Exception;
 
 final class CompanyDbRepository implements CompanyRepository
 {
-    private const DATABASE_TABLE = 'invoices_companies';
+    private const DATABASE_TABLE = 'invoices.companies';
 
-    public function __construct(private Connection $connection, private AddressRepository $addressRepository){}
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly AddressRepository $addressRepository
+    ){}
 
     /**
      * @throws Exception
@@ -65,7 +68,7 @@ final class CompanyDbRepository implements CompanyRepository
             ->values([
                 'id' => ':id',
                 'users_id' => ':userId',
-                'invoices_addresses_id' => ':addressId',
+                'addresses_id' => ':addressId',
                 'name' => ':name',
                 'identification_number' => ':identificationNumber',
                 'is_vat_payer' => ':isVatPayer',

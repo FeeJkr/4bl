@@ -8,13 +8,13 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 final class BankAccountQueryBuilder
 {
-    private const DATABASE_TABLE = 'invoices_bank_accounts';
-    private const DATABASE_TABLE_ALIAS = 'iba';
+    private const DATABASE_TABLE = 'invoices.bank_accounts';
+    private const DATABASE_TABLE_ALIAS = 'ba';
 
     private const COLUMNS = [
         'id',
         'users_id',
-        'invoices_companies_id',
+        'companies_id',
         'name',
         'bank_name',
         'bank_account_number',
@@ -52,7 +52,7 @@ final class BankAccountQueryBuilder
         string $companyId
     ): QueryBuilder {
         return self::buildSelect($queryBuilder, $userId)
-            ->andWhere(sprintf('%s.invoices_companies_id = :companyId', self::DATABASE_TABLE_ALIAS))
+            ->andWhere(sprintf('%s.companies_id = :companyId', self::DATABASE_TABLE_ALIAS))
             ->setParameter('companyId', $companyId);
     }
 }

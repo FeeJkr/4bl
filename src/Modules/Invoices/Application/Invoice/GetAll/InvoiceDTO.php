@@ -25,7 +25,7 @@ final class InvoiceDTO
     {
         return new self(
             $storage['id'],
-            $storage['invoice_number'],
+            $storage['number'],
             DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['generated_at']),
             DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $storage['sold_at']),
             $storage['status'],

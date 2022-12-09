@@ -9,8 +9,8 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 final class CompanyQueryBuilder
 {
-    private const DATABASE_TABLE = 'invoices_companies';
-    private const DATABASE_TABLE_ALIAS = 'ic';
+    private const DATABASE_TABLE = 'invoices.companies';
+    private const DATABASE_TABLE_ALIAS = 'companies';
 
     private const COLUMNS = [
         'id',
@@ -23,7 +23,7 @@ final class CompanyQueryBuilder
         'phone_number',
     ];
 
-    private const ADDRESS_FOREIGN_KEY = 'invoices_addresses_id';
+    private const ADDRESS_FOREIGN_KEY = 'addresses_id';
     private const ADDRESS_COLUMNS = [
         'id AS address_id',
         'name AS address_name',

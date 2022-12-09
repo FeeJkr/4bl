@@ -13,7 +13,7 @@ use Ramsey\Uuid\Uuid;
 
 final class GetUserByIdHandler implements QueryHandler
 {
-    public function __construct(private Connection $connection){}
+    public function __construct(private readonly Connection $connection){}
 
     /**
      * @throws NotFoundException
@@ -34,7 +34,7 @@ final class GetUserByIdHandler implements QueryHandler
                 'first_name',
                 'last_name',
             )
-            ->from('accounts_users')
+            ->from('accounts.users')
             ->where('id = :id')
             ->setParameter('id', $query->userId)
             ->executeQuery()

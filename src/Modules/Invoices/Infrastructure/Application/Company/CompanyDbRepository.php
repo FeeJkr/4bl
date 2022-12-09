@@ -13,7 +13,7 @@ use Doctrine\DBAL\Exception;
 
 final class CompanyDbRepository implements CompanyRepository
 {
-    public function __construct(private Connection $connection){}
+    public function __construct(private readonly Connection $connection){}
 
     /**
      * @throws Exception

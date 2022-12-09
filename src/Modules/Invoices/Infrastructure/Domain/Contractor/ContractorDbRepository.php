@@ -18,10 +18,13 @@ use Doctrine\DBAL\Exception;
 
 final class ContractorDbRepository implements ContractorRepository
 {
-    private const DATABASE_TABLE = 'invoices_contractors';
+    private const DATABASE_TABLE = 'invoices.contractors';
     private const DATABASE_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(private Connection $connection, private AddressRepository $addressRepository){}
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly AddressRepository $addressRepository
+    ){}
 
     public function nextIdentity(): ContractorId
     {
@@ -57,7 +60,7 @@ final class ContractorDbRepository implements ContractorRepository
             ->values([
                 'id' => ':id',
                 'users_id' => ':userId',
-                'invoices_addresses_id' => ':addressId',
+                'addresses_id' => ':addressId',
                 'name' => ':name',
                 'identification_number' => ':identificationNumber',
             ])

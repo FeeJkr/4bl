@@ -24,7 +24,7 @@ final class BankAccountDTO
         return new BankAccountDTO(
             $storage['id'],
             $storage['users_id'],
-            $storage['invoices_companies_id'],
+            $storage['companies_id'],
             $storage['name'],
             $storage['bank_name'],
             $storage['bank_account_number'],

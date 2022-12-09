@@ -17,7 +17,7 @@ final class BankAccountFactory
         return new BankAccount(
             BankAccountId::fromString($row['id']),
             UserId::fromString($row['users_id']),
-            CompanyId::fromString($row['invoices_companies_id']),
+            CompanyId::fromString($row['companies_id']),
             $row['name'],
             $row['bank_name'],
             $row['bank_account_number'],

@@ -23,19 +23,19 @@ class GetAllInvoicesHandler implements QueryHandler
             ->createQueryBuilder()
             ->select(
                 'i.id',
-                'i.invoice_number',
+                'i.number',
                 'i.generated_at',
                 'i.sold_at',
                 'i.currency_code',
                 'companies.name as company_name',
                 'i.status',
                 'contractors.name as contractor_name',
-                '(SELECT SUM(net_price) FROM invoices_invoice_products WHERE invoices_invoices_id = i.id) as total_net_price',
-                '(SELECT SUM(gross_price) FROM invoices_invoice_products WHERE invoices_invoices_id = i.id) as total_gross_price',
+                '(SELECT SUM(net_price) FROM invoices.invoice_products WHERE invoices_id = i.id) as total_net_price',
+                '(SELECT SUM(gross_price) FROM invoices.invoice_products WHERE invoices_id = i.id) as total_gross_price',
             )
-            ->from('invoices_invoices', 'i')
-            ->join('i', 'invoices_companies', 'companies', 'companies.id = i.invoices_companies_id')
-            ->join('i', 'invoices_contractors', 'contractors', 'contractors.id = i.invoices_contractors_id')
+            ->from('invoices.invoices', 'i')
+            ->join('i', 'invoices.companies', 'companies', 'companies.id = i.companies_id')
+            ->join('i', 'invoices.contractors', 'contractors', 'contractors.id = i.contractors_id')
             ->where('i.users_id = :userId')
             ->setParameter('userId', $this->userContext->getUserId()->toString());
 

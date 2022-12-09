@@ -13,7 +13,7 @@ use Throwable;
 
 final class UserRepository implements UserRepositoryInterface
 {
-    public function __construct(private Connection $connection){}
+    public function __construct(private readonly Connection $connection){}
 
     /**
      * @throws Throwable
@@ -27,7 +27,7 @@ final class UserRepository implements UserRepositoryInterface
 
             $this->connection
                 ->createQueryBuilder()
-                ->insert('accounts_users')
+                ->insert('accounts.users')
                 ->values([
                     'id' => ':id',
                     'email' => ':email',
@@ -50,9 +50,9 @@ final class UserRepository implements UserRepositoryInterface
 
             $this->connection
                 ->createQueryBuilder()
-                ->insert('accounts_users_confirmation')
+                ->insert('accounts.users_confirmation')
                 ->values([
-                    'user_id' => ':userId',
+                    'users_id' => ':userId',
                     'email' => ':email',
                     'confirmation_token' => ':confirmationToken',
                 ])
@@ -83,7 +83,7 @@ final class UserRepository implements UserRepositoryInterface
 
             $this->connection
                 ->createQueryBuilder()
-                ->update('accounts_users')
+                ->update('accounts.users')
                 ->set('status', ':status')
                 ->setParameters([
                     'status' => $snapshot->status,
@@ -107,19 +107,19 @@ final class UserRepository implements UserRepositoryInterface
             ->connection
             ->createQueryBuilder()
             ->select(
-                'au.id',
-                'au.email',
-                'au.username',
-                'au.password',
-                'au.first_name',
-                'au.last_name',
-                'au.status',
-                'auc.confirmation_token'
+                'u.id',
+                'u.email',
+                'u.username',
+                'u.password',
+                'u.first_name',
+                'u.last_name',
+                'u.status',
+                'uc.confirmation_token'
             )
-            ->from('accounts_users', 'au')
-            ->leftJoin('au', 'accounts_users_confirmation', 'auc', 'auc.user_id = au.id')
-            ->where('au.email = :email')
-            ->andWhere('au.status = :status')
+            ->from('accounts.users', 'u')
+            ->leftJoin('u', 'accounts.users_confirmation', 'uc', 'uc.users_id = u.id')
+            ->where('u.email = :email')
+            ->andWhere('u.status = :status')
             ->setParameters([
                 'email' => $email,
                 'status' => Status::ACTIVE->value,
@@ -142,7 +142,7 @@ final class UserRepository implements UserRepositoryInterface
         $databaseRows = $this->connection
             ->createQueryBuilder()
             ->select(1)
-            ->from('accounts_users')
+            ->from('accounts.users')
             ->where('email = :email')
             ->orWhere('username = :username')
             ->setParameters([
@@ -164,20 +164,20 @@ final class UserRepository implements UserRepositoryInterface
             ->connection
             ->createQueryBuilder()
             ->select(
-                'au.id',
-                'au.email',
-                'au.username',
-                'au.password',
-                'au.first_name',
-                'au.last_name',
-                'au.status',
-                'auc.confirmation_token'
+                'u.id',
+                'u.email',
+                'u.username',
+                'u.password',
+                'u.first_name',
+                'u.last_name',
+                'u.status',
+                'uc.confirmation_token'
             )
-            ->from('accounts_users', 'au')
-            ->leftJoin('au', 'accounts_users_confirmation', 'auc', 'auc.user_id = au.id')
-            ->where('auc.confirmation_token = :confirmationToken')
-            ->andWhere('au.status = :status')
-            ->andWhere('auc.email = au.email')
+            ->from('accounts.users', 'u')
+            ->leftJoin('u', 'accounts.users_confirmation', 'uc', 'uc.users_id = u.id')
+            ->where('uc.confirmation_token = :confirmationToken')
+            ->andWhere('u.status = :status')
+            ->andWhere('uc.email = u.email')
             ->setParameters([
                 'confirmationToken' => $confirmToken,
                 'status' => Status::EMAIL_VERIFICATION->value,

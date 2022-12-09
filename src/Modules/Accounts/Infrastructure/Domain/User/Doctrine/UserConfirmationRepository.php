@@ -11,7 +11,7 @@ use Throwable;
 
 final class UserConfirmationRepository
 {
-    public function __construct(private Connection $connection){}
+    public function __construct(private readonly Connection $connection){}
 
     /**
      * @throws ConnectionException
@@ -25,9 +25,9 @@ final class UserConfirmationRepository
 
             $this->connection
                 ->createQueryBuilder()
-                ->insert('accounts_users_confirmation')
+                ->insert('accounts.users_confirmation')
                 ->values([
-                    'user_id' => ':userId',
+                    'users_id' => ':userId',
                     'email' => ':email',
                     'confirmation_token' => ':confirmationToken',
                 ])

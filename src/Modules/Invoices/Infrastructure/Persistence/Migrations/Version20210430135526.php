@@ -16,11 +16,13 @@ final class Version20210430135526 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('CREATE SCHEMA IF NOT EXISTS invoices');
+
         $this->addSql('
-            create table invoices_addresses
+            create table invoices.addresses
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_addresses_pk primary key,
-                users_id uuid not null constraint invoices_addresses_accounts_users_id_fk references accounts_users on delete cascade,
+                id uuid default gen_random_uuid() not null unique constraint addresses_pk primary key,
+                users_id uuid not null,
                 name varchar(255) not null,
                 street varchar(255) not null,
                 zip_code varchar(7) not null,
@@ -31,11 +33,11 @@ final class Version20210430135526 extends AbstractMigration
         ');
 
         $this->addSql('
-            create table invoices_companies
+            create table invoices.companies
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_companies_pk primary key,
-                users_id uuid not null constraint invoices_companies_accounts_users_id_fk references accounts_users on delete cascade,
-                invoices_addresses_id uuid not null constraint invoices_companies_invoices_addresses_id_fk references invoices_addresses on delete set null,
+                id uuid default gen_random_uuid() not null unique constraint companies_pk primary key,
+                users_id uuid not null,
+                addresses_id uuid not null constraint companies_addresses_id_fk references invoices.addresses on delete set null,
                 name varchar(255) not null,
                 identification_number varchar(20) not null,
                 is_vat_payer boolean not null,
@@ -48,11 +50,11 @@ final class Version20210430135526 extends AbstractMigration
         ');
 
         $this->addSql('
-            create table invoices_bank_accounts
+            create table invoices.bank_accounts
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_companies_bank_accounts_pk primary key,
-                users_id uuid not null constraint invoices_bank_accounts_accounts_users_id_fk references accounts_users on delete cascade,
-                invoices_companies_id uuid not null constraint invoices_bank_accounts_invoices_companies_id_fk references invoices_companies on delete cascade,
+                id uuid default gen_random_uuid() not null unique constraint companies_bank_accounts_pk primary key,
+                users_id uuid not null,
+                companies_id uuid not null constraint bank_accounts_companies_id_fk references invoices.companies on delete cascade,
                 name varchar(255) not null,
                 bank_name varchar(255) not null,
                 bank_account_number varchar(255) not null,
@@ -63,11 +65,11 @@ final class Version20210430135526 extends AbstractMigration
         ');
 
         $this->addSql('
-            create table invoices_contractors
+            create table invoices.contractors
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_contractors_pk primary key,
-                users_id uuid not null constraint invoices_contractors_accounts_users_id_fk references accounts_users on delete cascade,
-                invoices_addresses_id uuid not null constraint invoices_contractors_invoices_addresses_id_fk references invoices_addresses on delete set null,
+                id uuid default gen_random_uuid() not null unique constraint contractors_pk primary key,
+                users_id uuid not null,
+                addresses_id uuid not null constraint contractors_addresses_id_fk references invoices.addresses on delete set null,
                 name varchar(255) not null,
                 identification_number varchar(255) not null,
                 created_at timestamp default now() not null,
@@ -75,23 +77,23 @@ final class Version20210430135526 extends AbstractMigration
             )    
         ');
 
-        $this->addSql("CREATE TYPE invoices_invoices_status AS ENUM ('draft', 'send', 'paid')");
-        $this->addSql("CREATE TYPE invoices_invoices_payment_type AS ENUM ('bank_transfer', 'cash')");
+        $this->addSql("CREATE TYPE invoices.invoices_status AS ENUM ('draft', 'send', 'paid')");
+        $this->addSql("CREATE TYPE invoices.invoices_payment_type AS ENUM ('bank_transfer', 'cash')");
 
         $this->addSql('
-            create table invoices_invoices
+            create table invoices.invoices
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_invoices_pk primary key,
-                users_id uuid not null constraint invoices_invoices_accounts_users_id_fk references accounts_users on delete cascade,
-                invoices_companies_id uuid not null constraint invoices_invoices_invoices_companies_fk references invoices_companies on delete cascade,
-                invoices_contractors_id uuid not null constraint invoices_invoices_invoices_contractors_fk references invoices_contractors on delete cascade,
-                invoices_bank_accounts_id uuid constraint invoices_invoices_invoices_bank_accounts_fk references invoices_bank_accounts on delete cascade,
-                status invoices_invoices_status not null,
-                invoice_number varchar(255) not null,
+                id uuid default gen_random_uuid() not null unique constraint invoices_pk primary key,
+                users_id uuid not null,
+                companies_id uuid not null constraint invoices_companies_fk references invoices.companies on delete cascade,
+                contractors_id uuid not null constraint invoices_contractors_fk references invoices.contractors on delete cascade,
+                bank_accounts_id uuid constraint invoices_bank_accounts_fk references invoices.bank_accounts on delete cascade,
+                status invoices.invoices_status not null,
+                number varchar(255) not null,
                 generate_place varchar(255) not null,
                 already_taken_price float not null,
                 days_for_payment int not null,
-                payment_type invoices_invoices_payment_type not null,
+                payment_type invoices.invoices_payment_type not null,
                 currency_code varchar(255) not null,
                 generated_at timestamp not null,
                 sold_at timestamp not null,
@@ -101,10 +103,10 @@ final class Version20210430135526 extends AbstractMigration
         ');
 
         $this->addSql('
-            create table invoices_invoice_products
+            create table invoices.invoice_products
             (
-                id uuid default gen_random_uuid() not null unique constraint invoices_invoice_products_pk primary key,
-                invoices_invoices_id uuid not null constraint invoices_invoice_products_invoices_invoices_fk references invoices_invoices on delete cascade,
+                id uuid default gen_random_uuid() not null unique constraint invoice_products_pk primary key,
+                invoices_id uuid not null constraint invoices_invoice_products_fk references invoices.invoices on delete cascade,
                 position int not null,
                 name text not null,
                 unit varchar(10) not null,

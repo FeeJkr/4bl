@@ -22,11 +22,11 @@ use Doctrine\DBAL\Exception;
 
 final class InvoiceDbRepository implements InvoiceRepository
 {
-    private const DATABASE_TABLE = 'invoices_invoices';
+    private const DATABASE_TABLE = 'invoices.invoices';
 
     public function __construct(
-        private Connection $connection,
-        private InvoiceProductDbRepository $invoiceProductRepository,
+        private readonly Connection $connection,
+        private readonly InvoiceProductDbRepository $invoiceProductRepository,
     ){}
 
     /**
@@ -39,11 +39,11 @@ final class InvoiceDbRepository implements InvoiceRepository
             ->select(
                 'id',
                 'users_id',
-                'invoices_companies_id',
-                'invoices_contractors_id',
-                'invoices_companies_bank_accounts_id',
+                'companies_id',
+                'contractors_id',
+                'bank_accounts_id',
                 'status',
-                'invoice_number',
+                'number',
                 'generate_place',
                 'already_taken_price',
                 'days_for_payment',
@@ -79,11 +79,11 @@ final class InvoiceDbRepository implements InvoiceRepository
             ->values([
                 'id' => ':id',
                 'users_id' => ':userId',
-                'invoices_companies_id' => ':companyId',
-                'invoices_contractors_id' => ':contractorId',
-                'invoices_bank_accounts_id' => ':bankAccountId',
+                'companies_id' => ':companyId',
+                'contractors_id' => ':contractorId',
+                'bank_accounts_id' => ':bankAccountId',
                 'status' => ':status',
-                'invoice_number' => ':invoiceNumber',
+                'number' => ':invoiceNumber',
                 'generate_place' => ':generatePlace',
                 'already_taken_price' => ':alreadyTakenPrice',
                 'days_for_payment' => ':daysForPayment',
@@ -123,11 +123,11 @@ final class InvoiceDbRepository implements InvoiceRepository
         $this->connection
             ->createQueryBuilder()
             ->update(self::DATABASE_TABLE)
-            ->set('invoices_companies_id', ':companyId')
-            ->set('invoices_contractors_id', ':contractorId')
-            ->set('invoices_companies_bank_accounts_id', ':bankAccountId')
+            ->set('companies_id', ':companyId')
+            ->set('contractors_id', ':contractorId')
+            ->set('bank_accounts_id', ':bankAccountId')
             ->set('status', ':status')
-            ->set('invoice_number', ':invoiceNumber')
+            ->set('number', ':invoiceNumber')
             ->set('generate_place', ':generatePlace')
             ->set('already_taken_price', ':alreadyTakenPrice')
             ->set('days_for_payment', ':daysForPayment')
@@ -191,17 +191,17 @@ final class InvoiceDbRepository implements InvoiceRepository
         return new Invoice(
             InvoiceId::fromString($row['id']),
             UserId::fromString($row['users_id']),
-            CompanyId::fromString($row['invoices_companies_id']),
-            ContractorId::fromString($row['invoices_contractors_id']),
+            CompanyId::fromString($row['companies_id']),
+            ContractorId::fromString($row['contractors_id']),
             Status::from($row['status']),
             new InvoiceParameters(
-                $row['invoice_number'],
+                $row['number'],
                 $row['generate_place'],
                 (float) $row['already_taken_price'],
                 new PaymentParameters(
                     (int) $row['days_for_payment'],
                     PaymentType::from($row['payment_type']),
-                    BankAccountId::fromString($row['invoices_companies_bank_accounts_id']),
+                    BankAccountId::fromString($row['bank_accounts_id']),
                     $row['currency_code'],
                 ),
                 DateTimeImmutable::createFromFormat('Y-m-d', $row['generated_at']),

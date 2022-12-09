@@ -8,8 +8,8 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 final class AddressQueryBuilder
 {
-    private const DATABASE_TABLE = 'invoices_addresses';
-    private const DATABASE_TABLE_ALIAS = 'ia';
+    private const DATABASE_TABLE = 'invoices.addresses';
+    private const DATABASE_TABLE_ALIAS = 'a';
 
     public static function addJoin(
         QueryBuilder $queryBuilder,

@@ -15,7 +15,7 @@ use Doctrine\DBAL\Exception;
 
 final class InvoiceProductDbRepository
 {
-    private const DATABASE_TABLE = 'invoices_invoice_products';
+    private const DATABASE_TABLE = 'invoices.invoice_products';
 
     public function __construct(private Connection $connection){}
 
@@ -36,7 +36,7 @@ final class InvoiceProductDbRepository
                 'tax_percentage',
             )
             ->from(self::DATABASE_TABLE)
-            ->where('invoices_invoices_id = :invoiceId')
+            ->where('invoices_id = :invoiceId')
             ->setParameter('invoiceId', $invoiceId)
             ->fetchAllAssociative();
 
@@ -55,7 +55,7 @@ final class InvoiceProductDbRepository
             ->insert(self::DATABASE_TABLE)
             ->values([
                 'id' => ':id',
-                'invoices_invoices_id' => ':invoiceId',
+                'invoices_id' => ':invoiceId',
                 'position' => ':position',
                 'name' => ':name',
                 'unit' => ':unit',
@@ -86,7 +86,7 @@ final class InvoiceProductDbRepository
         $this->connection
             ->createQueryBuilder()
             ->delete(self::DATABASE_TABLE)
-            ->where('invoices_invoices_id = :invoiceId')
+            ->where('invoices_id = :invoiceId')
             ->setParameter('invoiceId', $invoiceId)
             ->executeStatement();
     }

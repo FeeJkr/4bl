@@ -16,34 +16,36 @@ final class Version20210430133511 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('CREATE SCHEMA IF NOT EXISTS accounts;');
+
         $this->addSql(
-            "CREATE TYPE accounts_users_status AS ENUM ('active', 'disable', 'email_verification');"
+            "CREATE TYPE accounts.users_status AS ENUM ('active', 'disable', 'email_verification');"
         );
 
         $this->addSql("
-            create table accounts_users(
-                id uuid not null unique constraint accounts_users_pk primary key,
+            create table accounts.users(
+                id uuid not null unique constraint users_pk primary key,
                 email varchar(255) unique not null,
                 username varchar(255) unique not null,
                 password varchar(255) not null,
                 first_name varchar(255) not null,
                 last_name varchar(255) not null,
-                status accounts_users_status default 'active',
+                status accounts.users_status default 'active',
                 registered_at timestamp default now() not null,
                 updated_at timestamp
             );
         ");
 
         $this->addSql("
-            CREATE INDEX accounts_users_email_index ON accounts_users(email)
+            CREATE INDEX users_email_index ON accounts.users(email)
         ");
 
         $this->addSql("
-            CREATE INDEX accounts_users_username_index ON accounts_users(username)    
+            CREATE INDEX users_username_index ON accounts.users(username)    
         ");
 
         $this->addSql("
-            CREATE INDEX accounts_users_status_index ON accounts_users(status)
+            CREATE INDEX users_status_index ON accounts.users(status)
         ");
     }
 

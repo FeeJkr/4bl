@@ -19,15 +19,17 @@ final class Version20210619174449 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("CREATE TYPE category_type AS ENUM ('expenses', 'income')");
+        $this->addSql('CREATE SCHEMA IF NOT EXISTS finances;');
+
+        $this->addSql("CREATE TYPE finances.category_type AS ENUM ('expenses', 'income')");
 
         $this->addSql("
-            create table finances_categories
+            create table finances.categories
             (
                 id uuid default gen_random_uuid() not null unique constraint categories_pk primary key,
-                user_id uuid not null constraint companies_accounts_users_id_fk references accounts_users on delete cascade,
+                users_id uuid not null,
                 name varchar(255) not null,
-                type category_type not null,
+                type finances.category_type not null,
                 icon varchar(255) not null,
                 created_at timestamp default now() not null,
                 updated_at timestamp
@@ -35,10 +37,10 @@ final class Version20210619174449 extends AbstractMigration
         ");
 
         $this->addSql("
-            create table finances_wallets
+            create table finances.wallets
             (
                 id uuid default gen_random_uuid() not null unique constraint wallets_pk primary key,
-                user_id uuid not null constraint wallets_accounts_users_id_fk references accounts_users on delete cascade,
+                users_id uuid not null,
                 name varchar(255) not null,
                 start_balance int not null,
                 currency varchar(30) not null,

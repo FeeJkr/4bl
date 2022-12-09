@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 
 final class SendUserConfirmationEmailAfterRegister implements EventHandler
 {
-    public function __construct(private CommandBus $bus){}
+    public function __construct(private readonly CommandBus $bus){}
 
     public function __invoke(UserWasRegistered $event): void
     {
