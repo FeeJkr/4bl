@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './List.css';
 import {useDispatch, useSelector} from "react-redux";
-import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {Link} from "react-router-dom";
 import {Toast} from "react-bootstrap";
 import ContractorListElement from "./ContractorListElement";

@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {useDispatch, useSelector} from "react-redux";
 import {fields, labels, placeholders, handleChanges as helperHandleChanges} from "../../../helpers/forms/invoices/contractors";
 import Input from "../../../components/Fields/Form/Input";

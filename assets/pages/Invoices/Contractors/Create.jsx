@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {fields, labels, placeholders, handleChanges as helperHandleChanges} from "../../../helpers/forms/invoices/contractors";
 import Input from "../../../components/Fields/Form/Input";
 import {Form as Address} from "../Addresses/Form";

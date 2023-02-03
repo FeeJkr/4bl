@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {invoicesActions} from "../../../actions/invoices.actions";
 import {useDispatch, useSelector} from "react-redux";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import './Invoices.css';
 import 'boxicons/css/boxicons.min.css';
-import {companiesActions} from "../../../actions/invoices/companies/actions";
 import AsyncSelect from "react-select/async";
 import {contractorsService} from "../../../services/invoices/contractors/crud.service";
 

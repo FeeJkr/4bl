@@ -5,9 +5,9 @@ import SignIn from "./pages/Authentication/SignIn";
 import SignUp from "./pages/Authentication/SignUp";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
-import {List as DocumentsList} from "./pages/Invoices/Documents/List";
+import DocumentsList from "./pages/Invoices/Documents/list";
 import {List as ContractorsList} from "./pages/Invoices/Contractors/List";
-import {Generate} from "./pages/Invoices/Documents/Generate";
+import GenerateDocument from "./pages/Invoices/Documents/generate";
 import DocumentsLayout from "./layouts/invoices/DocumentsLayout";
 import {Create as CreateContractor} from "./pages/Invoices/Contractors/Create";
 import ContractorsLayout from "./layouts/invoices/ContractorsLayout";
@@ -16,12 +16,12 @@ import {Edit as EditDocument} from "./pages/Invoices/Documents/Edit";
 import Profile from "./pages/Account/Profile";
 import Settings from "./pages/Account/Settings";
 import CompaniesLayout from "./layouts/invoices/CompaniesLayout";
-import {List as CompanyList} from "./pages/Invoices/Companies/List";
-import {Edit as EditCompany} from "./pages/Invoices/Companies/Edit";
-import {Create as CreateCompany} from "./pages/Invoices/Companies/Create";
 import BudgetPlannerLayout from "./layouts/finances/BudgetPlannerLayout";
 import {List as BudgetsPeriodsList} from "./pages/Finances/Budgets/Periods/List";
 import {Show as BudgetsPeriodsShow} from "./pages/Finances/Budgets/Periods/Show";
+import CompaniesList from "./pages/Invoices/Companies/list";
+import CreateCompany from "./pages/Invoices/Companies/create";
+import EditCompany from "./pages/Invoices/Companies/edit";
 
 export default function Router() {
     return useRoutes([
@@ -47,7 +47,7 @@ export default function Router() {
                             path: 'companies',
                             element: <CompaniesLayout/>,
                             children: [
-                                { path: '', element: <CompanyList/> },
+                                { path: '', element: <CompaniesList/> },
                                 { path: 'new', element: <CreateCompany/> },
                                 { path: 'edit/:id', element: <EditCompany/> },
                             ],
@@ -66,7 +66,7 @@ export default function Router() {
                             element: <DocumentsLayout/>,
                             children: [
                                 { path: '',  element: <DocumentsList/> },
-                                { path: 'new', element: <Generate/> },
+                                { path: 'new', element: <GenerateDocument/> },
                                 { path: 'edit/:id', element: <EditDocument/> },
                             ],
                         },

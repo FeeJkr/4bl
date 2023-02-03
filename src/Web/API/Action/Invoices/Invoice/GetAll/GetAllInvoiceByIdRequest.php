@@ -11,17 +11,15 @@ use Symfony\Component\HttpFoundation\Request as ServerRequest;
 
 final class GetAllInvoiceByIdRequest extends Request
 {
-    private const FILTER = 'filter';
-
-    private const GENERATED_AT_KEY = 'generatedAt';
+    private const GENERATED_AT_FILTER = 'generatedAt';
 
     public function __construct(public readonly ?DateTimeImmutable $generatedAtFilter){}
 
     public static function fromRequest(ServerRequest $request): Request
     {
-        $filter = $request->get(self::FILTER);
-        $generatedAtFilter = isset($filter[self::GENERATED_AT_KEY])
-            ? DateTimeImmutable::createFromFormat('d-m-Y', $filter[self::GENERATED_AT_KEY])
+        $filter = $request->get(self::GENERATED_AT_FILTER);
+        $generatedAtFilter = $filter
+            ? DateTimeImmutable::createFromFormat('d-m-Y', $filter)
             : null;
 
         return new self($generatedAtFilter);

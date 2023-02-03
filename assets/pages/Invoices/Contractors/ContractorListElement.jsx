@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {Link} from "react-router-dom";
-import {contractorsActions} from "../../../actions/invoices/contractors/actions";
 import {useDispatch} from "react-redux";
 
 export default function ContractorListElement(props) {
